@@ -1,10 +1,11 @@
 #example name
 NAME=expr
+EXTENSION=toEns
 #compiler name
-CC=g++
+CC=clang++
 #lex name+path
 LEX=flex
-LIBLEX=-lfl
+LIBLEX=-ll
 #yacc/bison
 YACC=bison
 

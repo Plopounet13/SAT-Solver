@@ -5,6 +5,8 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include <vector>
+#include <set>
 #ifdef YYERROR_VERBOSE
 # undef YYERROR_VERBOSE
 # define YYERROR_VERBOSE 1
@@ -60,11 +62,11 @@ private:
 class EOu : public Expr
 {
 public:
-    EOu(Expr * e1, Expr * e2);
+    EOu(Expr& e1, Expr& e2);
     virtual string to_string();
-    virtual bool eval(map<int,int>& sigma);
+	virtual bool eval(map<int,int>& sigma);
 private:
-    Expr * op1, * op2;
+    Expr& op1,& op2;
 };
 
 /***********************************/
@@ -74,11 +76,11 @@ private:
 class EEt : public Expr
 {
 public:
-    EEt(Expr * e1, Expr * e2);
+    EEt(Expr& e1, Expr& e2);
     virtual string to_string();
-    virtual bool eval(map<int,int>& sigma);
+	virtual bool eval(map<int,int>& sigma);
 private:
-    Expr * op1, * op2;
+    Expr& op1,& op2;
 };
 
 /***********************************/
@@ -88,11 +90,11 @@ private:
 class ENot : public Expr
 {
 public:
-    ENot(Expr * e);
+    ENot(Expr& e);
     virtual string to_string();
-    virtual bool eval(map<int,int>& sigma);
+	virtual bool eval(map<int,int>& sigma);
 private:
-    Expr * op;
+    Expr& op;
 };
 
 /***********************************/
@@ -102,11 +104,11 @@ private:
 class EXor : public Expr
 {
 public:
-    EXor(Expr * e1, Expr * e2);
+    EXor(Expr& e1, Expr& e2);
     virtual string to_string();
     virtual bool eval(map<int,int>& sigma);
 private:
-    Expr * op1, * op2;
+    Expr& op1,& op2;
 };
 
 /***********************************/
@@ -116,11 +118,11 @@ private:
 class EImp : public Expr
 {
 public:
-    EImp(Expr * e1, Expr * e2);
+    EImp(Expr& e1, Expr& e2);
     virtual string to_string();
     virtual bool eval(map<int,int>& sigma);
 private:
-    Expr * op1, * op2;
+    Expr& op1,& op2;
 };
 
 
@@ -131,11 +133,11 @@ private:
 class EEqiv : public Expr
 {
 public:
-    EEqiv(Expr * e1, Expr * e2);
+    EEqiv(Expr& e1, Expr& e2);
     virtual string to_string();
     virtual bool eval(map<int,int>& sigma);
 private:
-    Expr * op1, * op2;
+    Expr& op1,& op2;
 };
 
 #endif // ! DEF_EXPR

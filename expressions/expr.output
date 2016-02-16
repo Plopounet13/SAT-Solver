@@ -1,13 +1,13 @@
-État 11 conflits: 6 décalage/réduction
-État 13 conflits: 6 décalage/réduction
-État 24 conflits: 1 décalage/réduction
-État 25 conflits: 1 décalage/réduction
-État 26 conflits: 1 décalage/réduction
-État 27 conflits: 1 décalage/réduction
-État 28 conflits: 1 décalage/réduction
+State 11 conflicts: 6 shift/reduce
+State 13 conflicts: 6 shift/reduce
+State 24 conflicts: 1 shift/reduce
+State 25 conflicts: 1 shift/reduce
+State 26 conflicts: 1 shift/reduce
+State 27 conflicts: 1 shift/reduce
+State 28 conflicts: 1 shift/reduce
 
 
-Grammaire
+Grammar
 
     0 $accept: input $end
 
@@ -30,7 +30,7 @@ Grammaire
    15           | expression TK_BN ligne
 
 
-Terminaux, suivis des règles où ils apparaissent
+Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
@@ -50,20 +50,20 @@ TK_VAR (270) 2 3
 TK_BOOL (271) 4
 
 
-Non-terminaux, suivis des règles où ils apparaissent
+Nonterminals, with rules where they appear
 
 $accept (17)
-    à gauche: 0
+    on left: 0
 input (18)
-    à gauche: 1, à droite: 0
+    on left: 1, on right: 0
 ligne (19)
-    à gauche: 2 3 4 5 6 7 8 9 10 11 12 13, à droite: 5 6 7 8 9 10
-    11 12 13 14 15
+    on left: 2 3 4 5 6 7 8 9 10 11 12 13, on right: 5 6 7 8 9 10 11
+    12 13 14 15
 expression (20)
-    à gauche: 14 15, à droite: 1 15
+    on left: 14 15, on right: 1 15
 
 
-État 0
+state 0
 
     0 $accept: . input $end
     1 input: . expression TK_END
@@ -82,19 +82,19 @@ expression (20)
    14 expression: . ligne
    15           | . expression TK_BN ligne
 
-    TK_LPAREN  décalage et aller à l'état 1
-    TK_TIL     décalage et aller à l'état 2
-    TK_MNS     décalage et aller à l'état 3
-    TK_COM     décalage et aller à l'état 4
-    TK_VAR     décalage et aller à l'état 5
-    TK_BOOL    décalage et aller à l'état 6
+    TK_LPAREN  shift, and go to state 1
+    TK_TIL     shift, and go to state 2
+    TK_MNS     shift, and go to state 3
+    TK_COM     shift, and go to state 4
+    TK_VAR     shift, and go to state 5
+    TK_BOOL    shift, and go to state 6
 
-    input       aller à l'état 7
-    ligne       aller à l'état 8
-    expression  aller à l'état 9
+    input       go to state 7
+    ligne       go to state 8
+    expression  go to state 9
 
 
-État 1
+state 1
 
     2 ligne: . TK_MNS TK_VAR
     3      | . TK_VAR
@@ -110,17 +110,17 @@ expression (20)
    12      | . TK_COM ligne
    13      | . ligne TK_COM
 
-    TK_LPAREN  décalage et aller à l'état 1
-    TK_TIL     décalage et aller à l'état 2
-    TK_MNS     décalage et aller à l'état 3
-    TK_COM     décalage et aller à l'état 4
-    TK_VAR     décalage et aller à l'état 5
-    TK_BOOL    décalage et aller à l'état 6
+    TK_LPAREN  shift, and go to state 1
+    TK_TIL     shift, and go to state 2
+    TK_MNS     shift, and go to state 3
+    TK_COM     shift, and go to state 4
+    TK_VAR     shift, and go to state 5
+    TK_BOOL    shift, and go to state 6
 
-    ligne  aller à l'état 10
+    ligne  go to state 10
 
 
-État 2
+state 2
 
     2 ligne: . TK_MNS TK_VAR
     3      | . TK_VAR
@@ -136,24 +136,24 @@ expression (20)
    12      | . TK_COM ligne
    13      | . ligne TK_COM
 
-    TK_LPAREN  décalage et aller à l'état 1
-    TK_TIL     décalage et aller à l'état 2
-    TK_MNS     décalage et aller à l'état 3
-    TK_COM     décalage et aller à l'état 4
-    TK_VAR     décalage et aller à l'état 5
-    TK_BOOL    décalage et aller à l'état 6
+    TK_LPAREN  shift, and go to state 1
+    TK_TIL     shift, and go to state 2
+    TK_MNS     shift, and go to state 3
+    TK_COM     shift, and go to state 4
+    TK_VAR     shift, and go to state 5
+    TK_BOOL    shift, and go to state 6
 
-    ligne  aller à l'état 11
+    ligne  go to state 11
 
 
-État 3
+state 3
 
     2 ligne: TK_MNS . TK_VAR
 
-    TK_VAR  décalage et aller à l'état 12
+    TK_VAR  shift, and go to state 12
 
 
-État 4
+state 4
 
     2 ligne: . TK_MNS TK_VAR
     3      | . TK_VAR
@@ -169,38 +169,38 @@ expression (20)
    12      | TK_COM . ligne
    13      | . ligne TK_COM
 
-    TK_LPAREN  décalage et aller à l'état 1
-    TK_TIL     décalage et aller à l'état 2
-    TK_MNS     décalage et aller à l'état 3
-    TK_COM     décalage et aller à l'état 4
-    TK_VAR     décalage et aller à l'état 5
-    TK_BOOL    décalage et aller à l'état 6
+    TK_LPAREN  shift, and go to state 1
+    TK_TIL     shift, and go to state 2
+    TK_MNS     shift, and go to state 3
+    TK_COM     shift, and go to state 4
+    TK_VAR     shift, and go to state 5
+    TK_BOOL    shift, and go to state 6
 
-    ligne  aller à l'état 13
+    ligne  go to state 13
 
 
-État 5
+state 5
 
     3 ligne: TK_VAR .
 
-    $défaut  réduction par utilisation de la règle 3 (ligne)
+    $default  reduce using rule 3 (ligne)
 
 
-État 6
+state 6
 
     4 ligne: TK_BOOL .
 
-    $défaut  réduction par utilisation de la règle 4 (ligne)
+    $default  reduce using rule 4 (ligne)
 
 
-État 7
+state 7
 
     0 $accept: input . $end
 
-    $end  décalage et aller à l'état 14
+    $end  shift, and go to state 14
 
 
-État 8
+state 8
 
     6 ligne: ligne . TK_OU ligne
     7      | ligne . TK_ET ligne
@@ -210,26 +210,26 @@ expression (20)
    13      | ligne . TK_COM
    14 expression: ligne .  [TK_BN, TK_END]
 
-    TK_OU    décalage et aller à l'état 15
-    TK_ET    décalage et aller à l'état 16
-    TK_XOR   décalage et aller à l'état 17
-    TK_IMP   décalage et aller à l'état 18
-    TK_EQIV  décalage et aller à l'état 19
-    TK_COM   décalage et aller à l'état 20
+    TK_OU    shift, and go to state 15
+    TK_ET    shift, and go to state 16
+    TK_XOR   shift, and go to state 17
+    TK_IMP   shift, and go to state 18
+    TK_EQIV  shift, and go to state 19
+    TK_COM   shift, and go to state 20
 
-    $défaut  réduction par utilisation de la règle 14 (expression)
+    $default  reduce using rule 14 (expression)
 
 
-État 9
+state 9
 
     1 input: expression . TK_END
    15 expression: expression . TK_BN ligne
 
-    TK_BN   décalage et aller à l'état 21
-    TK_END  décalage et aller à l'état 22
+    TK_BN   shift, and go to state 21
+    TK_END  shift, and go to state 22
 
 
-État 10
+state 10
 
     5 ligne: TK_LPAREN ligne . TK_RPAREN
     6      | ligne . TK_OU ligne
@@ -239,16 +239,16 @@ expression (20)
    10      | ligne . TK_EQIV ligne
    13      | ligne . TK_COM
 
-    TK_OU      décalage et aller à l'état 15
-    TK_ET      décalage et aller à l'état 16
-    TK_XOR     décalage et aller à l'état 17
-    TK_IMP     décalage et aller à l'état 18
-    TK_EQIV    décalage et aller à l'état 19
-    TK_RPAREN  décalage et aller à l'état 23
-    TK_COM     décalage et aller à l'état 20
+    TK_OU      shift, and go to state 15
+    TK_ET      shift, and go to state 16
+    TK_XOR     shift, and go to state 17
+    TK_IMP     shift, and go to state 18
+    TK_EQIV    shift, and go to state 19
+    TK_RPAREN  shift, and go to state 23
+    TK_COM     shift, and go to state 20
 
 
-État 11
+state 11
 
     6 ligne: ligne . TK_OU ligne
     7      | ligne . TK_ET ligne
@@ -258,30 +258,30 @@ expression (20)
    11      | TK_TIL ligne .  [TK_OU, TK_ET, TK_BN, TK_XOR, TK_IMP, TK_EQIV, TK_RPAREN, TK_END, TK_COM]
    13      | ligne . TK_COM
 
-    TK_OU    décalage et aller à l'état 15
-    TK_ET    décalage et aller à l'état 16
-    TK_XOR   décalage et aller à l'état 17
-    TK_IMP   décalage et aller à l'état 18
-    TK_EQIV  décalage et aller à l'état 19
-    TK_COM   décalage et aller à l'état 20
+    TK_OU    shift, and go to state 15
+    TK_ET    shift, and go to state 16
+    TK_XOR   shift, and go to state 17
+    TK_IMP   shift, and go to state 18
+    TK_EQIV  shift, and go to state 19
+    TK_COM   shift, and go to state 20
 
-    TK_OU     [réduction par utilisation de la règle 11 (ligne)]
-    TK_ET     [réduction par utilisation de la règle 11 (ligne)]
-    TK_XOR    [réduction par utilisation de la règle 11 (ligne)]
-    TK_IMP    [réduction par utilisation de la règle 11 (ligne)]
-    TK_EQIV   [réduction par utilisation de la règle 11 (ligne)]
-    TK_COM    [réduction par utilisation de la règle 11 (ligne)]
-    $défaut  réduction par utilisation de la règle 11 (ligne)
+    TK_OU     [reduce using rule 11 (ligne)]
+    TK_ET     [reduce using rule 11 (ligne)]
+    TK_XOR    [reduce using rule 11 (ligne)]
+    TK_IMP    [reduce using rule 11 (ligne)]
+    TK_EQIV   [reduce using rule 11 (ligne)]
+    TK_COM    [reduce using rule 11 (ligne)]
+    $default  reduce using rule 11 (ligne)
 
 
-État 12
+state 12
 
     2 ligne: TK_MNS TK_VAR .
 
-    $défaut  réduction par utilisation de la règle 2 (ligne)
+    $default  reduce using rule 2 (ligne)
 
 
-État 13
+state 13
 
     6 ligne: ligne . TK_OU ligne
     7      | ligne . TK_ET ligne
@@ -291,30 +291,30 @@ expression (20)
    12      | TK_COM ligne .  [TK_OU, TK_ET, TK_BN, TK_XOR, TK_IMP, TK_EQIV, TK_RPAREN, TK_END, TK_COM]
    13      | ligne . TK_COM
 
-    TK_OU    décalage et aller à l'état 15
-    TK_ET    décalage et aller à l'état 16
-    TK_XOR   décalage et aller à l'état 17
-    TK_IMP   décalage et aller à l'état 18
-    TK_EQIV  décalage et aller à l'état 19
-    TK_COM   décalage et aller à l'état 20
+    TK_OU    shift, and go to state 15
+    TK_ET    shift, and go to state 16
+    TK_XOR   shift, and go to state 17
+    TK_IMP   shift, and go to state 18
+    TK_EQIV  shift, and go to state 19
+    TK_COM   shift, and go to state 20
 
-    TK_OU     [réduction par utilisation de la règle 12 (ligne)]
-    TK_ET     [réduction par utilisation de la règle 12 (ligne)]
-    TK_XOR    [réduction par utilisation de la règle 12 (ligne)]
-    TK_IMP    [réduction par utilisation de la règle 12 (ligne)]
-    TK_EQIV   [réduction par utilisation de la règle 12 (ligne)]
-    TK_COM    [réduction par utilisation de la règle 12 (ligne)]
-    $défaut  réduction par utilisation de la règle 12 (ligne)
+    TK_OU     [reduce using rule 12 (ligne)]
+    TK_ET     [reduce using rule 12 (ligne)]
+    TK_XOR    [reduce using rule 12 (ligne)]
+    TK_IMP    [reduce using rule 12 (ligne)]
+    TK_EQIV   [reduce using rule 12 (ligne)]
+    TK_COM    [reduce using rule 12 (ligne)]
+    $default  reduce using rule 12 (ligne)
 
 
-État 14
+state 14
 
     0 $accept: input $end .
 
-    $défaut  accepter
+    $default  accept
 
 
-État 15
+state 15
 
     2 ligne: . TK_MNS TK_VAR
     3      | . TK_VAR
@@ -330,17 +330,17 @@ expression (20)
    12      | . TK_COM ligne
    13      | . ligne TK_COM
 
-    TK_LPAREN  décalage et aller à l'état 1
-    TK_TIL     décalage et aller à l'état 2
-    TK_MNS     décalage et aller à l'état 3
-    TK_COM     décalage et aller à l'état 4
-    TK_VAR     décalage et aller à l'état 5
-    TK_BOOL    décalage et aller à l'état 6
+    TK_LPAREN  shift, and go to state 1
+    TK_TIL     shift, and go to state 2
+    TK_MNS     shift, and go to state 3
+    TK_COM     shift, and go to state 4
+    TK_VAR     shift, and go to state 5
+    TK_BOOL    shift, and go to state 6
 
-    ligne  aller à l'état 24
+    ligne  go to state 24
 
 
-État 16
+state 16
 
     2 ligne: . TK_MNS TK_VAR
     3      | . TK_VAR
@@ -356,17 +356,17 @@ expression (20)
    12      | . TK_COM ligne
    13      | . ligne TK_COM
 
-    TK_LPAREN  décalage et aller à l'état 1
-    TK_TIL     décalage et aller à l'état 2
-    TK_MNS     décalage et aller à l'état 3
-    TK_COM     décalage et aller à l'état 4
-    TK_VAR     décalage et aller à l'état 5
-    TK_BOOL    décalage et aller à l'état 6
+    TK_LPAREN  shift, and go to state 1
+    TK_TIL     shift, and go to state 2
+    TK_MNS     shift, and go to state 3
+    TK_COM     shift, and go to state 4
+    TK_VAR     shift, and go to state 5
+    TK_BOOL    shift, and go to state 6
 
-    ligne  aller à l'état 25
+    ligne  go to state 25
 
 
-État 17
+state 17
 
     2 ligne: . TK_MNS TK_VAR
     3      | . TK_VAR
@@ -382,17 +382,17 @@ expression (20)
    12      | . TK_COM ligne
    13      | . ligne TK_COM
 
-    TK_LPAREN  décalage et aller à l'état 1
-    TK_TIL     décalage et aller à l'état 2
-    TK_MNS     décalage et aller à l'état 3
-    TK_COM     décalage et aller à l'état 4
-    TK_VAR     décalage et aller à l'état 5
-    TK_BOOL    décalage et aller à l'état 6
+    TK_LPAREN  shift, and go to state 1
+    TK_TIL     shift, and go to state 2
+    TK_MNS     shift, and go to state 3
+    TK_COM     shift, and go to state 4
+    TK_VAR     shift, and go to state 5
+    TK_BOOL    shift, and go to state 6
 
-    ligne  aller à l'état 26
+    ligne  go to state 26
 
 
-État 18
+state 18
 
     2 ligne: . TK_MNS TK_VAR
     3      | . TK_VAR
@@ -408,17 +408,17 @@ expression (20)
    12      | . TK_COM ligne
    13      | . ligne TK_COM
 
-    TK_LPAREN  décalage et aller à l'état 1
-    TK_TIL     décalage et aller à l'état 2
-    TK_MNS     décalage et aller à l'état 3
-    TK_COM     décalage et aller à l'état 4
-    TK_VAR     décalage et aller à l'état 5
-    TK_BOOL    décalage et aller à l'état 6
+    TK_LPAREN  shift, and go to state 1
+    TK_TIL     shift, and go to state 2
+    TK_MNS     shift, and go to state 3
+    TK_COM     shift, and go to state 4
+    TK_VAR     shift, and go to state 5
+    TK_BOOL    shift, and go to state 6
 
-    ligne  aller à l'état 27
+    ligne  go to state 27
 
 
-État 19
+state 19
 
     2 ligne: . TK_MNS TK_VAR
     3      | . TK_VAR
@@ -434,24 +434,24 @@ expression (20)
    12      | . TK_COM ligne
    13      | . ligne TK_COM
 
-    TK_LPAREN  décalage et aller à l'état 1
-    TK_TIL     décalage et aller à l'état 2
-    TK_MNS     décalage et aller à l'état 3
-    TK_COM     décalage et aller à l'état 4
-    TK_VAR     décalage et aller à l'état 5
-    TK_BOOL    décalage et aller à l'état 6
+    TK_LPAREN  shift, and go to state 1
+    TK_TIL     shift, and go to state 2
+    TK_MNS     shift, and go to state 3
+    TK_COM     shift, and go to state 4
+    TK_VAR     shift, and go to state 5
+    TK_BOOL    shift, and go to state 6
 
-    ligne  aller à l'état 28
+    ligne  go to state 28
 
 
-État 20
+state 20
 
    13 ligne: ligne TK_COM .
 
-    $défaut  réduction par utilisation de la règle 13 (ligne)
+    $default  reduce using rule 13 (ligne)
 
 
-État 21
+state 21
 
     2 ligne: . TK_MNS TK_VAR
     3      | . TK_VAR
@@ -467,33 +467,33 @@ expression (20)
    13      | . ligne TK_COM
    15 expression: expression TK_BN . ligne
 
-    TK_LPAREN  décalage et aller à l'état 1
-    TK_TIL     décalage et aller à l'état 2
-    TK_MNS     décalage et aller à l'état 3
-    TK_COM     décalage et aller à l'état 4
-    TK_VAR     décalage et aller à l'état 5
-    TK_BOOL    décalage et aller à l'état 6
+    TK_LPAREN  shift, and go to state 1
+    TK_TIL     shift, and go to state 2
+    TK_MNS     shift, and go to state 3
+    TK_COM     shift, and go to state 4
+    TK_VAR     shift, and go to state 5
+    TK_BOOL    shift, and go to state 6
 
-    ligne  aller à l'état 29
+    ligne  go to state 29
 
 
-État 22
+state 22
 
     1 input: expression TK_END .
 
-    $défaut  réduction par utilisation de la règle 1 (input)
+    $default  reduce using rule 1 (input)
 
 
-État 23
+state 23
 
     5 ligne: TK_LPAREN ligne TK_RPAREN .
 
-    $défaut  réduction par utilisation de la règle 5 (ligne)
+    $default  reduce using rule 5 (ligne)
 
 
-État 24
+state 24
 
-    6 ligne: ligne . TK_OU ligne
+    6 ligne: ligne . TK_OU ligne  [TK_OU, TK_BN, TK_RPAREN, TK_END, TK_COM]
     6      | ligne TK_OU ligne .  [TK_OU, TK_BN, TK_RPAREN, TK_END, TK_COM]
     7      | ligne . TK_ET ligne
     8      | ligne . TK_XOR ligne
@@ -501,117 +501,117 @@ expression (20)
    10      | ligne . TK_EQIV ligne
    13      | ligne . TK_COM
 
-    TK_ET    décalage et aller à l'état 16
-    TK_XOR   décalage et aller à l'état 17
-    TK_IMP   décalage et aller à l'état 18
-    TK_EQIV  décalage et aller à l'état 19
-    TK_COM   décalage et aller à l'état 20
+    TK_ET    shift, and go to state 16
+    TK_XOR   shift, and go to state 17
+    TK_IMP   shift, and go to state 18
+    TK_EQIV  shift, and go to state 19
+    TK_COM   shift, and go to state 20
 
-    TK_COM    [réduction par utilisation de la règle 6 (ligne)]
-    $défaut  réduction par utilisation de la règle 6 (ligne)
+    TK_COM    [reduce using rule 6 (ligne)]
+    $default  reduce using rule 6 (ligne)
 
-    Conflit entre la règle 6 et le jeton TK_OU résolu par réduction (%left TK_OU).
-    Conflit entre la règle 6 et le jeton TK_ET résolu par décalage (TK_OU < TK_ET).
-    Conflit entre la règle 6 et le jeton TK_XOR résolu par décalage (TK_OU < TK_XOR).
-    Conflit entre la règle 6 et le jeton TK_IMP résolu par décalage (TK_OU < TK_IMP).
-    Conflit entre la règle 6 et le jeton TK_EQIV résolu par décalage (TK_OU < TK_EQIV).
+    Conflict between rule 6 and token TK_OU resolved as reduce (%left TK_OU).
+    Conflict between rule 6 and token TK_ET resolved as shift (TK_OU < TK_ET).
+    Conflict between rule 6 and token TK_XOR resolved as shift (TK_OU < TK_XOR).
+    Conflict between rule 6 and token TK_IMP resolved as shift (TK_OU < TK_IMP).
+    Conflict between rule 6 and token TK_EQIV resolved as shift (TK_OU < TK_EQIV).
 
 
-État 25
+state 25
 
     6 ligne: ligne . TK_OU ligne
-    7      | ligne . TK_ET ligne
+    7      | ligne . TK_ET ligne  [TK_OU, TK_ET, TK_BN, TK_RPAREN, TK_END, TK_COM]
     7      | ligne TK_ET ligne .  [TK_OU, TK_ET, TK_BN, TK_RPAREN, TK_END, TK_COM]
     8      | ligne . TK_XOR ligne
     9      | ligne . TK_IMP ligne
    10      | ligne . TK_EQIV ligne
    13      | ligne . TK_COM
 
-    TK_XOR   décalage et aller à l'état 17
-    TK_IMP   décalage et aller à l'état 18
-    TK_EQIV  décalage et aller à l'état 19
-    TK_COM   décalage et aller à l'état 20
+    TK_XOR   shift, and go to state 17
+    TK_IMP   shift, and go to state 18
+    TK_EQIV  shift, and go to state 19
+    TK_COM   shift, and go to state 20
 
-    TK_COM    [réduction par utilisation de la règle 7 (ligne)]
-    $défaut  réduction par utilisation de la règle 7 (ligne)
+    TK_COM    [reduce using rule 7 (ligne)]
+    $default  reduce using rule 7 (ligne)
 
-    Conflit entre la règle 7 et le jeton TK_OU résolu par réduction (TK_OU < TK_ET).
-    Conflit entre la règle 7 et le jeton TK_ET résolu par réduction (%left TK_ET).
-    Conflit entre la règle 7 et le jeton TK_XOR résolu par décalage (TK_ET < TK_XOR).
-    Conflit entre la règle 7 et le jeton TK_IMP résolu par décalage (TK_ET < TK_IMP).
-    Conflit entre la règle 7 et le jeton TK_EQIV résolu par décalage (TK_ET < TK_EQIV).
+    Conflict between rule 7 and token TK_OU resolved as reduce (TK_OU < TK_ET).
+    Conflict between rule 7 and token TK_ET resolved as reduce (%left TK_ET).
+    Conflict between rule 7 and token TK_XOR resolved as shift (TK_ET < TK_XOR).
+    Conflict between rule 7 and token TK_IMP resolved as shift (TK_ET < TK_IMP).
+    Conflict between rule 7 and token TK_EQIV resolved as shift (TK_ET < TK_EQIV).
 
 
-État 26
+state 26
 
     6 ligne: ligne . TK_OU ligne
     7      | ligne . TK_ET ligne
-    8      | ligne . TK_XOR ligne
+    8      | ligne . TK_XOR ligne  [TK_OU, TK_ET, TK_BN, TK_XOR, TK_RPAREN, TK_END, TK_COM]
     8      | ligne TK_XOR ligne .  [TK_OU, TK_ET, TK_BN, TK_XOR, TK_RPAREN, TK_END, TK_COM]
     9      | ligne . TK_IMP ligne
    10      | ligne . TK_EQIV ligne
    13      | ligne . TK_COM
 
-    TK_IMP   décalage et aller à l'état 18
-    TK_EQIV  décalage et aller à l'état 19
-    TK_COM   décalage et aller à l'état 20
+    TK_IMP   shift, and go to state 18
+    TK_EQIV  shift, and go to state 19
+    TK_COM   shift, and go to state 20
 
-    TK_COM    [réduction par utilisation de la règle 8 (ligne)]
-    $défaut  réduction par utilisation de la règle 8 (ligne)
+    TK_COM    [reduce using rule 8 (ligne)]
+    $default  reduce using rule 8 (ligne)
 
-    Conflit entre la règle 8 et le jeton TK_OU résolu par réduction (TK_OU < TK_XOR).
-    Conflit entre la règle 8 et le jeton TK_ET résolu par réduction (TK_ET < TK_XOR).
-    Conflit entre la règle 8 et le jeton TK_XOR résolu par réduction (%left TK_XOR).
-    Conflit entre la règle 8 et le jeton TK_IMP résolu par décalage (TK_XOR < TK_IMP).
-    Conflit entre la règle 8 et le jeton TK_EQIV résolu par décalage (TK_XOR < TK_EQIV).
+    Conflict between rule 8 and token TK_OU resolved as reduce (TK_OU < TK_XOR).
+    Conflict between rule 8 and token TK_ET resolved as reduce (TK_ET < TK_XOR).
+    Conflict between rule 8 and token TK_XOR resolved as reduce (%left TK_XOR).
+    Conflict between rule 8 and token TK_IMP resolved as shift (TK_XOR < TK_IMP).
+    Conflict between rule 8 and token TK_EQIV resolved as shift (TK_XOR < TK_EQIV).
 
 
-État 27
+state 27
 
     6 ligne: ligne . TK_OU ligne
     7      | ligne . TK_ET ligne
     8      | ligne . TK_XOR ligne
-    9      | ligne . TK_IMP ligne
+    9      | ligne . TK_IMP ligne  [TK_OU, TK_ET, TK_BN, TK_XOR, TK_IMP, TK_RPAREN, TK_END, TK_COM]
     9      | ligne TK_IMP ligne .  [TK_OU, TK_ET, TK_BN, TK_XOR, TK_IMP, TK_RPAREN, TK_END, TK_COM]
    10      | ligne . TK_EQIV ligne
    13      | ligne . TK_COM
 
-    TK_EQIV  décalage et aller à l'état 19
-    TK_COM   décalage et aller à l'état 20
+    TK_EQIV  shift, and go to state 19
+    TK_COM   shift, and go to state 20
 
-    TK_COM    [réduction par utilisation de la règle 9 (ligne)]
-    $défaut  réduction par utilisation de la règle 9 (ligne)
+    TK_COM    [reduce using rule 9 (ligne)]
+    $default  reduce using rule 9 (ligne)
 
-    Conflit entre la règle 9 et le jeton TK_OU résolu par réduction (TK_OU < TK_IMP).
-    Conflit entre la règle 9 et le jeton TK_ET résolu par réduction (TK_ET < TK_IMP).
-    Conflit entre la règle 9 et le jeton TK_XOR résolu par réduction (TK_XOR < TK_IMP).
-    Conflit entre la règle 9 et le jeton TK_IMP résolu par réduction (%left TK_IMP).
-    Conflit entre la règle 9 et le jeton TK_EQIV résolu par décalage (TK_IMP < TK_EQIV).
+    Conflict between rule 9 and token TK_OU resolved as reduce (TK_OU < TK_IMP).
+    Conflict between rule 9 and token TK_ET resolved as reduce (TK_ET < TK_IMP).
+    Conflict between rule 9 and token TK_XOR resolved as reduce (TK_XOR < TK_IMP).
+    Conflict between rule 9 and token TK_IMP resolved as reduce (%left TK_IMP).
+    Conflict between rule 9 and token TK_EQIV resolved as shift (TK_IMP < TK_EQIV).
 
 
-État 28
+state 28
 
     6 ligne: ligne . TK_OU ligne
     7      | ligne . TK_ET ligne
     8      | ligne . TK_XOR ligne
     9      | ligne . TK_IMP ligne
-   10      | ligne . TK_EQIV ligne
+   10      | ligne . TK_EQIV ligne  [TK_OU, TK_ET, TK_BN, TK_XOR, TK_IMP, TK_EQIV, TK_RPAREN, TK_END, TK_COM]
    10      | ligne TK_EQIV ligne .  [TK_OU, TK_ET, TK_BN, TK_XOR, TK_IMP, TK_EQIV, TK_RPAREN, TK_END, TK_COM]
    13      | ligne . TK_COM
 
-    TK_COM  décalage et aller à l'état 20
+    TK_COM  shift, and go to state 20
 
-    TK_COM    [réduction par utilisation de la règle 10 (ligne)]
-    $défaut  réduction par utilisation de la règle 10 (ligne)
+    TK_COM    [reduce using rule 10 (ligne)]
+    $default  reduce using rule 10 (ligne)
 
-    Conflit entre la règle 10 et le jeton TK_OU résolu par réduction (TK_OU < TK_EQIV).
-    Conflit entre la règle 10 et le jeton TK_ET résolu par réduction (TK_ET < TK_EQIV).
-    Conflit entre la règle 10 et le jeton TK_XOR résolu par réduction (TK_XOR < TK_EQIV).
-    Conflit entre la règle 10 et le jeton TK_IMP résolu par réduction (TK_IMP < TK_EQIV).
-    Conflit entre la règle 10 et le jeton TK_EQIV résolu par réduction (%left TK_EQIV).
+    Conflict between rule 10 and token TK_OU resolved as reduce (TK_OU < TK_EQIV).
+    Conflict between rule 10 and token TK_ET resolved as reduce (TK_ET < TK_EQIV).
+    Conflict between rule 10 and token TK_XOR resolved as reduce (TK_XOR < TK_EQIV).
+    Conflict between rule 10 and token TK_IMP resolved as reduce (TK_IMP < TK_EQIV).
+    Conflict between rule 10 and token TK_EQIV resolved as reduce (%left TK_EQIV).
 
 
-État 29
+state 29
 
     6 ligne: ligne . TK_OU ligne
     7      | ligne . TK_ET ligne
@@ -621,11 +621,11 @@ expression (20)
    13      | ligne . TK_COM
    15 expression: expression TK_BN ligne .  [TK_BN, TK_END]
 
-    TK_OU    décalage et aller à l'état 15
-    TK_ET    décalage et aller à l'état 16
-    TK_XOR   décalage et aller à l'état 17
-    TK_IMP   décalage et aller à l'état 18
-    TK_EQIV  décalage et aller à l'état 19
-    TK_COM   décalage et aller à l'état 20
+    TK_OU    shift, and go to state 15
+    TK_ET    shift, and go to state 16
+    TK_XOR   shift, and go to state 17
+    TK_IMP   shift, and go to state 18
+    TK_EQIV  shift, and go to state 19
+    TK_COM   shift, and go to state 20
 
-    $défaut  réduction par utilisation de la règle 15 (expression)
+    $default  reduce using rule 15 (expression)
