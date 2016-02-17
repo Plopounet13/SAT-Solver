@@ -10,20 +10,25 @@ Formule::Formule(Expr& e){
 	}
 }
 
-void Formule::evol(int var){
+int Formule::evol(int var, bool val){
 	for (int c:activeClauses){
-		Expr e = Not(Var(var));
-		set::set<Expr&>::iterator p = value[c].find(e);
+		Expr e = val?ENot(EVar(var)):EVar(var);
+		set<reference_wrapper<Expr> >::iterator p = value[c].find(e);
 		if(p != set::end){
-			activeClauses[c].erase(p);
-			if (activeClauses[c].empty()){
+            delete(*p);
+			value[c].erase(p);
+			if (value[c].empty()){
+
+                if(not(b.back())){
+
+                }
 				//TODO : backtrack
 			}
 		}
-		e = Var(var);
+		e = val?EVar(var):ENot(EVar(var));
 		p = value[c].find(e);
 		if(p != set::end)
-			activeClauses.erase(activeClauses.begin()+c);
+            activeClauses.erase(c);
 		if (activeClauses.empty())
 			//TODO : Succés
 			//Pour tout var positif dans affectation on affiche le machin
