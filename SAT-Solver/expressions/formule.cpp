@@ -26,5 +26,6 @@ void Formule::evol(int var){
 			activeClauses.erase(activeClauses.begin()+c);
 		if (activeClauses.empty())
 			//TODO : Succés
+			//Pour tout var positif dans affectation on affiche le machin
 	}
 }
