@@ -7,12 +7,7 @@
 #include <map>
 #include <vector>
 #include <set>
-#ifdef YYERROR_VERBOSE
-# undef YYERROR_VERBOSE
-# define YYERROR_VERBOSE 1
-#else
-# define YYERROR_VERBOSE 1
-#endif
+
 using namespace std;
 /***********************************/
 /*********  Expressions   **********/
@@ -26,6 +21,12 @@ public:
     virtual bool eval(map<int,int>& sigma)=0;
 };
 
+bool operator==(Expr& a, Expr& b){
+	return (a.to_string() == b.to_string());
+}
+
+class ExprBin : public Expr{};
+
 /***********************************/
 /***********  Constants  ***********/
 /***********************************/
@@ -36,6 +37,7 @@ public:
     EConst(bool val);
     virtual string to_string();
     virtual bool eval(map<int,int>& sigma);
+	virtual bool getValue();
 private:
     bool value;
 };
@@ -50,7 +52,8 @@ class EVar : public Expr
 public:
     EVar(int et);
     virtual string to_string();
-    virtual bool eval(map<int,int>& sigma);
+	virtual bool eval(map<int,int>& sigma);
+	virtual int getEtiq();
 private:
     int etiq;
 };
@@ -65,6 +68,8 @@ public:
     EOu(Expr& e1, Expr& e2);
     virtual string to_string();
 	virtual bool eval(map<int,int>& sigma);
+	virtual Expr& getOp1();
+	virtual Expr& getOp2();
 private:
     Expr& op1,& op2;
 };
@@ -79,6 +84,8 @@ public:
     EEt(Expr& e1, Expr& e2);
     virtual string to_string();
 	virtual bool eval(map<int,int>& sigma);
+	virtual Expr& getOp1();
+	virtual Expr& getOp2();
 private:
     Expr& op1,& op2;
 };
@@ -93,6 +100,7 @@ public:
     ENot(Expr& e);
     virtual string to_string();
 	virtual bool eval(map<int,int>& sigma);
+	virtual Expr& getOp();
 private:
     Expr& op;
 };
@@ -106,7 +114,9 @@ class EXor : public Expr
 public:
     EXor(Expr& e1, Expr& e2);
     virtual string to_string();
-    virtual bool eval(map<int,int>& sigma);
+	virtual bool eval(map<int,int>& sigma);
+	virtual Expr& getOp1();
+	virtual Expr& getOp2();
 private:
     Expr& op1,& op2;
 };
@@ -120,7 +130,9 @@ class EImp : public Expr
 public:
     EImp(Expr& e1, Expr& e2);
     virtual string to_string();
-    virtual bool eval(map<int,int>& sigma);
+	virtual bool eval(map<int,int>& sigma);
+	virtual Expr& getOp1();
+	virtual Expr& getOp2();
 private:
     Expr& op1,& op2;
 };
@@ -135,7 +147,9 @@ class EEqiv : public Expr
 public:
     EEqiv(Expr& e1, Expr& e2);
     virtual string to_string();
-    virtual bool eval(map<int,int>& sigma);
+	virtual bool eval(map<int,int>& sigma);
+	virtual Expr& getOp1();
+	virtual Expr& getOp2();
 private:
     Expr& op1,& op2;
 };

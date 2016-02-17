@@ -40,6 +40,10 @@ bool EVar::eval(map<int,int>& sigma)
     return sigma[etiq];
 }
 
+int EVar::getEtiq(){
+	return etiq;
+}
+
 /***********************************/
 /*********  Disjonction   **********/
 /***********************************/
@@ -54,6 +58,14 @@ string EOu::to_string()
 bool EOu::eval(map<int,int>& sigma)
 {
     return op1.eval(sigma) || op2.eval(sigma);
+}
+
+Expr& EOu::getOp1(){
+	return op1;
+}
+
+Expr& EOu::getOp2(){
+	return op2;
 }
 
 /***********************************/
@@ -72,6 +84,14 @@ bool EEt::eval(map<int,int>& sigma)
     return op1.eval(sigma) && op2.eval(sigma);
 }
 
+Expr& EEt::getOp1(){
+	return op1;
+}
+
+Expr& EEt::getOp2(){
+	return op2;
+}
+
 /***********************************/
 /***********  Negation  ************/
 /***********************************/
@@ -86,6 +106,10 @@ string ENot::to_string()
 bool ENot::eval(map<int,int>& sigma)
 {
     return !op.eval(sigma);
+}
+
+Expr& ENot::getOp(){
+	return op;
 }
 
 /***********************************/
@@ -104,6 +128,14 @@ bool EXor::eval(map<int,int>& sigma)
     return op1.eval(sigma) xor op2.eval(sigma);
 }
 
+Expr& EXor::getOp1(){
+	return op1;
+}
+
+Expr& EXor::getOp2(){
+	return op2;
+}
+
 /***********************************/
 /*********  Impliquation  **********/
 /***********************************/
@@ -118,6 +150,14 @@ string EImp::to_string()
 bool EImp::eval(map<int,int>& sigma)
 {
     return !op1.eval(sigma) || op2.eval(sigma);
+}
+
+Expr& EImp::getOp1(){
+	return op1;
+}
+
+Expr& EImp::getOp2(){
+	return op2;
 }
 
 
@@ -135,5 +175,13 @@ string EEqiv::to_string()
 bool EEqiv::eval(map<int,int>& sigma)
 {
     return op1.eval(sigma) == op2.eval(sigma);
+}
+
+Expr& EEqiv::getOp1(){
+	return op1;
+}
+
+Expr& EEqiv::getOp2(){
+	return op2;
 }
 

@@ -11,7 +11,15 @@ vector<set<Expr&> >& toEns(Expr& e){
 }
 
 
-void Expr::toEns(vector<set<Expr&> >& v){
+void EImp::toEns(vector<set<Expr&> >& v){
+	return;
+}
+
+void EEqiv::toEns(vector<set<Expr&> >& v){
+	return;
+}
+
+void EConst::toEns(vector<set<Expr&> >& v){
 	return;
 }
 

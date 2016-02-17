@@ -1,0 +1,72 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		E337095E1C7459F400353D86 /* expressions */ = {isa = PBXFileReference; lastKnownFileType = folder; path = expressions; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		E337094C1C74548D00353D86 = {
+			isa = PBXGroup;
+			children = (
+				E337095E1C7459F400353D86 /* expressions */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		E337094D1C74548D00353D86 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+			};
+			buildConfigurationList = E33709501C74548D00353D86 /* Build configuration list for PBXProject "SAT-Solver" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E337094C1C74548D00353D86;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		E33709511C74548D00353D86 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		E33709521C74548D00353D86 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E33709501C74548D00353D86 /* Build configuration list for PBXProject "SAT-Solver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E33709511C74548D00353D86 /* Debug */,
+				E33709521C74548D00353D86 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E337094D1C74548D00353D86 /* Project object */;
+}
