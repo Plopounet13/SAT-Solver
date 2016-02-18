@@ -1,16 +1,17 @@
 #example name
 NAME=expr
-EXTENSION=toEns
+EXTENSION=toEns Tseitin formule backtrack
 #compiler name
 CC=clang++
 #lex name+path
 LEX=flex
+STD = -std=c++11
 LIBLEX=-ll
 #yacc/bison
 YACC=bison
 
-all: $(NAME).tab.cpp $(NAME).yy.c $(NAME).cpp main.cpp formule.cpp
-	$(CC) -g -Wno-write-strings -o calc $^ $(LIBLEX)
+all: $(NAME).tab.cpp $(NAME).yy.c $(NAME).cpp main.cpp formule.cpp $(EXTENSION:=.cpp)
+	$(CC) -g -Wno-write-strings -o calc $^ $(LIBLEX) $(STD)
 
 $(NAME).yy.c :  $(NAME).l
 	$(LEX)  -o $@ $^

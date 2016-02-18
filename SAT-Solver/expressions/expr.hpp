@@ -44,6 +44,7 @@ public:
     virtual bool eval(map<int,int>& sigma);
 	virtual bool getValue();
 	virtual Expr& tseytin1(int& lastvar);
+	void toEns(vector<set<reference_wrapper<Expr>>>* v);
 private:
     bool value;
 };
@@ -61,6 +62,7 @@ public:
 	virtual bool eval(map<int,int>& sigma);
 	virtual int getEtiq();
 	virtual Expr& tseytin1(int& lastvar);
+	void toEns(vector<set<reference_wrapper<Expr>>>* v);
 private:
     int etiq;
 };
@@ -78,6 +80,7 @@ public:
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
 	virtual Expr& tseytin1(int& lastvar);
+	void toEns(vector<set<reference_wrapper<Expr>>>* v);
 private:
     Expr& op1,& op2;
 };
@@ -95,6 +98,7 @@ public:
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
 	virtual Expr& tseytin1(int& lastvar);
+	void toEns(vector<set<reference_wrapper<Expr>>>* v);
 private:
     Expr& op1,& op2;
 };
@@ -111,6 +115,7 @@ public:
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp();
 	virtual Expr& tseytin1(int& lastvar);
+	void toEns(vector<set<reference_wrapper<Expr>>>* v);
 private:
     Expr& op;
 };
@@ -128,6 +133,7 @@ public:
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
 	virtual Expr& tseytin1(int& lastvar);
+	void toEns(vector<set<reference_wrapper<Expr>>>* v);
 private:
     Expr& op1,& op2;
 };
@@ -145,6 +151,7 @@ public:
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
 	virtual Expr& tseytin1(int& lastvar);
+	void toEns(vector<set<reference_wrapper<Expr>>>* v);
 private:
     Expr& op1,& op2;
 };
@@ -163,6 +170,7 @@ public:
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
 	virtual Expr& tseytin1(int& lastvar);
+	void toEns(vector<set<reference_wrapper<Expr>>>* v);
 private:
     Expr& op1,& op2;
 };

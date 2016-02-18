@@ -87,8 +87,9 @@ void Formule::dpll(string fout){
     }
     if(res==1){
         cout << "s SATISFIABLE" << endl;
-		set<int>
-        for(int x:){
+		set<int> s;
+		b.variables(s);
+        for(int x:s){
             cout << x << " ";
         }
         cout << 0 << endl;
