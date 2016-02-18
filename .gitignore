@@ -4,3 +4,4 @@ SAT-Solver/expressions/expr.o
 SAT-Solver/expressions/expr.o
 *.o
 *.o
+*.xcuserstate
