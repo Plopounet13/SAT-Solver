@@ -19,13 +19,12 @@ public:
     Expr(){}
     virtual string to_string()=0;
     virtual bool eval(map<int,int>& sigma)=0;
+    virtual Expr& tseytin(int& lastvar)=0;
 };
 
 bool operator==(Expr& a, Expr& b){
 	return (a.to_string() == b.to_string());
 }
-
-class ExprBin : public Expr{};
 
 /***********************************/
 /***********  Constants  ***********/
@@ -38,6 +37,7 @@ public:
     virtual string to_string();
     virtual bool eval(map<int,int>& sigma);
 	virtual bool getValue();
+	virtual Expr& tseytin(int& lastvar);
 private:
     bool value;
 };
@@ -54,6 +54,7 @@ public:
     virtual string to_string();
 	virtual bool eval(map<int,int>& sigma);
 	virtual int getEtiq();
+	virtual Expr& tseytin(int& lastvar);
 private:
     int etiq;
 };
@@ -70,6 +71,7 @@ public:
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
+	virtual Expr& tseytin(int& lastvar);
 private:
     Expr& op1,& op2;
 };
@@ -86,6 +88,7 @@ public:
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
+	virtual Expr& tseytin(int& lastvar);
 private:
     Expr& op1,& op2;
 };
@@ -101,6 +104,7 @@ public:
     virtual string to_string();
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp();
+	virtual Expr& tseytin(int& lastvar);
 private:
     Expr& op;
 };
@@ -117,6 +121,7 @@ public:
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
+	virtual Expr& tseytin(int& lastvar);
 private:
     Expr& op1,& op2;
 };
@@ -133,6 +138,7 @@ public:
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
+	virtual Expr& tseytin(int& lastvar);
 private:
     Expr& op1,& op2;
 };
@@ -150,6 +156,7 @@ public:
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
+	virtual Expr& tseytin(int& lastvar);
 private:
     Expr& op1,& op2;
 };

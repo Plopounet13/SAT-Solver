@@ -18,7 +18,7 @@ int Formule::evol(int var, bool val, bool forced){
 		Expr e = val?ENot(EVar(var)):EVar(var);
 		set<reference_wrapper<Expr> >::iterator p = value[c].find(e);
 		if(p != set::end){
-            delete(*p);
+            p->get().del();
             clauses_ret->insert(c);
 			value[c].erase(p);
 			if (value[c].empty()){
@@ -27,7 +27,6 @@ int Formule::evol(int var, bool val, bool forced){
                     return 0;
                 else
                     return 2;
-				//TODO : backtrack
 			}
 			if(value[c].size()==1){
                 if(*(value[c].begin()).type()==EVar){
@@ -57,10 +56,10 @@ int Formule::evol(int var, bool val, bool forced){
 }
 pair<int,bool> Formule::choose() {
     Expr& e = *(value[*(activeClauses.begin())].begin());
-    if(e.type()=="ENot"){
-        e=e.op();
-    }
-
+    if(e.type()=="ENot")
+        return pair<int,bool>(e.getOp().getValue(),false);
+    else
+        return pair<int,bool>(e.getValue(),true);
 }
 //TODO : écrire dans le fichier
 void Formule::dpll(string fout){
@@ -68,7 +67,6 @@ void Formule::dpll(string fout){
     pair<int,bool> choice;
     while(r==0){
         choice = this.choose();
-        //TODO : fonction choose
         this.evol(get<0>(choice),get<1>(choice))
     }
     if(r==1){

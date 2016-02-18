@@ -22,6 +22,9 @@ bool EConst::eval(map<int,int>& sigma)
     return value;
 }
 
+bool EConst::getValue(){
+	return value;
+}
 /***********************************/
 /***********  Variables  ***********/
 /***********************************/

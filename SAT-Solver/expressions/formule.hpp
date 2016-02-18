@@ -15,6 +15,7 @@ public:
 	Formule(Expr& e);
 	virtual void dpll(string fout);
 	virtual int evol(int var, bool val, bool forced);
+	virtual pair<int,bool> Formule::choose();
 private:
 	vector<set<reference_wrapper<Expr> > > value;
 	set<int> activeClauses;
