@@ -5,3 +5,5 @@ SAT-Solver/expressions/expr.o
 *.o
 *.o
 *.xcuserstate
+
+SAT-Solver/SAT-Solver.xcodeproj/project.xcworkspace/xcuserdata/lois.xcuserdatad/UserInterfaceState.xcuserstate
