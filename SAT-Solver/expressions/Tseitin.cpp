@@ -101,11 +101,3 @@ Expr& Expr::tseytin(){
     int lastvar = 0;
     return *new EEt(*new EVar(lastvar), this->tseytin1(lastvar));
 }
-int main(){
-    EVar foo = EVar(1);//EEt(*new EVar(1),*new EVar(2));
-    cout << foo.to_string() << endl;
-    int n=0;
-    Expr& foo2=foo.tseytin();
-    cout << foo2.to_string() << endl;
-    return 0;
-}
