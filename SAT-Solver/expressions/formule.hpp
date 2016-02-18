@@ -7,6 +7,7 @@
 #include <functional>
 #include "backtrack.hpp"
 #include "expr.hpp"
+
 using namespace std;
 
 class Formule
