@@ -5,7 +5,7 @@ ElemBacktrack::ElemBacktrack(int vr, bool vl, bool forc, set<int>* clsup, set<in
 void ElemBacktrack::annule(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses){
 	for (int x: *clauses_sup)
 		activeClauses->insert(x);
-	
+
 	for (int x: *clauses_ret)
 		if (val)
 			(*value)[x].insert(*new ENot(*new EVar(var)));
@@ -18,10 +18,16 @@ bool ElemBacktrack::isForced(){
 }
 
 void ElemBacktrack::revert(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses, int* vr, bool* b){
-	
 	annule(value,activeClauses);
 	*vr = var;
 	*b = !val;
+}
+
+int ElemBacktrack::variable(){
+    if(var>0)
+        return val?var:(-var);
+    else
+        return 0;
 }
 
 Backtrack::Backtrack(){
@@ -49,6 +55,13 @@ bool Backtrack::back(vector<set<reference_wrapper<Expr>>>* value, set<int>* acti
 	}
 }
 
-
-//return 0 if failed
-//return 1 if OK
+void Backtrack::variables(set<int>& s){
+    int v;
+    while (!pile->empty()){
+        v=pile->top().get().variable();
+        if(v!=0)
+            s.insert(v);
+		//TODO: del
+		pile->pop();
+	}
+}

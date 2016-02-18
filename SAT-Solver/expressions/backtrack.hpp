@@ -17,6 +17,7 @@ public:
 	virtual bool isForced();
 	virtual void annule(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses);
 	virtual void revert(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses, int* vr, bool* b);
+	virtual int variable();
 private:
 	int var;			   //etiq
 	bool val;			   //Value set for the variable
@@ -31,6 +32,7 @@ public:
 	Backtrack();
 	virtual void push(int vr, bool vl, bool forc, set<int>* clsup, set<int>* clret);
 	virtual bool back(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses, int* var, bool* b);
+	virtual void variables(set<int>& s);
 private:
 	stack<reference_wrapper<ElemBacktrack> >* pile;
 };
