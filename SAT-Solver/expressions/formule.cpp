@@ -24,8 +24,9 @@ int Formule::evol(int var, bool val, bool forced){
 			(*value)[c].erase(p);
 			if ((*value)[c].empty()){
                 b.push(var,val,forced,clauses_sup,clauses_ret);
-                if(b.back(value, activeClauses))
-                    return 0;
+                if(b.back(value, activeClauses, &var, &val)){
+                    return this.evol(var, val, true);
+                }
                 else
                     return 2;
 			}
@@ -55,7 +56,7 @@ int Formule::evol(int var, bool val, bool forced){
     }
 	return 0;
 }
-	
+
 pair<int,bool> Formule::choose() {
     Expr& e = *((*value)[*(activeClauses->begin())].begin());
     if(e.type()=="ENot")
