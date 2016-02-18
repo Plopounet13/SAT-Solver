@@ -17,36 +17,11 @@ bool ElemBacktrack::isForced(){
 	return forced;
 }
 
-bool ElemBacktrack::revert(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses){
+void ElemBacktrack::revert(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses, int* vr, bool* b){
 	
 	annule(value,activeClauses);
-	
-	forced = true;
-	val = !val;
-	set<int>* tmp = clauses_sup;
-	clauses_sup=clauses_ret;
-	clauses_ret=tmp;
-	
-	for (int x: *clauses_sup){
-		activeClauses->erase(x);
-	}
-	
-	for (int x: *clauses_ret){
-		if (val){
-			Expr* e = new ENot(*new EVar(var));
-			set<reference_wrapper<Expr>>::iterator p = (*value)[x].find(*e);
-			//e->del(); TODO:
-			(*value)[x].erase(p);
-			//p->del(); TODO:
-		}else{
-			Expr* e = new EVar(var);
-			set<reference_wrapper<Expr>>::iterator p = (*value)[x].find(*e);
-			//e->del(); TODO:
-			(*value)[x].erase(p);
-			//p->del(); TODO:
-		}
-	}
-	return true;
+	*vr = var;
+	*b = !val;
 }
 
 Backtrack::Backtrack(){
@@ -58,15 +33,19 @@ void Backtrack::push(int vr, bool vl, bool forc, set<int>* clsup, set<int>* clre
 	pile->push(e);
 }
 
-bool Backtrack::back(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses){
+bool Backtrack::back(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses, int* var, bool* b){
 	while (!pile->empty() && pile->top().get().isForced()){
 		pile->top().get().annule(value, activeClauses);
+		//TODO: del
 		pile->pop();
 	}
 	if (pile->empty()){
 		return false;
 	}else{
-		return pile->top().get().revert(value, activeClauses);
+		pile->top().get().revert(value, activeClauses, var, b);
+		//TODO: del
+		pile->pop();
+		return true;
 	}
 }
 
