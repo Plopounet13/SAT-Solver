@@ -4,8 +4,8 @@
 
 using namespace std;
 
-vector<set<Expr&> >& toEns(Expr& e){
-	vector<set<Expr&> >& v = new vector<set<Expr&> >(1);
+vector<set<reference_wrapper<Expr>>>& toEns(Expr& e){
+	vector<set<reference_wrapper<Expr>>>& v = new vector<set<reference_wrapper<Expr>>>(1);
 	e.toEns(v);
 	return v;
 }
