@@ -17,8 +17,8 @@ public:
 	virtual int evol(int var, bool val, bool forced);
 	virtual pair<int,bool> choose();
 private:
-	vector<set<reference_wrapper<Expr> > > value;
-	set<int> activeClauses;
+	vector<set<reference_wrapper<Expr>>>* value;
+	set<int>* activeClauses;
 	Backtrack b;
 };
 

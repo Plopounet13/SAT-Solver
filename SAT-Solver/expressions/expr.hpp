@@ -20,6 +20,7 @@ public:
     virtual string to_string() const;
     virtual bool eval(map<int,int>& sigma)=0;
     Expr& tseytin();
+	virtual void toEns(vector<set<reference_wrapper<Expr>>>& v);
     virtual Expr& tseytin1(int& lastvar)=0;
 };
 

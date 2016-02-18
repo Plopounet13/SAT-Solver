@@ -3,6 +3,7 @@
 #include "formule.hpp"
 
 Formule::Formule(Expr& e){
+	value = new vector<set<reference_wrapper<Expr>>>();
 	e.toEns(value);
 	activeClauses = new set<int>();
 	for (int i=0; i<value.size; ++i){
@@ -14,34 +15,34 @@ int Formule::evol(int var, bool val, bool forced){
 	set<int>* clauses_sup = new set<int>();
 	set<int>* clauses_ret = new set<int>();
 	set<pair<int,bool> > forcedVariables;
-	for (int c:activeClauses){
+	for (int c:*activeClauses){
 		Expr e = val?ENot(EVar(var)):EVar(var);
-		set<reference_wrapper<Expr> >::iterator p = value[c].find(e);
+		set<reference_wrapper<Expr> >::iterator p = *value[c].find(e);
 		if(p != set::end){
             p->get().del();
             clauses_ret->insert(c);
-			value[c].erase(p);
-			if (value[c].empty()){
+			*value[c].erase(p);
+			if (*value[c].empty()){
                 b.push(var,val,forced,clauses_sup,clauses_ret);
                 if(b.back(value, activeClauses))
                     return 0;
                 else
                     return 2;
 			}
-			if(value[c].size()==1){
-                if(*(value[c].begin()).type()==EVar){
-                    forcedVariables.insert(pair<int,bool>(*(value[c].begin()).getEtiq(),true));
+			if(*value[c].size()==1){
+                if(*(*value[c].begin()).type()=="EVar"){
+                    forcedVariables.insert(pair<int,bool>(*(*value[c].begin()).getEtiq(),true));
                 else
-                    forcedVariables.insert(pair<int,bool>(*(value[c].begin()).getOp().getEtiq(),false));
+                    forcedVariables.insert(pair<int,bool>(*(*value[c].begin()).getOp().getEtiq(),false));
 			}
 		}
 		e = val?EVar(var):ENot(EVar(var));
-		p = value[c].find(e);
+		p = *value[c].find(e);
 		if(p != set::end){
-            activeClauses.erase(c);
+            activeClauses->erase(c);
             clauses_sup->insert(c);
         }
-		if (activeClauses.empty()){
+		if (activeClauses->empty()){
             b.push(var,val,forced,clauses_sup,clauses_ret);
             return 1;
 		}

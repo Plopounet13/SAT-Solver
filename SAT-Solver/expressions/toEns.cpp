@@ -11,32 +11,32 @@ vector<set<reference_wrapper<Expr>>>& toEns(Expr& e){
 }
 
 
-void EImp::toEns(vector<set<Expr&> >& v){
+void EImp::toEns(vector<set<reference_wrapper<Expr>>>& v){
 	return;
 }
 
-void EEqiv::toEns(vector<set<Expr&> >& v){
+void EEqiv::toEns(vector<set<reference_wrapper<Expr>>>& v){
 	return;
 }
 
-void EConst::toEns(vector<set<Expr&> >& v){
+void EConst::toEns(vector<set<reference_wrapper<Expr>>>& v){
 	return;
 }
 
-void EVar::toEns(vector<set<Expr&> >& v){
+void EVar::toEns(vector<set<reference_wrapper<Expr>>>& v){
 	v.back().insert(&self);
 }
 
-void ENot::toEns(vector<set<Expr&> >& v){
+void ENot::toEns(vector<set<reference_wrapper<Expr>>>& v){
 	v.back().insert(&self);
 }
 
-void EOu::toEns(vector<set<Expr&> >& v){
+void EOu::toEns(vector<set<reference_wrapper<Expr>>>& v){
 	op1.toEns(v);
 	op2.toEns(v);
 }
 
-void EEt::toEns(vector<set<Expr&> >& v){
+void EEt::toEns(vector<set<reference_wrapper<Expr>>>& v){
 	op1.toEns(v);
 	v.push_back(set<Expr&>());
 	op2.toEns(v);

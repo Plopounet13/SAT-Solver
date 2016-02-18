@@ -2,22 +2,22 @@
 
 ElemBacktrack::ElemBacktrack(int vr, bool vl, bool forc, set<int>* clsup, set<int>* clret) : var(vr), val(vl), forced(forc), clauses_sup(clsup), clauses_ret(clret) {}
 
-void ElemBacktrack::annule(vector<set<reference_wrapper<Expr>>>& value, set<int>& activeClauses){
+void ElemBacktrack::annule(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses){
 	for (int x: *clauses_sup)
-		activeClauses.insert(x);
+		activeClauses->insert(x);
 	
 	for (int x: *clauses_ret)
 		if (val)
-			value[x].insert(*new ENot(*new EVar(var)));
+			*value[x].insert(*new ENot(*new EVar(var)));
 		else
-			value[x].insert(*new EVar(var));
+			*value[x].insert(*new EVar(var));
 }
 
 bool ElemBacktrack::isForced(){
 	return forced;
 }
 
-bool ElemBacktrack::revert(vector<set<reference_wrapper<Expr>>>& value, set<int>& activeClauses){
+bool ElemBacktrack::revert(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses){
 	
 	annule(value,activeClauses);
 	
@@ -28,21 +28,21 @@ bool ElemBacktrack::revert(vector<set<reference_wrapper<Expr>>>& value, set<int>
 	clauses_ret=tmp;
 	
 	for (int x: *clauses_sup){
-		activeClauses.erase(x);
+		activeClauses->erase(x);
 	}
 	
 	for (int x: *clauses_ret){
 		if (val){
 			Expr* e = new ENot(*new EVar(var));
-			set<reference_wrapper<Expr>>::iterator p = value[x].find(*e);
+			set<reference_wrapper<Expr>>::iterator p = *value[x].find(*e);
 			//e->del(); TODO:
-			value[x].erase(p);
+			*value[x].erase(p);
 			//p->del(); TODO:
 		}else{
 			Expr* e = new EVar(var);
-			set<reference_wrapper<Expr>>::iterator p = value[x].find(*e);
+			set<reference_wrapper<Expr>>::iterator p = *value[x].find(*e);
 			//e->del(); TODO:
-			value[x].erase(p);
+			*value[x].erase(p);
 			//p->del(); TODO:
 		}
 	}
@@ -58,7 +58,7 @@ void Backtrack::push(int vr, bool vl, bool forc, set<int>* clsup, set<int>* clre
 	pile->push(e);
 }
 
-bool Backtrack::back(vector<set<reference_wrapper<Expr>>>& value, set<int>& activeClauses){
+bool Backtrack::back(vector<set<reference_wrapper<Expr>>>* value, set<int>* activeClauses){
 	while (!pile->empty() && pile->top().get().isForced()){
 		pile->top().get().annule(value, activeClauses);
 		pile->pop();
