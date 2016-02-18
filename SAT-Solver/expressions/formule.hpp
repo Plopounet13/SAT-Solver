@@ -4,18 +4,21 @@
 #include <vector>
 #include <set>
 #include <stack>
+#include <functional>
+#include "backtrack.hpp"
+#include "expr.hpp"
 using namespace std;
 
 class Formule
 {
 public:
 	Formule(Expr& e);
-	virtual void dpll(string nomFichier);
-	virtual void evolClause(int clause, int var);
-	virtual void evol(int var);
+	virtual void dpll(string fout);
+	virtual int evol(int var, bool val, bool forced);
 private:
-	vector<set<Expr&> >& value;
-	set<int>& activeClauses;
+	vector<set<reference_wrapper<Expr> > > value;
+	set<int> activeClauses;
+	Backtrack b;
 };
 
 
