@@ -23,19 +23,17 @@ int Formule::evol(int var, bool val, bool forced){
 			value[c].erase(p);
 			if (value[c].empty()){
                 b.push(var,val,forced,clauses_sup,clause_ret);
-                if(not(b.back(value, activeClauses)))
-                    return 2;
-                else
+                if(b.back(value, activeClauses))
                     return 0;
+                else
+                    return 2;
 				//TODO : backtrack
 			}
 			if(value[c].size()==1){
-                for(auto& x:value[c]){
-                    if(x.type()==EVar){
-                        forcedVariables.insert(pair<int,bool>(x.getEtiq(),true));
-                    else
-                        forcedVariables.insert(pair<int,bool>(x.getOp().getEtiq(),false));
-                }
+                if(*(value[c].begin()).type()==EVar){
+                    forcedVariables.insert(pair<int,bool>(*(value[c].begin()).getEtiq(),true));
+                else
+                    forcedVariables.insert(pair<int,bool>(*(value[c].begin()).getOp().getEtiq(),false));
 			}
 		}
 		e = val?EVar(var):ENot(EVar(var));
@@ -51,11 +49,14 @@ int Formule::evol(int var, bool val, bool forced){
 	}
 	b.push(var,val,forced,clauses_sup,clause_ret);
     for(auto& x:forcedVariables){
-        int r = this.evol(get<0>(x),get<1>(x));
+        int r = this.evol(get<0>(x),get<1>(x),true);
         if(r!=0)
             return r;
     }
 	return 0;
+}
+pair<int,bool> Formule::choose() {
+    for(i:activeClauses)
 }
 //TODO : écrire dans le fichier
 void Formule::dpll(string fout){
