@@ -11,18 +11,18 @@ Formule::Formule(Expr& e){
 }
 //0:continue, 1:succeed, 2:fail
 int Formule::evol(int var, bool val, bool forced){
-	set<int> clauses_sup;
-	set<int> clauses_ret;
+	set<int>* clauses_sup = new set<int>();
+	set<int>* clauses_ret = new set<int>();
 	set<pair<int,bool> > forcedVariables;
 	for (int c:activeClauses){
 		Expr e = val?ENot(EVar(var)):EVar(var);
 		set<reference_wrapper<Expr> >::iterator p = value[c].find(e);
 		if(p != set::end){
             delete(*p);
-            clauses_ret.insert(c);
+            clauses_ret->insert(c);
 			value[c].erase(p);
 			if (value[c].empty()){
-                b.push(var,val,forced,clauses_sup,clause_ret);
+                b.push(var,val,forced,clauses_sup,clauses_ret);
                 if(b.back(value, activeClauses))
                     return 0;
                 else
@@ -40,14 +40,14 @@ int Formule::evol(int var, bool val, bool forced){
 		p = value[c].find(e);
 		if(p != set::end){
             activeClauses.erase(c);
-            clauses_sup.insert(c);
+            clauses_sup->insert(c);
         }
 		if (activeClauses.empty()){
-            b.push(var,val,forced,clauses_sup,clause_ret);
+            b.push(var,val,forced,clauses_sup,clauses_ret);
             return 1;
 		}
 	}
-	b.push(var,val,forced,clauses_sup,clause_ret);
+	b.push(var,val,forced,clauses_sup,clauses_ret);
     for(auto& x:forcedVariables){
         int r = this.evol(get<0>(x),get<1>(x),true);
         if(r!=0)
@@ -56,7 +56,11 @@ int Formule::evol(int var, bool val, bool forced){
 	return 0;
 }
 pair<int,bool> Formule::choose() {
-    for(i:activeClauses)
+    Expr& e = *(value[*(activeClauses.begin())].begin());
+    if(e.type()=="ENot"){
+        e=e.op();
+    }
+
 }
 //TODO : écrire dans le fichier
 void Formule::dpll(string fout){
