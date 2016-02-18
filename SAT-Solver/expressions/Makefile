@@ -9,7 +9,7 @@ LIBLEX=-ll
 #yacc/bison
 YACC=bison
 
-all: $(NAME).tab.cpp $(NAME).yy.c $(NAME).cpp main.cpp
+all: $(NAME).tab.cpp $(NAME).yy.c $(NAME).cpp main.cpp formule.cpp
 	$(CC) -g -Wno-write-strings -o calc $^ $(LIBLEX)
 
 $(NAME).yy.c :  $(NAME).l

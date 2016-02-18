@@ -7,22 +7,26 @@
 
 //Backtrack sur full forced donne fail
 
-class Elem_backtrack{
+class ElemBacktrack{
 public:
-	Elem_backtrack(int var, int)
-	virtual void annule(vector<set<Expr&> >& value, set<int>& activeClauses);
+	ElemBacktrack(int vr, bool vl, bool forc, set<int>& clsup, set<int>& clret);
+	virtual bool isForced();
+	virtual void annule(vector<set<reference_wrapper<Expr> > >& value, set<int>& activeClauses);
+	virtual bool revert(vector<set<reference_wrapper<Expr>>>& value, set<int>& activeClauses);
 private:
-	int var;
-	bool val;
-	int forced;
-	set<int> clauses_sup; //Set des clauses
-	set<int> clauses_ret;
+	int var;			   //etiq
+	bool val;			   //Value set for the variable
+	bool forced;		   //True -> Variable déduite
+	set<int>* clauses_sup; //Set des clauses validées
+	set<int>* clauses_ret; //Set des clauses modifiées
 };
+
 
 class Backtrack{
 public:
-	virtual void back(vector<set<Expr&> >& value, set<int>& activeClauses);
+	virtual void push(int vr, bool vl, bool forc, set<int>& clsup, set<int>& clret);
+	virtual bool back(vector<set<reference_wrapper<Expr> > >& value, set<int>& activeClauses);
 private:
-	stack<elem_backtrack&> pile;
+	stack<reference_wrapper<elem_backtrack> >& pile;
 };
 #endif
