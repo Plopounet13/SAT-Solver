@@ -55,8 +55,9 @@ int Formule::evol(int var, bool val, bool forced){
     }
 	return 0;
 }
+	
 pair<int,bool> Formule::choose() {
-    Expr& e = *(value[*(activeClauses.begin())].begin());
+    Expr& e = *(*value[*(activeClauses->begin())].begin());
     if(e.type()=="ENot")
         return pair<int,bool>(e.getOp().getValue(),false);
     else

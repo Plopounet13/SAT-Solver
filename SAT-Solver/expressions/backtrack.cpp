@@ -8,9 +8,9 @@ void ElemBacktrack::annule(vector<set<reference_wrapper<Expr>>>* value, set<int>
 	
 	for (int x: *clauses_ret)
 		if (val)
-			*value[x].insert(*new ENot(*new EVar(var)));
+			(*value)[x].insert(*new ENot(*new EVar(var)));
 		else
-			*value[x].insert(*new EVar(var));
+			(*value)[x].insert(*new EVar(var));
 }
 
 bool ElemBacktrack::isForced(){
@@ -34,15 +34,15 @@ bool ElemBacktrack::revert(vector<set<reference_wrapper<Expr>>>* value, set<int>
 	for (int x: *clauses_ret){
 		if (val){
 			Expr* e = new ENot(*new EVar(var));
-			set<reference_wrapper<Expr>>::iterator p = *value[x].find(*e);
+			set<reference_wrapper<Expr>>::iterator p = (*value)[x].find(*e);
 			//e->del(); TODO:
-			*value[x].erase(p);
+			(*value)[x].erase(p);
 			//p->del(); TODO:
 		}else{
 			Expr* e = new EVar(var);
-			set<reference_wrapper<Expr>>::iterator p = *value[x].find(*e);
+			set<reference_wrapper<Expr>>::iterator p = (*value)[x].find(*e);
 			//e->del(); TODO:
-			*value[x].erase(p);
+			(*value)[x].erase(p);
 			//p->del(); TODO:
 		}
 	}
