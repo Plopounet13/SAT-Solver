@@ -3,13 +3,15 @@
 
 using namespace std;
 
+//Ordre
+
 /***********************************/
 /**********  Constants   ***********/
 /***********************************/
 
 EConst::EConst(bool val) : value(val) {}
 
-string EConst::to_string()
+string EConst::to_string() const
 {
     if (value)
 		return "T";
@@ -31,7 +33,7 @@ bool EConst::getValue(){
 
 EVar::EVar(int et) : etiq(et) {}
 
-string EVar::to_string()
+string EVar::to_string() const
 {
 	stringstream ss;
 	ss << etiq;
@@ -53,7 +55,7 @@ int EVar::getEtiq(){
 
 EOu::EOu(Expr & e1, Expr & e2) : op1(e1), op2(e2) {}
 
-string EOu::to_string()
+string EOu::to_string() const
 {
     return "(" + op1.to_string() + " \\/ " +  op2.to_string() + ")";
 }
@@ -77,7 +79,7 @@ Expr& EOu::getOp2(){
 
 EEt::EEt(Expr & e1, Expr & e2) : op1(e1), op2(e2) {}
 
-string EEt::to_string()
+string EEt::to_string() const
 {
     return "(" + op1.to_string() + " /\\ " +  op2.to_string() + ")";
 }
@@ -101,7 +103,7 @@ Expr& EEt::getOp2(){
 
 ENot::ENot(Expr & e) : op(e) {}
 
-string ENot::to_string()
+string ENot::to_string() const
 {
     return "(~" +op.to_string() + ")";
 }
@@ -121,7 +123,7 @@ Expr& ENot::getOp(){
 
 EXor::EXor(Expr & e1, Expr & e2) : op1(e1), op2(e2) {}
 
-string EXor::to_string()
+string EXor::to_string() const
 {
     return "(" + op1.to_string() + " X " +  op2.to_string() + ")";
 }
@@ -145,7 +147,7 @@ Expr& EXor::getOp2(){
 
 EImp::EImp(Expr & e1, Expr & e2) : op1(e1), op2(e2) {}
 
-string EImp::to_string()
+string EImp::to_string() const
 {
     return "(" + op1.to_string() + " => " +  op2.to_string() + ")";
 }
@@ -170,7 +172,7 @@ Expr& EImp::getOp2(){
 
 EEqiv::EEqiv(Expr & e1, Expr & e2) : op1(e1), op2(e2) {}
 
-string EEqiv::to_string()
+string EEqiv::to_string() const
 {
     return "(" + op1.to_string() + " <=> " +  op2.to_string() + ")";
 }

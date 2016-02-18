@@ -17,13 +17,17 @@ class Expr
 {
 public:
     Expr(){}
-    virtual string to_string()=0;
+    virtual string to_string() const;
     virtual bool eval(map<int,int>& sigma)=0;
     virtual Expr& tseytin(int& lastvar)=0;
 };
 
 bool operator==(Expr& a, Expr& b){
 	return (a.to_string() == b.to_string());
+}
+
+bool operator <(const Expr& e1, const Expr& e2){
+	return e1.to_string() < e2.to_string();
 }
 
 /***********************************/
@@ -34,7 +38,7 @@ class EConst : public Expr
 {
 public:
     EConst(bool val);
-    virtual string to_string();
+    virtual string to_string() const;
     virtual bool eval(map<int,int>& sigma);
 	virtual bool getValue();
 	virtual Expr& tseytin(int& lastvar);
@@ -51,7 +55,7 @@ class EVar : public Expr
 {
 public:
     EVar(int et);
-    virtual string to_string();
+    virtual string to_string() const;
 	virtual bool eval(map<int,int>& sigma);
 	virtual int getEtiq();
 	virtual Expr& tseytin(int& lastvar);
@@ -67,7 +71,7 @@ class EOu : public Expr
 {
 public:
     EOu(Expr& e1, Expr& e2);
-    virtual string to_string();
+    virtual string to_string() const;
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
@@ -84,7 +88,7 @@ class EEt : public Expr
 {
 public:
     EEt(Expr& e1, Expr& e2);
-    virtual string to_string();
+    virtual string to_string() const;
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
@@ -101,7 +105,7 @@ class ENot : public Expr
 {
 public:
     ENot(Expr& e);
-    virtual string to_string();
+    virtual string to_string() const;
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp();
 	virtual Expr& tseytin(int& lastvar);
@@ -117,7 +121,7 @@ class EXor : public Expr
 {
 public:
     EXor(Expr& e1, Expr& e2);
-    virtual string to_string();
+    virtual string to_string() const;
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
@@ -134,7 +138,7 @@ class EImp : public Expr
 {
 public:
     EImp(Expr& e1, Expr& e2);
-    virtual string to_string();
+    virtual string to_string() const;
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
@@ -152,7 +156,7 @@ class EEqiv : public Expr
 {
 public:
     EEqiv(Expr& e1, Expr& e2);
-    virtual string to_string();
+    virtual string to_string() const;
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
