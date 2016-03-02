@@ -14,10 +14,12 @@ class Formule
 {
 public:
 	Formule(Expr& e);
+	Formule(vector<set<reference_wrapper<Expr>>>* val);
 	virtual void dpll(string fout);
 	virtual int evol(int var, bool val, bool forced);
 	virtual pair<int,bool> choose();
 private:
+    map<int,int>* fixed;
 	vector<set<reference_wrapper<Expr>>>* value;
 	set<int>* activeClauses;
 	Backtrack b;

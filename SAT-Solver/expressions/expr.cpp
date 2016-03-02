@@ -4,6 +4,14 @@
 using namespace std;
 
 //Ordre
+bool operator <(const Expr& e1, const Expr& e2){
+	return e1.to_string() < e2.to_string();
+}
+
+//comparaison
+bool operator==(Expr& a, Expr& b){
+	return (a.to_string() == b.to_string());
+}
 
 /***********************************/
 /**********  Constants   ***********/

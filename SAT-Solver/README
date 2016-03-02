@@ -1,0 +1,28 @@
+Structure du code
+
+Le code à été séparé en 5 modules principaux
+	- Expr qui gère la forme arborescente des formules
+	- Tseitin qui gère la transformation des formules
+	- formule qui gère les formules sous une forme ensembliste et gère dpll
+	- toEns qui transforme une formule arborecente en formule ensembliste
+	- backtrack qui gère la mémorisation des choix et l'annulation de ceux-ci
+
+La représentation ensembliste à été choisie car considérée plus pratique pour l'application de dpll.
+Pour Tseitin, on ne gère qu'une seule clause par exécution.
+
+Pour le travail, nous avons séparé le travail par module :
+Rédouane :
+	- Tseitin
+	- dpll dans formule
+Loïs :
+	- backtrack
+	- toEns
+	- structure de formule
+À deux :
+	- Expr
+
+Les tests à 20 clauses ont été obtenus grace au générateur de tests de Meven Bertrand.
+Les tests tseitin ont été rédigés à la main.
+Les autres tests ont été trouvés sur le net et nous semblaient pertinents.
+
+Au niveau performance, nous n'avons pas repéré de ralentissement sur les tests à une centaine de clauses.

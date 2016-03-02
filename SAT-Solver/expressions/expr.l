@@ -20,7 +20,7 @@ X				{ return TK_XOR; }
 "=>"			{ return TK_IMP; }
 "<=>"			{ return TK_EQIV; }
 \n            { return TK_BN; }
-0				{ return TK_END; }
+"0\n"				{ return TK_END; }
 c[a-zA-Z0-9 ]*\n				{ return TK_COM; }
 \nc[a-zA-Z0-9 ]*				{ return TK_COM; }
 .               ;

@@ -3,19 +3,56 @@
 #include "formule.hpp"
 
 Formule::Formule(Expr& e){
-	value = new vector<set<reference_wrapper<Expr>>>();
-	e.toEns(value);
+	value = toEns(e);
+	/*for (set<reference_wrapper<Expr>> x: *value){
+        for (Expr& y : x)
+            cout << y.to_string() << " ";
+        cout << endl;
+	}*/
+	fixed = new map<int,int>;
 	activeClauses = new set<int>();
 	for (int i=0; i<value->size(); ++i){
 		activeClauses->insert(i);
 	}
 }
-//0:continue, 1:succeed, 2:fail
+
+Formule::Formule(vector<set<reference_wrapper<Expr>>>* val){
+	value = val;
+	/*for (set<reference_wrapper<Expr>> x: *value){
+        for (Expr& y : x)
+            cout << y.to_string() << " ";
+        cout << endl;
+	}*/
+	fixed = new map<int,int>;
+	activeClauses = new set<int>();
+	for (int i=0; i<value->size(); ++i){
+		activeClauses->insert(i);
+	}
+}
+
+//0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::evol(int var, bool val, bool forced){
+    int res=0;
 	set<int>* clauses_sup = new set<int>();
 	set<int>* clauses_ret = new set<int>();
 	set<pair<int,bool> > forcedVariables;
-	for (int c:*activeClauses){
+	set<int> activeClausesCopy = *activeClauses;
+	if ((*fixed)[var]!=0){
+        if (((*fixed)[var]==2) != val or !forced){
+            if(b.back(value, activeClauses, fixed, &var, &val)){
+                res = evol(var, val, true);
+                if(res<=0)
+                    return -1;
+                else
+                    return res;
+            }
+            else
+                return 2;
+        }else
+            return 0;
+	}
+	(*fixed)[var]=(val?2:1);
+	for (int c:activeClausesCopy){
 		Expr* e;
 		if (val)
 			e = new ENot(*new EVar(var));
@@ -28,8 +65,12 @@ int Formule::evol(int var, bool val, bool forced){
 			(*value)[c].erase(p);
 			if ((*value)[c].empty()){
                 b.push(var,val,forced,clauses_sup,clauses_ret);
-                if(b.back(value, activeClauses, &var, &val)){
-                    return evol(var, val, true);
+                if(b.back(value, activeClauses, fixed, &var, &val)){
+                    int res = evol(var, val, true);
+                    if(res<=0)
+                        return -1;
+                    else
+                        return res;
                 }
                 else
                     return 2;
@@ -59,9 +100,10 @@ int Formule::evol(int var, bool val, bool forced){
 	}
 	b.push(var,val,forced,clauses_sup,clauses_ret);
     for(auto& x:forcedVariables){
-        int r = evol(get<0>(x),get<1>(x),true);
-        if(r!=0)
-            return r;
+        res = evol(get<0>(x),get<1>(x),true);
+        if(res!=0){
+            return res;
+        }
     }
 	return 0;
 }
@@ -81,10 +123,12 @@ pair<int,bool> Formule::choose() {
 void Formule::dpll(string fout){
     int res = 0;
     pair<int,bool> choice;
-    while(res==0){
+    while(res<=0){
         choice = choose();
 		res = evol(get<0>(choice),get<1>(choice), false);
+
     }
+
     if(res==1){
         cout << "s SATISFIABLE" << endl;
 		set<int> s;
@@ -94,6 +138,7 @@ void Formule::dpll(string fout){
         }
         cout << 0 << endl;
     }
-    if(res==2)
+    if(res==2){
         cout << "s UNSATISFIABLE" << endl;
+    }
 }

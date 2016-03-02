@@ -8,12 +8,14 @@
 
 /* Begin PBXFileReference section */
 		E337095E1C7459F400353D86 /* expressions */ = {isa = PBXFileReference; lastKnownFileType = folder; path = expressions; sourceTree = "<group>"; };
+		E33709611C7678C900353D86 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		E337094C1C74548D00353D86 = {
 			isa = PBXGroup;
 			children = (
+				E33709611C7678C900353D86 /* README */,
 				E337095E1C7459F400353D86 /* expressions */,
 			);
 			sourceTree = "<group>";

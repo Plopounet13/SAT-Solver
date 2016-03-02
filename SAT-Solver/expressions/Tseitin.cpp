@@ -1,4 +1,4 @@
-#include "expr.cpp"
+#include "expr.hpp"
 //Définition récursive de tseytin1
 /***** DEFINI *****/
 Expr& EEt::tseytin1(int& lastvar){
@@ -98,6 +98,7 @@ Expr& EConst::tseytin1(int& lastvar){
     return selfmod;
 }
 Expr& Expr::tseytin(){
-    int lastvar = 0;
-    return *new EEt(*new EVar(lastvar), this->tseytin1(lastvar));
+    int lastvar = 1;
+    EVar& myvar = *new EVar(0);
+    return *new EEt(myvar, this->tseytin1(lastvar));
 }

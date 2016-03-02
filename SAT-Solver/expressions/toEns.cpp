@@ -19,12 +19,17 @@ void EEqiv::toEns(vector<set<reference_wrapper<Expr>>>* v){
 	return;
 }
 
+void EXor::toEns(vector<set<reference_wrapper<Expr>>>* v){
+	return;
+}
+
 void EConst::toEns(vector<set<reference_wrapper<Expr>>>* v){
 	return;
 }
 
 void EVar::toEns(vector<set<reference_wrapper<Expr>>>* v){
-	v->back().insert(*this);
+	Expr& e = *this;
+	v->back().insert(e);
 }
 
 void ENot::toEns(vector<set<reference_wrapper<Expr>>>* v){

@@ -7,30 +7,31 @@
 #include <map>
 #include <vector>
 #include <set>
+#include <functional>
 
 using namespace std;
 /***********************************/
 /*********  Expressions   **********/
 /***********************************/
 
+
 class Expr
 {
 public:
     Expr(){}
-    virtual string to_string() const;
+    ~Expr(){}
+    virtual string to_string() const=0;
     virtual bool eval(map<int,int>& sigma)=0;
     Expr& tseytin();
-	virtual void toEns(vector<set<reference_wrapper<Expr>>>* v);
+	virtual void toEns(vector<set<reference_wrapper<Expr>>>* v)=0;
     virtual Expr& tseytin1(int& lastvar)=0;
 };
 
-bool operator==(Expr& a, Expr& b){
-	return (a.to_string() == b.to_string());
-}
+bool operator==(Expr& a, Expr& b);
+bool operator <(const Expr& e1, const Expr& e2);
 
-bool operator <(const Expr& e1, const Expr& e2){
-	return e1.to_string() < e2.to_string();
-}
+//toEns
+vector<set<reference_wrapper<Expr>>>* toEns(Expr& e);
 
 /***********************************/
 /***********  Constants  ***********/
