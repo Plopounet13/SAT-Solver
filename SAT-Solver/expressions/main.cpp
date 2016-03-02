@@ -11,12 +11,15 @@ using namespace std;
 #include "formule.hpp"
 #include "expr.tab.hpp"
 
+//TODO : output debug deductions
+
+
 //extern "C" int yyparse();
 extern "C" FILE *yyin;
 extern Expr *res;
 
 void usage(){
-    fprintf(stderr, "Usage : ./resol [-tseitin] src.[cnf|for].\n");
+    fprintf(stderr, "Usage : ./resol [-tseitin] src.[cnf|for]\n");
 }
 
 char* getExt(char* param){
@@ -32,20 +35,20 @@ char* getExt(char* param){
 //ici c'est le début du main
 int main(int argc, char** argv) {
 
-    if (argc < 3 || argc > 4){
+    if (argc < 2 || argc > 3){
         fprintf(stderr,"Erreur : nombre de parametres incorrect.\n");
         usage();
         exit(1);
     }
 
-    if (argc == 4 && strcmp(argv[1], "-tseitin")){
+    if (argc == 3 && strcmp(argv[1], "-tseitin")){
         fprintf(stderr,"Erreur : parametre inconnu : %s.\n", argv[1]);
         usage();
         exit(2);
     }
 
     char* ext;
-    if (!((argc == 4 && (ext = getExt(argv[2])) && !strcmp(ext, "for")) || (argc == 3 && (ext = getExt(argv[1])) && !strcmp(ext, "cnf")))){
+    if (!((argc == 3 && (ext = getExt(argv[2])) && !strcmp(ext, "for")) || (argc == 2 && (ext = getExt(argv[1])) && !strcmp(ext, "cnf")))){
         fprintf(stderr,"Erreur : extension invalide.\n");
         usage();
         exit(3);
@@ -58,14 +61,7 @@ int main(int argc, char** argv) {
         exit(3);
     }
 
-    if (!(dstd = open(argv[argc-1], O_WRONLY | O_CREAT | O_TRUNC))){
-        fprintf(stderr,"Erreur : Ouverture fichier destination impossible.\n");
-        usage();
-        exit(3);
-    }
-
 	dup2(fd, 0);
-	dup2(dstd, 1);
 
     // parse through the input until there is no more:
     if (argc == 4){
