@@ -24,6 +24,7 @@ private:
     map<int,int>* fixed;
 	vector<set<reference_wrapper<Expr>>>* value;
 	set<int>* activeClauses;
+	vector<pair<int,int> >* watched;
 	Backtrack b;
 };
 
