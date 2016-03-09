@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include <stack>
+#include <list>
 #include <functional>
 #include "backtrack.hpp"
 #include "expr.hpp"
@@ -18,6 +19,7 @@ public:
 	virtual void dpll(string fout);
 	virtual int evol(int var, bool val, bool forced);
 	virtual pair<int,bool> choose();
+	virtual int preTrait();
 private:
     map<int,int>* fixed;
 	vector<set<reference_wrapper<Expr>>>* value;

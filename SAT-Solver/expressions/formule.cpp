@@ -142,3 +142,69 @@ void Formule::dpll(string fout){
         cout << "s UNSATISFIABLE" << endl;
     }
 }
+
+
+int Formule::preTrait(){
+	list<int> l;
+	for (int i:*activeClauses){
+		if ((*value)[i].size() == 1){
+			int v = 0;
+		} else {
+			for (auto& v:(*value)[i]){
+				EVar* e = dynamic_cast<EVar*>(&(v.get()));
+				if (find((*value)[i].begin(), (*value)[i].end(), *e) != (*value)[i].end())
+					l.push_back(i);
+			}
+		}
+	}
+	for (int i:l){
+		activeClauses->erase(i);
+	}
+	return -1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
