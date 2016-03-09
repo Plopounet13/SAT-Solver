@@ -14,7 +14,7 @@ using namespace std;
 //TODO : output debug deductions
 
 
-//extern "C" int yyparse();
+extern "C" int yyparse();
 extern "C" FILE *yyin;
 extern Expr *res;
 

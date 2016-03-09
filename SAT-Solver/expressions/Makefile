@@ -6,7 +6,7 @@ CC=clang++
 #lex name+path
 LEX=flex
 STD = -std=c++11
-LIBLEX=-lfl
+LIBLEX=-L/usr/local/Cellar/flex/2.6.0/lib/ -lfl
 #yacc/bison
 YACC=bison
 
