@@ -16,7 +16,7 @@ Formule::Formule(Expr& e){
 	}
 }
 
-Formule::Formule(vector<set<reference_wrapper<Expr>>>* val){
+Formule::Formule(vector<set<int>>* val){
 	value = val;
 	/*for (set<reference_wrapper<Expr>> x: *value){
         for (Expr& y : x)
@@ -29,7 +29,7 @@ Formule::Formule(vector<set<reference_wrapper<Expr>>>* val){
 		activeClauses->insert(i);
 	}
 }
-
+//TODO : Change Backtrack set<int>
 //0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::evol(int var, bool val, bool forced){
     int res=0;
@@ -53,12 +53,8 @@ int Formule::evol(int var, bool val, bool forced){
 	}
 	(*fixed)[var]=(val?2:1);
 	for (int c:activeClausesCopy){
-		Expr* e;
-		if (val)
-			e = new ENot(*new EVar(var));
-		else
-			e = new EVar(var);
-		set<reference_wrapper<Expr> >::iterator p = (*value)[c].find(*e);
+		int e = (val?var:-var);
+		set<int>::iterator p = (*value)[c].find(e);
 		if(p != (*value)[c].end()){
             // TODO : p->get().del();
             clauses_ret->insert(c);
@@ -76,19 +72,16 @@ int Formule::evol(int var, bool val, bool forced){
                     return 2;
 			}
 			if ((*value)[c].size()==1){
-                if (EVar* expVar = dynamic_cast<EVar*>(&((*value)[c].begin())->get()))
-                    forcedVariables.insert(pair<int,bool>(expVar->getEtiq(),true));
-				else if (ENot* expNot = dynamic_cast<ENot*>(&((*value)[c].begin())->get())){
-					EVar* varlala = dynamic_cast<EVar*>(&expNot->getOp());
-                    forcedVariables.insert(pair<int,bool>(varlala->getEtiq(),false));
-				}
+				int varsol;
+                if ((varsol = (*value)[c].begin())>0)
+                    forcedVariables.insert(pair<int,bool>(varsol,true));
+				else
+					forcedVariables.insert(pair<int,bool>(varsol,false));
 			}
 		}
 		if (val)
-			e = new EVar(var);
-		else
-			e = new ENot(*new EVar(var));
-		p = (*value)[c].find(*e);
+			e = (val?var:-var);
+		p = (*value)[c].find(e);
 		if(p != (*value)[c].end()){
             activeClauses->erase(c);
             clauses_sup->insert(c);
@@ -109,16 +102,13 @@ int Formule::evol(int var, bool val, bool forced){
 }
 
 pair<int,bool> Formule::choose() {
-    Expr& e = *((*value)[*(activeClauses->begin())].begin());
-	if(ENot* expnot = dynamic_cast<ENot*>(&e)){
-		EVar* varlala = dynamic_cast<EVar*>(&expnot->getOp());
-        return pair<int,bool>(varlala->getEtiq(),false);
-	}
-	else{
-		EVar* expvar = dynamic_cast<EVar*>(&e);
-        return pair<int,bool>(expvar->getEtiq(),true);
-	}
+    int e = *((*value)[*(activeClauses->begin())].begin());
+	if(e<0)
+        return pair<int,bool>(-e,false);
+	else
+        return pair<int,bool>(e,true);
 }
+
 //TODO : écrire dans le fichier
 void Formule::dpll(string fout){
     int res = 0;
@@ -144,6 +134,10 @@ void Formule::dpll(string fout){
 }
 
 
+int Formule::propage(int var, bool val){
+	
+}
+
 int Formule::preTrait(){
 	list<int> l;
 	for (int i:*activeClauses){
@@ -162,9 +156,6 @@ int Formule::preTrait(){
 	}
 	return -1;
 }
-
-
-
 
 
 
