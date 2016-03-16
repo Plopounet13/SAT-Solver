@@ -19,10 +19,11 @@ public:
 	virtual void dpll(string fout);
 	virtual int evol(int var, bool val, bool forced);
 	virtual pair<int,bool> choose();
+	virtual int propage(int var, int val);
 	virtual int preTrait();
 private:
     map<int,int>* fixed;
-	vector<set<int> >* value;
+	vector<set<int>>* value;
 	set<int>* activeClauses;
 	vector<pair<int,int> >* watched;
 	Backtrack b;
