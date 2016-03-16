@@ -29,7 +29,6 @@ Formule::Formule(vector<set<int>>* val){
 		activeClauses->insert(i);
 	}
 }
-//TODO : Change Backtrack set<int>
 //0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::evol(int var, bool val, bool forced){
     int res=0;
@@ -109,7 +108,6 @@ pair<int,bool> Formule::choose() {
         return pair<int,bool>(e,true);
 }
 
-//TODO : écrire dans le fichier
 void Formule::dpll(string fout){
     int res = 0;
     pair<int,bool> choice;
