@@ -100,20 +100,17 @@ int Formule::evol(int var, bool val, bool forced){
 	return 0;
 }
 
-pair<int,bool> Formule::choose() {
-    int e = *((*value)[*(activeClauses->begin())].begin());
-	if(e<0)
-        return pair<int,bool>(-e,false);
-	else
-        return pair<int,bool>(e,true);
+int Formule::choose() {
+    int val = *((*value)[*(activeClauses->begin())].begin());
+    return val;
 }
 
 void Formule::dpll(string fout){
     int res = 0;
-    pair<int,bool> choice;
+    int choice;
     while(res<=0){
         choice = choose();
-		res = evol(get<0>(choice),get<1>(choice), false);
+		res = evol(choice, false);
 
     }
 
@@ -133,7 +130,7 @@ void Formule::dpll(string fout){
 
 
 int Formule::propage(int var, bool val){
-	
+
 }
 
 int Formule::preTrait(){
