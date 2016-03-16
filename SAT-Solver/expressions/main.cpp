@@ -17,6 +17,7 @@ using namespace std;
 extern "C" int yyparse();
 extern "C" FILE *yyin;
 extern Expr *res;
+extern int maxVar;
 
 void usage(){
     fprintf(stderr, "Usage : ./resol [-tseitin] src.[cnf|for]\n");

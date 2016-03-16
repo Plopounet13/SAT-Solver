@@ -8,6 +8,7 @@ using namespace std;
 
 // stuff from flex that bison needs to know about:
 extern "C" int yylex();
+int maxVar=0;
 
 void yyerror(const char *s);
 
@@ -52,18 +53,18 @@ Expr *res=NULL;
 input: expression TK_END{ res = $1; }
      ;
 ligne:
-      TK_MNS TK_VAR								{ $$ = new ENot(*new EVar($2));			}
-	| TK_VAR									{ $$ = new EVar($1);					}
-    | TK_BOOL									{ $$ = new EConst($1);					}
-    | TK_LPAREN ligne TK_RPAREN			{ $$ = $2;								}
-    | ligne TK_OU ligne				{ $$ = new EOu(*$1, *$3);					}
-    | ligne TK_ET ligne				{ $$ = new EEt(*$1, *$3);					}
-    | ligne TK_XOR ligne				{ $$ = new EXor(*$1, *$3);				}
-    | ligne TK_IMP ligne				{ $$ = new EImp(*$1, *$3);				}
-    | ligne TK_EQIV ligne				{ $$ = new EEqiv(*$1, *$3);				}
-    | TK_TIL ligne 						{ $$ = new ENot(*$2);					}
-	| TK_COM ligne							{ $$ = $2;								}
-	| ligne TK_COM							{ $$ = $1;								}
+      TK_MNS TK_VAR								{ $$ = new ENot(*new EVar($2));					}
+| TK_VAR										{ if ($1>maxVar) maxVar=$1; $$ = new EVar($1);	}
+    | TK_BOOL									{ $$ = new EConst($1);							}
+    | TK_LPAREN ligne TK_RPAREN					{ $$ = $2;										}
+    | ligne TK_OU ligne							{ $$ = new EOu(*$1, *$3);						}
+    | ligne TK_ET ligne							{ $$ = new EEt(*$1, *$3);						}
+    | ligne TK_XOR ligne						{ $$ = new EXor(*$1, *$3);						}
+    | ligne TK_IMP ligne						{ $$ = new EImp(*$1, *$3);						}
+    | ligne TK_EQIV ligne						{ $$ = new EEqiv(*$1, *$3);						}
+    | TK_TIL ligne								{ $$ = new ENot(*$2);							}
+	| TK_COM ligne								{ $$ = $2;										}
+	| ligne TK_COM								{ $$ = $1;										}
 		;
 
 expression: 

@@ -76,7 +76,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 22 "expr.ypp"
+#line 23 "expr.ypp"
 {
     int ival;
     class Expr *exp;

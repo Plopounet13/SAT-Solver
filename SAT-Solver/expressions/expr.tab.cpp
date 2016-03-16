@@ -113,6 +113,7 @@ using namespace std;
 
 // stuff from flex that bison needs to know about:
 extern "C" int yylex();
+int maxVar=0;
 
 void yyerror(const char *s);
 
@@ -139,13 +140,13 @@ Expr *res=NULL;
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 22 "expr.ypp"
+#line 23 "expr.ypp"
 {
     int ival;
     class Expr *exp;
 }
 /* Line 193 of yacc.c.  */
-#line 149 "expr.tab.cpp"
+#line 150 "expr.tab.cpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -158,7 +159,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 162 "expr.tab.cpp"
+#line 163 "expr.tab.cpp"
 
 #ifdef short
 # undef short
@@ -447,8 +448,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    52,    52,    55,    56,    57,    58,    59,    60,    61,
-      62,    63,    64,    65,    66,    70,    71
+       0,    53,    53,    56,    57,    58,    59,    60,    61,    62,
+      63,    64,    65,    66,    67,    71,    72
 };
 #endif
 
@@ -1366,83 +1367,83 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 52 "expr.ypp"
+#line 53 "expr.ypp"
     { res = (yyvsp[(1) - (2)].exp); ;}
     break;
 
   case 3:
-#line 55 "expr.ypp"
-    { (yyval.exp) = new ENot(*new EVar((yyvsp[(2) - (2)].ival)));			;}
+#line 56 "expr.ypp"
+    { (yyval.exp) = new ENot(*new EVar((yyvsp[(2) - (2)].ival)));					;}
     break;
 
   case 4:
-#line 56 "expr.ypp"
-    { (yyval.exp) = new EVar((yyvsp[(1) - (1)].ival));					;}
+#line 57 "expr.ypp"
+    { if ((yyvsp[(1) - (1)].ival)>maxVar) maxVar=(yyvsp[(1) - (1)].ival); (yyval.exp) = new EVar((yyvsp[(1) - (1)].ival));	;}
     break;
 
   case 5:
-#line 57 "expr.ypp"
-    { (yyval.exp) = new EConst((yyvsp[(1) - (1)].ival));					;}
+#line 58 "expr.ypp"
+    { (yyval.exp) = new EConst((yyvsp[(1) - (1)].ival));							;}
     break;
 
   case 6:
-#line 58 "expr.ypp"
-    { (yyval.exp) = (yyvsp[(2) - (3)].exp);								;}
+#line 59 "expr.ypp"
+    { (yyval.exp) = (yyvsp[(2) - (3)].exp);										;}
     break;
 
   case 7:
-#line 59 "expr.ypp"
-    { (yyval.exp) = new EOu(*(yyvsp[(1) - (3)].exp), *(yyvsp[(3) - (3)].exp));					;}
+#line 60 "expr.ypp"
+    { (yyval.exp) = new EOu(*(yyvsp[(1) - (3)].exp), *(yyvsp[(3) - (3)].exp));						;}
     break;
 
   case 8:
-#line 60 "expr.ypp"
-    { (yyval.exp) = new EEt(*(yyvsp[(1) - (3)].exp), *(yyvsp[(3) - (3)].exp));					;}
+#line 61 "expr.ypp"
+    { (yyval.exp) = new EEt(*(yyvsp[(1) - (3)].exp), *(yyvsp[(3) - (3)].exp));						;}
     break;
 
   case 9:
-#line 61 "expr.ypp"
-    { (yyval.exp) = new EXor(*(yyvsp[(1) - (3)].exp), *(yyvsp[(3) - (3)].exp));				;}
+#line 62 "expr.ypp"
+    { (yyval.exp) = new EXor(*(yyvsp[(1) - (3)].exp), *(yyvsp[(3) - (3)].exp));						;}
     break;
 
   case 10:
-#line 62 "expr.ypp"
-    { (yyval.exp) = new EImp(*(yyvsp[(1) - (3)].exp), *(yyvsp[(3) - (3)].exp));				;}
+#line 63 "expr.ypp"
+    { (yyval.exp) = new EImp(*(yyvsp[(1) - (3)].exp), *(yyvsp[(3) - (3)].exp));						;}
     break;
 
   case 11:
-#line 63 "expr.ypp"
-    { (yyval.exp) = new EEqiv(*(yyvsp[(1) - (3)].exp), *(yyvsp[(3) - (3)].exp));				;}
+#line 64 "expr.ypp"
+    { (yyval.exp) = new EEqiv(*(yyvsp[(1) - (3)].exp), *(yyvsp[(3) - (3)].exp));						;}
     break;
 
   case 12:
-#line 64 "expr.ypp"
-    { (yyval.exp) = new ENot(*(yyvsp[(2) - (2)].exp));					;}
+#line 65 "expr.ypp"
+    { (yyval.exp) = new ENot(*(yyvsp[(2) - (2)].exp));							;}
     break;
 
   case 13:
-#line 65 "expr.ypp"
-    { (yyval.exp) = (yyvsp[(2) - (2)].exp);								;}
+#line 66 "expr.ypp"
+    { (yyval.exp) = (yyvsp[(2) - (2)].exp);										;}
     break;
 
   case 14:
-#line 66 "expr.ypp"
-    { (yyval.exp) = (yyvsp[(1) - (2)].exp);								;}
+#line 67 "expr.ypp"
+    { (yyval.exp) = (yyvsp[(1) - (2)].exp);										;}
     break;
 
   case 15:
-#line 70 "expr.ypp"
+#line 71 "expr.ypp"
     { (yyval.exp) = (yyvsp[(1) - (1)].exp); ;}
     break;
 
   case 16:
-#line 71 "expr.ypp"
+#line 72 "expr.ypp"
     { (yyval.exp) = new EEt(*(yyvsp[(1) - (3)].exp),*(yyvsp[(3) - (3)].exp)); ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1446 "expr.tab.cpp"
+#line 1447 "expr.tab.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1656,6 +1657,6 @@ yyreturn:
 }
 
 
-#line 73 "expr.ypp"
+#line 74 "expr.ypp"
 
 
