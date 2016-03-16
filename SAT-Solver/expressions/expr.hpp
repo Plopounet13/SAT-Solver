@@ -31,7 +31,7 @@ bool operator==(Expr& a, Expr& b);
 bool operator <(const Expr& e1, const Expr& e2);
 
 //toEns
-vector<set<int>>* toEns(Expr& e, int negation);
+vector<set<int>>* toEns(Expr& e);
 
 /***********************************/
 /***********  Constants  ***********/

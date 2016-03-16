@@ -73,7 +73,7 @@ int Formule::evol(int var, bool val, bool forced){
 			}
 			if ((*value)[c].size()==1){
 				int varsol;
-                if ((varsol = (*value)[c].begin())>0)
+                if ((varsol = *(*value)[c].begin())>0)
                     forcedVariables.insert(pair<int,bool>(varsol,true));
 				else
 					forcedVariables.insert(pair<int,bool>(varsol,false));
@@ -145,8 +145,8 @@ int Formule::preTrait(){
 			int v = 0;
 		} else {
 			for (auto& v:(*value)[i]){
-				EVar* e = dynamic_cast<EVar*>(&(v.get()));
-				if (find((*value)[i].begin(), (*value)[i].end(), *e) != (*value)[i].end())
+				int e = v;
+				if (find((*value)[i].begin(), (*value)[i].end(), e) != (*value)[i].end())
 					l.push_back(i);
 			}
 		}
