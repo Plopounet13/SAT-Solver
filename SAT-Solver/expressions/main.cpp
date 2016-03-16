@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
     if (argc == 4){
         do {
             yyparse();
-            Formule f(res->tseytin());
+            Formule f(res->tseytin(0));
             f.dpll("plop.out");
         } while (!feof(yyin));
     } else {
@@ -84,22 +84,18 @@ int main(int argc, char** argv) {
             fprintf(stderr,"Erreur : Le fichier doit commencer par \"p cnf\".\n");
             exit(4);
         }
-        vector<set<reference_wrapper<Expr>>>* value = new vector<set<reference_wrapper<Expr>>>();
+        vector<set<int>>* value = new vector<set<int>>();
         while (getline(cin, line)){
             if (line != "" && line[0] != 'c'){
                 --C;
                 stringstream streamline2(line);
                 streamline2 >> var;
-                value->push_back(set<reference_wrapper<Expr>>());
+                value->push_back(set<int>());
                 while(var != 0){
                     Expr* e;
                     if (abs(var) > V)
                         fprintf(stderr, "Erreur : Borne max variables dépassée : %d.\n", abs(var));
-                    if (var > 0)
-                        e = new EVar(var);
-                    else
-                        e = new ENot(*new EVar(-var));
-                    value->back().insert(*e);
+                    value->back().insert(var);
                     streamline2 >> var;
                 }
             }

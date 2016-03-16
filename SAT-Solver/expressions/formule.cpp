@@ -16,7 +16,7 @@ Formule::Formule(Expr& e){
 	}
 }
 
-Formule::Formule(vector<set<reference_wrapper<Expr>>>* val){
+Formule::Formule(vector<set<int>>* val){
 	value = val;
 	/*for (set<reference_wrapper<Expr>> x: *value){
         for (Expr& y : x)

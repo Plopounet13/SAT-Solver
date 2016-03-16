@@ -22,8 +22,8 @@ public:
     ~Expr(){}
     virtual string to_string() const=0;
     virtual bool eval(map<int,int>& sigma)=0;
-    Expr& tseytin();
-	virtual void toEns(vector<set<reference_wrapper<Expr>>>* v)=0;
+    Expr& tseytin(int lastvar);
+	virtual void toEns(vector<set<int>>* v, int negation)=0;
     virtual Expr& tseytin1(int& lastvar)=0;
 };
 
@@ -31,7 +31,7 @@ bool operator==(Expr& a, Expr& b);
 bool operator <(const Expr& e1, const Expr& e2);
 
 //toEns
-vector<set<reference_wrapper<Expr>>>* toEns(Expr& e);
+vector<set<int>>* toEns(Expr& e, int negation);
 
 /***********************************/
 /***********  Constants  ***********/
@@ -45,7 +45,7 @@ public:
     virtual bool eval(map<int,int>& sigma);
 	virtual bool getValue();
 	virtual Expr& tseytin1(int& lastvar);
-	void toEns(vector<set<reference_wrapper<Expr>>>* v);
+	void toEns(vector<set<int>>* v, int negation);
 private:
     bool value;
 };
@@ -63,7 +63,7 @@ public:
 	virtual bool eval(map<int,int>& sigma);
 	virtual int getEtiq();
 	virtual Expr& tseytin1(int& lastvar);
-	void toEns(vector<set<reference_wrapper<Expr>>>* v);
+	void toEns(vector<set<int>>* v, int negation);
 private:
     int etiq;
 };
@@ -81,7 +81,7 @@ public:
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
 	virtual Expr& tseytin1(int& lastvar);
-	void toEns(vector<set<reference_wrapper<Expr>>>* v);
+	void toEns(vector<set<int>>* v, int negation);
 private:
     Expr& op1,& op2;
 };
@@ -99,7 +99,7 @@ public:
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
 	virtual Expr& tseytin1(int& lastvar);
-	void toEns(vector<set<reference_wrapper<Expr>>>* v);
+	void toEns(vector<set<int>>* v, int negation);
 private:
     Expr& op1,& op2;
 };
@@ -116,7 +116,7 @@ public:
 	virtual bool eval(map<int,int>& sigma);
 	virtual Expr& getOp();
 	virtual Expr& tseytin1(int& lastvar);
-	void toEns(vector<set<reference_wrapper<Expr>>>* v);
+	void toEns(vector<set<int>>* v, int negation);
 private:
     Expr& op;
 };
@@ -134,7 +134,7 @@ public:
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
 	virtual Expr& tseytin1(int& lastvar);
-	void toEns(vector<set<reference_wrapper<Expr>>>* v);
+	void toEns(vector<set<int>>* v, int negation);
 private:
     Expr& op1,& op2;
 };
@@ -152,7 +152,7 @@ public:
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
 	virtual Expr& tseytin1(int& lastvar);
-	void toEns(vector<set<reference_wrapper<Expr>>>* v);
+	void toEns(vector<set<int>>* v, int negation);
 private:
     Expr& op1,& op2;
 };
@@ -171,7 +171,7 @@ public:
 	virtual Expr& getOp1();
 	virtual Expr& getOp2();
 	virtual Expr& tseytin1(int& lastvar);
-	void toEns(vector<set<reference_wrapper<Expr>>>* v);
+	void toEns(vector<set<int>>* v, int negation);
 private:
     Expr& op1,& op2;
 };

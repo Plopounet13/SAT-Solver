@@ -1,4 +1,5 @@
 #include "expr.hpp"
+//TODO : ne plus utiliser les négatifs, récupérer la plus grande variable dans le parseur
 //Définition récursive de tseytin1
 /***** DEFINI *****/
 Expr& EEt::tseytin1(int& lastvar){
@@ -97,8 +98,8 @@ Expr& EConst::tseytin1(int& lastvar){
     EEt& selfmod = *new EEt(*new EOu(*new ENot(myvar),self),*new EOu(myvar,*new ENot(self)));
     return selfmod;
 }
-Expr& Expr::tseytin(){
-    int lastvar = 1;
-    EVar& myvar = *new EVar(0);
+Expr& Expr::tseytin(int lastvar){
+    lastvar--;
+    EVar& myvar = *new EVar(lastvar);
     return *new EEt(myvar, this->tseytin1(lastvar));
 }
