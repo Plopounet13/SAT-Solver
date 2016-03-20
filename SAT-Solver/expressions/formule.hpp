@@ -19,7 +19,7 @@ public:
 	virtual void dpll(string fout);
 	virtual int evol(int var, bool val, bool forced);
 	virtual pair<int,bool> choose();
-	virtual int propage(int var, bool val);
+	virtual int propage(int var);
 	virtual int preTrait();
 private:
     map<int,int>* fixed;

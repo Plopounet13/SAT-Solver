@@ -129,18 +129,39 @@ void Formule::dpll(string fout){
 }
 
 
-int Formule::propage(int var, bool val){
-
+int Formule::propage(int var){
+	list<int> l;
+	set<int>::iterator pos;
+	for (int i:*activeClauses){
+		if (find((*value)[i].begin(), (*value)[i].end(), var) != (*value)[i].end()){
+			l.push_back(i);
+		}else if ((pos = find((*value)[i].begin(), (*value)[i].end(), -var)) != (*value)[i].end()){
+			(*value)[i].erase(pos);
+			if ((*value)[i].size() == 0)
+				return 0;
+			else if ((*value)[i].size() == 1)
+				if (!propage(*(*value)[i].begin()))
+					return 0;
+		}
+	}
+	for (int sup:l)
+		activeClauses->erase(sup);
+	return 1;
 }
 
+
+//return values :
+//	1 if success
+//	0 if fails
 int Formule::preTrait(){
 	list<int> l;
 	for (int i:*activeClauses){
 		if ((*value)[i].size() == 1){
-			int v = 0;
+			int v = *(*value)[i].begin();
+			propage(v);
 		} else {
 			for (auto& v:(*value)[i]){
-				int e = v;
+				int e = -v;
 				if (find((*value)[i].begin(), (*value)[i].end(), e) != (*value)[i].end())
 					l.push_back(i);
 			}
