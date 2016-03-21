@@ -13,14 +13,13 @@ using namespace std;
 
 class ElemBacktrack{
 public:
-	ElemBacktrack(int vr, bool vl, bool forc, set<int>* clsup, set<int>* clret);
+	ElemBacktrack(int vr, bool forc, set<int>* clsup, set<int>* clret);
 	virtual bool isForced();
 	virtual void annule(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed);
-	virtual void revert(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed, int* vr, bool* b);
+	virtual void revert(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed, int* vr);
 	virtual int variable();
 private:
 	int var;			   //etiq
-	bool val;			   //Value set for the variable
 	bool forced;		   //True -> Variable déduite
 	set<int>* clauses_sup; //Set des clauses validées
 	set<int>* clauses_ret; //Set des clauses modifiées
@@ -30,8 +29,8 @@ private:
 class Backtrack{
 public:
 	Backtrack();
-	virtual void push(int vr, bool vl, bool forc, set<int>* clsup, set<int>* clret);
-	virtual bool back(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed, int* var, bool* b);
+	virtual void push(int vr, bool forc, set<int>* clsup, set<int>* clret);
+	virtual bool back(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed, int* var);
 	virtual void variables(set<int>& s);
 private:
 	stack<reference_wrapper<ElemBacktrack> >* pile;

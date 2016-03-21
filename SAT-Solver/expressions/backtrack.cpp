@@ -18,10 +18,9 @@ bool ElemBacktrack::isForced(){
 	return forced;
 }
 
-void ElemBacktrack::revert(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed, int* vr, bool* b){
+void ElemBacktrack::revert(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed, int* vr){
     annule(value,activeClauses,fixed);
 	*vr = var;
-	*b = !val;
 }
 
 int ElemBacktrack::variable(){
@@ -36,11 +35,11 @@ Backtrack::Backtrack(){
 }
 
 void Backtrack::push(int vr, bool vl, bool forc, set<int>* clsup, set<int>* clret){
-	ElemBacktrack& e = *new ElemBacktrack(vr,vl,forc,clsup,clret);
+	ElemBacktrack& e = *new ElemBacktrack(vr,forc,clsup,clret);
 	pile->push(e);
 }
 
-bool Backtrack::back(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed, int* var, bool* b){
+bool Backtrack::back(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed, int* var){
 	while (!pile->empty() && pile->top().get().isForced()){
 		pile->top().get().annule(value, activeClauses, fixed);
 		//TODO: del
@@ -49,7 +48,7 @@ bool Backtrack::back(vector<set<int>>* value, set<int>* activeClauses, map<int,i
 	if (pile->empty()){
 		return false;
 	}else{
-		pile->top().get().revert(value, activeClauses, fixed, var, b);
+		pile->top().get().revert(value, activeClauses, fixed, var);
 		//TODO: del
 		pile->pop();
 		return true;

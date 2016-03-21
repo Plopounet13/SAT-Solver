@@ -30,16 +30,18 @@ Formule::Formule(vector<set<int>>* val){
 	}
 }
 //0:continue, 1:succeed, 2:fail, -1 backtrack
-int Formule::evol(int var, bool val, bool forced){
+int Formule::evol(int var, bool forced){
     int res=0;
 	set<int>* clauses_sup = new set<int>();
 	set<int>* clauses_ret = new set<int>();
-	set<pair<int,bool> > forcedVariables;
+	set<int> forcedVariables;
 	set<int> activeClausesCopy = *activeClauses;
-	if ((*fixed)[var]!=0){
-        if (((*fixed)[var]==2) != val or !forced){
-            if(b.back(value, activeClauses, fixed, &var, &val)){
-                res = evol(var, val, true);
+	if ((*fixed)[var]==true){
+        return 0;
+	}
+	if ((*fixed)[-var]==true){
+            if(b.back(value, activeClauses, fixed, &var)){
+                res = evol(-var, true);
                 if(res<=0)
                     return -1;
                 else
@@ -47,21 +49,18 @@ int Formule::evol(int var, bool val, bool forced){
             }
             else
                 return 2;
-        }else
-            return 0;
 	}
-	(*fixed)[var]=(val?2:1);
+	(*fixed)[var]=true;
 	for (int c:activeClausesCopy){
-		int e = (val?var:-var);
-		set<int>::iterator p = (*value)[c].find(e);
+		set<int>::iterator p = (*value)[c].find(-var);
 		if(p != (*value)[c].end()){
             // TODO : p->get().del();
             clauses_ret->insert(c);
 			(*value)[c].erase(p);
 			if ((*value)[c].empty()){
                 b.push(var,val,forced,clauses_sup,clauses_ret);
-                if(b.back(value, activeClauses, fixed, &var, &val)){
-                    int res = evol(var, val, true);
+                if(b.back(value, activeClauses, fixed, &var)){
+                    int res = evol(var, true);
                     if(res<=0)
                         return -1;
                     else
@@ -71,28 +70,22 @@ int Formule::evol(int var, bool val, bool forced){
                     return 2;
 			}
 			if ((*value)[c].size()==1){
-				int varsol;
-                if ((varsol = *(*value)[c].begin())>0)
-                    forcedVariables.insert(pair<int,bool>(varsol,true));
-				else
-					forcedVariables.insert(pair<int,bool>(varsol,false));
+                forcedVariables.insert(*(*value)[c].begin()));
 			}
 		}
-		if (val)
-			e = (val?var:-var);
-		p = (*value)[c].find(e);
+		p = (*value)[c].find(var);
 		if(p != (*value)[c].end()){
             activeClauses->erase(c);
             clauses_sup->insert(c);
         }
 		if (activeClauses->empty()){
-            b.push(var,val,forced,clauses_sup,clauses_ret);
+            b.push(var,forced,clauses_sup,clauses_ret);
             return 1;
 		}
 	}
-	b.push(var,val,forced,clauses_sup,clauses_ret);
+	b.push(var,forced,clauses_sup,clauses_ret);
     for(auto& x:forcedVariables){
-        res = evol(get<0>(x),get<1>(x),true);
+        res = evol(x,true);
         if(res!=0){
             return res;
         }
@@ -101,8 +94,8 @@ int Formule::evol(int var, bool val, bool forced){
 }
 
 int Formule::choose() {
-    int val = *((*value)[*(activeClauses->begin())].begin());
-    return val;
+    int var = *((*value)[*(activeClauses->begin())].begin());
+    return var;
 }
 
 void Formule::dpll(string fout){

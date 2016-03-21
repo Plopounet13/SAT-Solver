@@ -22,7 +22,7 @@ public:
 	virtual int propage(int var);
 	virtual int preTrait();
 private:
-    map<int,int>* fixed;
+    map<int,bool>* fixed;
 	vector<set<int>>* value;
 	set<int>* activeClauses;
 	vector<pair<int,int> >* watched;
