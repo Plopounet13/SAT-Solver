@@ -2,7 +2,7 @@
 NAME=expr
 EXTENSION=toEns Tseitin formule backtrack
 #compiler name
-CC=clang++
+CC=g++
 #lex name+path
 LEX=flex
 STD = -std=c++11
