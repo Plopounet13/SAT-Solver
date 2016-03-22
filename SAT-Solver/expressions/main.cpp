@@ -20,7 +20,7 @@ extern Expr *res;
 extern int maxVar;
 
 void usage(){
-    fprintf(stderr, "Usage : ./resol [-tseitin] src.[cnf|for]\n");
+    fprintf(stderr, "Usage : ./resol [-tseitin] src.[cnf|for] [-wl]\n");
 }
 
 char* getExt(char* param){
@@ -35,14 +35,23 @@ char* getExt(char* param){
 
 //ici c'est le début du main
 int main(int argc, char** argv) {
-
-    if (argc < 2 || argc > 3){
+	bool watched=false;
+    if (argc < 2 || argc > 4){
         fprintf(stderr,"Erreur : nombre de parametres incorrect.\n");
         usage();
         exit(1);
     }
+	
+	if (argc == 4 && strcmp("-wl", argv[3])){
+		fprintf(stderr,"Erreur : Parametres incorrects.\n");
+		usage();
+		exit(5);
+	}
+	
+	if (argc == 4)
+		watched=true;
 
-    if (argc == 3 && strcmp(argv[1], "-tseitin")){
+    if (argc >= 3 && strcmp(argv[1], "-tseitin")){
         fprintf(stderr,"Erreur : parametre inconnu : %s.\n", argv[1]);
         usage();
         exit(2);
@@ -59,7 +68,7 @@ int main(int argc, char** argv) {
     if (!(fd = open(argv[argc-2], O_RDONLY))){
         fprintf(stderr,"Erreur : Ouverture fichier source impossible.\n");
         usage();
-        exit(3);
+        exit(4);
     }
 
 	dup2(fd, 0);
