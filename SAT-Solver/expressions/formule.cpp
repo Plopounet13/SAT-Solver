@@ -75,12 +75,11 @@ for(int i:*activeClauses){
 activeClausesCopy.insert(i);
 //cout << i << endl;
 }
-//cout << 1 <<endl;
 	if ((*fixed)[var]==true){
         return 0;
 	}
 	if ((*fixed)[-var]==true){
-            if(b.back(value, activeClauses, fixed, &var))
+            if(b.back(value, activeClauses, fixed, &var, nbApparPos, nbApparNeg))
                 return -1;
             else
                 return 2;
@@ -89,12 +88,16 @@ activeClausesCopy.insert(i);
 	for (int c:activeClausesCopy){
 		set<int>::iterator p = (*value)[c].find(-var);
 		if(p != (*value)[c].end()){
+            if(-var>0)
+                --(*nbApparPos)[-var];
+            else
+                --(*nbApparNeg)[var];
             // TODO : p->get().del();
             clauses_ret->insert(c);
 			(*value)[c].erase(p);
 			if ((*value)[c].empty()){
                 b.push(var,forced,clauses_sup,clauses_ret);
-                if(b.back(value, activeClauses, fixed, &var)){
+                if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg)){
                     return -1;
                 }
                 else
@@ -106,6 +109,18 @@ activeClausesCopy.insert(i);
 		}
 		p = (*value)[c].find(var);
 		if(p != (*value)[c].end()){
+            for(int i:(*value)[c]){
+                if(i>0)
+                    --(*nbApparPos)[i];
+                else
+                    --(*nbApparNeg)[-i];
+                if((*nbApparPos)[i]+(*nbApparNeg)[i]!=0 and !(*fixed)[i] and !(*fixed)[-i]){
+                    if((*nbApparPos)[abs(i)]==0)
+                        forcedVariables.push(-abs(i));
+                    if((*nbApparNeg)[abs(i)]==0)
+                        forcedVariables.push(abs(i));
+                }
+            }
             activeClauses->erase(c);
             clauses_sup->insert(c);
         }
@@ -137,8 +152,9 @@ void Formule::dpll(string fout){
         cout << endl;
 	}*/
     while(res<=0){
-    //cout << ++cpt << endl;
-        //res=polUnique(forcedVariables);
+    /*++cpt;
+    if((cpt%1000)==0)
+    cout << cpt << endl;*/
         if(res<=0){
             if(forcedVariables.empty()){
                 choice = choose();
