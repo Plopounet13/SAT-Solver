@@ -5,23 +5,7 @@ Structure du code
 
 	Loïs :
 	Le prétraitement et certaines déductions ont été ajoutés.
+	
+La déduction de polarité unique a nécessité la mise en place d’une structure de donnée annexe permettant de conserver le nombre d’apparition de chaque variable, pour chaque polarité.
 
-La représentation ensembliste à été choisie car considérée plus pratique pour l'application de dpll.
-Pour Tseitin, on ne gère qu'une seule clause par exécution.
-
-Pour le travail, nous avons séparé le travail par module :
-Rédouane :
-	- Tseitin
-	- dpll dans formule
-Loïs :
-	- backtrack
-	- toEns
-	- structure de formule
-À deux :
-	- Expr
-
-Les tests à 20 clauses ont été obtenus grace au générateur de tests de Meven Bertrand.
-Les tests tseitin ont été rédigés à la main, pour vérifier la correction de la transformation.
-Les autres tests ont été trouvés sur le net et nous semblaient pertinents.
-
-Au niveau performance, nous n'avons pas repéré de ralentissement sur les tests à une centaine de clauses.
+Au niveau performance, les tests insalifiables les plus lourds ne terminent pas en moins de 20 minutes, et certains tests pourtant beaucoup plus courts et prenant moins de place mémoire lors du debug que les tests complexes ont des erreurs core dumped dues à un surplus de mémoire utilisée. 
