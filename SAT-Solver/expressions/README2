@@ -1,11 +1,10 @@
 Structure du code
 
-Le code à été séparé en 5 modules principaux
-	- Expr qui gère la forme arborescente des formules
-	- Tseitin qui gère la transformation des formules
-	- formule qui gère les formules sous une forme ensembliste et gère dpll
-	- toEns qui transforme une formule arborecente en formule ensembliste
-	- backtrack qui gère la mémorisation des choix et l'annulation de ceux-ci
+	Rédouane : 
+	Le code a été refondu : dans le corps du dpll, on n'utilise plus des Expr mais des int. Cette modification a été faite pour faciliter les modifications futures. En conséquence, tous les fichiers ont été modifiés.
+
+	Loïs :
+	Le prétraitement et certaines déductions ont été ajoutés.
 
 La représentation ensembliste à été choisie car considérée plus pratique pour l'application de dpll.
 Pour Tseitin, on ne gère qu'une seule clause par exécution.
