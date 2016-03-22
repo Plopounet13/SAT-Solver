@@ -212,7 +212,7 @@ int Formule::propage(int var){
 		activeClauses->erase(sup);
 	return 1;
 }
-//TODO : là on le fait qu'une fois, le faire jusqu'à état stable
+
 //return values :
 //0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::preTrait(queue<int>& forcedVariables){
