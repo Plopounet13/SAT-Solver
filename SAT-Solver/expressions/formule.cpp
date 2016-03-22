@@ -217,23 +217,32 @@ int Formule::propage(int var){
 //0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::preTrait(queue<int>& forcedVariables){
 	int res;
-	set<int> activeClausesCopy(*activeClauses);
-	for (int i:activeClausesCopy){
-		if ((*value)[i].size() == 1){
-			int v = *(*value)[i].begin();
-			if ((res=evol(v,true,forcedVariables))>0)
-				return res;
-		} else {
-			for (int v:(*value)[i]){
-				if ((*value)[i].find(-v) != (*value)[i].end()){
-				//if (find((*value)[i].begin(), (*value)[i].end(), -v) != (*value)[i].end()){
-					activeClauses->erase(i);
-					break;
-				}
-			}
-		}
-	}
-
+	bool nFini = true;
+	while(nFini){
+        nFini = false;
+        set<int> activeClausesCopy(*activeClauses);
+        for (int i:activeClausesCopy){
+            if ((*value)[i].size() == 1){
+                nFini = true;
+                int v = *(*value)[i].begin();
+                if ((res=evol(v,true,forcedVariables))>0)
+                    return res;
+            } else {
+                for (int v:(*value)[i]){
+                    if ((*value)[i].find(-v) != (*value)[i].end()){
+                    //if (find((*value)[i].begin(), (*value)[i].end(), -v) != (*value)[i].end()){
+                        activeClauses->erase(i);
+                        break;
+                    }
+                }
+            }
+        }
+        while(!forcedVariables.empty()){
+            int choice = forcedVariables.front();
+            forcedVariables.pop();
+            res = evol(choice, true, forcedVariables);
+        }
+    }
 	return activeClauses->empty();
 }
 
