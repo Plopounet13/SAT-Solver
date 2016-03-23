@@ -14,9 +14,9 @@ void ElemBacktrack::annule(vector<set<int>>* value, set<int>* activeClauses, map
 		activeClauses->insert(x);
 		for(int i:(*value)[x]){
                 if(i>0)
-                    ++(*nbApparPos)[i];
+                    ++((*nbApparPos)[i]);
                 else
-                    ++(*nbApparNeg)[-i];
+                    ++((*nbApparNeg)[-i]);
         }
     }
 	for (int x: *clauses_ret){

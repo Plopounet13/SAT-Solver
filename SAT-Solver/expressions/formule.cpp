@@ -22,9 +22,9 @@ Formule::Formule(Expr& e){
 	for(auto& x:*value){
         for(int i:x){
             if(i>0)
-                ++(*nbApparPos)[i];
+                ++((*nbApparPos)[i]);
             else
-                ++(*nbApparNeg)[-i];
+                ++((*nbApparNeg)[-i]);
         }
 	}
 	fixed = new map<int,bool>;
@@ -52,9 +52,9 @@ Formule::Formule(vector<set<int>>* val){
 	for(auto& x:*value){
         for(int i:x){
             if(i>0)
-                ++(*nbApparPos)[i];
+                ++((*nbApparPos)[i]);
             else
-                ++(*nbApparNeg)[-i];
+                ++((*nbApparNeg)[-i]);
         }
 	}
 	fixed = new map<int,bool>;
@@ -89,9 +89,9 @@ activeClausesCopy.insert(i);
 		set<int>::iterator p = (*value)[c].find(-var);
 		if(p != (*value)[c].end()){
             if(-var>0)
-                --(*nbApparPos)[-var];
+                --((*nbApparPos)[-var]);
             else
-                --(*nbApparNeg)[var];
+                --((*nbApparNeg)[var]);
             // TODO : p->get().del();
             clauses_ret->insert(c);
 			(*value)[c].erase(p);
@@ -111,9 +111,9 @@ activeClausesCopy.insert(i);
 		if(p != (*value)[c].end()){
             for(int i:(*value)[c]){
                 if(i>0)
-                    --(*nbApparPos)[i];
+                    --((*nbApparPos)[i]);
                 else
-                    --(*nbApparNeg)[-i];
+                    --((*nbApparNeg)[-i]);
                 if((*nbApparPos)[i]+(*nbApparNeg)[i]!=0 and !(*fixed)[i] and !(*fixed)[-i]){
                     if((*nbApparPos)[abs(i)]==0)
                         forcedVariables.push(-abs(i));
