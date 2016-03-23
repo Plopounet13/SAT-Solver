@@ -34,6 +34,6 @@ public:
 	virtual bool back(vector<set<int>>* value, set<int>* activeClauses, map<int,bool>* fixed, int* var,vector<int>* nbApparPos,vector<int>* nbApparNeg);
 	virtual void variables(set<int>& s);
 private:
-	stack<reference_wrapper<ElemBacktrack> >* pile;
+	stack<ElemBacktrack>* pile;
 };
 #endif

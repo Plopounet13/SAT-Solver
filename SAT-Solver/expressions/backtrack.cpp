@@ -7,7 +7,7 @@ ElemBacktrack::ElemBacktrack(int vr, bool forc, set<int>* clsup, set<int>* clret
 ElemBacktrack::~ElemBacktrack(){
 cout << "une fois" << endl;
     delete clauses_ret;
-    delete clauses_sup;
+	delete clauses_sup;
 }
 
 void ElemBacktrack::annule(vector<set<int>>* value, set<int>* activeClauses, map<int,bool>* fixed,vector<int>* nbApparPos,vector<int>* nbApparNeg){
@@ -28,8 +28,6 @@ void ElemBacktrack::annule(vector<set<int>>* value, set<int>* activeClauses, map
         else
             ++(*nbApparNeg)[var];
     }
-    delete clauses_ret;
-    delete clauses_sup;
 }
 
 bool ElemBacktrack::isForced(){
@@ -49,12 +47,11 @@ int ElemBacktrack::variable(){
 }
 
 Backtrack::Backtrack(){
-	pile = new stack<reference_wrapper<ElemBacktrack>>();
+	pile = new stack<ElemBacktrack>>();
 }
 
 void Backtrack::push(int vr, bool forc, set<int>* clsup, set<int>* clret){
-	ElemBacktrack& e = *new ElemBacktrack(vr,forc,clsup,clret);
-	pile->push(e);
+	pile->emplace(vr,forc,clsup,clret);
 }
 
 bool Backtrack::back(vector<set<int>>* value, set<int>* activeClauses, map<int,bool>* fixed, int* var,vector<int>* nbApparPos,vector<int>* nbApparNeg){
