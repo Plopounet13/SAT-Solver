@@ -152,9 +152,9 @@ void Formule::dpll(string fout){
         cout << endl;
 	}*/
     while(res<=0){
-    /*++cpt;
+    ++cpt;
     if((cpt%1000)==0)
-    cout << cpt << endl;*/
+    cout << cpt << endl;
         if(res<=0){
             if(forcedVariables.empty()){
                 choice = choose();

@@ -3,9 +3,7 @@ extern int maxVar;
 
 ElemBacktrack::ElemBacktrack(int vr, bool forc, set<int>* clsup, set<int>* clret) : var(vr), forced(forc), clauses_sup(clsup), clauses_ret(clret) {}
 
-//Non appelé par POP ????
 ElemBacktrack::~ElemBacktrack(){
-cout << "une fois" << endl;
     delete clauses_ret;
 	delete clauses_sup;
 }
@@ -47,7 +45,7 @@ int ElemBacktrack::variable(){
 }
 
 Backtrack::Backtrack(){
-	pile = new stack<ElemBacktrack>>();
+	pile = new stack<ElemBacktrack>();
 }
 
 void Backtrack::push(int vr, bool forc, set<int>* clsup, set<int>* clret){
@@ -56,14 +54,14 @@ void Backtrack::push(int vr, bool forc, set<int>* clsup, set<int>* clret){
 
 bool Backtrack::back(vector<set<int>>* value, set<int>* activeClauses, map<int,bool>* fixed, int* var,vector<int>* nbApparPos,vector<int>* nbApparNeg){
 //cout << "BACK"<< endl;
-	while (!pile->empty() && pile->top().get().isForced()){
-		pile->top().get().annule(value, activeClauses, fixed,nbApparPos,nbApparNeg);
+	while (!pile->empty() && pile->top().isForced()){
+		pile->top().annule(value, activeClauses, fixed,nbApparPos,nbApparNeg);
 		pile->pop();
 	}
 	if (pile->empty()){
 		return false;
 	}else{
-		pile->top().get().annule(value, activeClauses, fixed,nbApparPos,nbApparNeg);
+		pile->top().annule(value, activeClauses, fixed,nbApparPos,nbApparNeg);
 		pile->pop();
 		return true;
 	}
@@ -72,7 +70,7 @@ bool Backtrack::back(vector<set<int>>* value, set<int>* activeClauses, map<int,b
 void Backtrack::variables(set<int>& s){
     int v;
     while (!pile->empty()){
-        v=pile->top().get().variable();
+        v=pile->top().variable();
         if(v!=0)
             s.insert(v);
 		//TODO: del
