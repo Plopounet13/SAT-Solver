@@ -297,9 +297,3 @@ int Formule::polUnique(queue<int>& forcedVariables){
 
 
 
-
-
-
-
-
-
