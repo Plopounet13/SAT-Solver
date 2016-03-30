@@ -9,7 +9,7 @@ Formule::Formule(Expr& e){
             cout << y.to_string() << " ";
         cout << endl;
 	}*/
-	fixed = new map<int,int>;
+	fixed = new map<int,bool>;
 	activeClauses = new set<int>();
 	for (int i=0; i<value->size(); ++i){
 		activeClauses->insert(i);
@@ -23,7 +23,7 @@ Formule::Formule(vector<set<int>>* val){
             cout << y.to_string() << " ";
         cout << endl;
 	}*/
-	fixed = new map<int,int>;
+	fixed = new map<int,bool>;
 	activeClauses = new set<int>();
 	for (int i=0; i<value->size(); ++i){
 		activeClauses->insert(i);
@@ -58,7 +58,7 @@ int Formule::evol(int var, bool forced){
             clauses_ret->insert(c);
 			(*value)[c].erase(p);
 			if ((*value)[c].empty()){
-                b.push(var,val,forced,clauses_sup,clauses_ret);
+                b.push(var,forced,clauses_sup,clauses_ret);
                 if(b.back(value, activeClauses, fixed, &var)){
                     int res = evol(var, true);
                     if(res<=0)
@@ -70,7 +70,7 @@ int Formule::evol(int var, bool forced){
                     return 2;
 			}
 			if ((*value)[c].size()==1){
-                forcedVariables.insert(*(*value)[c].begin()));
+                forcedVariables.insert(*(*value)[c].begin());
 			}
 		}
 		p = (*value)[c].find(var);
@@ -128,9 +128,11 @@ int Formule::propage(int var){
 	list<int> l;
 	set<int>::iterator pos;
 	for (int i:*activeClauses){
-		if (find((*value)[i].begin(), (*value)[i].end(), var) != (*value)[i].end()){
+        if ((*value)[i].find(var) != (*value)[i].end()){
+		//if (find((*value)[i].begin(), (*value)[i].end(), var) != (*value)[i].end()){
 			l.push_back(i);
-		}else if ((pos = find((*value)[i].begin(), (*value)[i].end(), -var)) != (*value)[i].end()){
+		}else if ((pos = (*value)[i].find(-var)) != (*value)[i].end()){
+		//}else if ((pos = find((*value)[i].begin(), (*value)[i].end(), -var)) != (*value)[i].end()){
 			(*value)[i].erase(pos);
 			if ((*value)[i].size() == 0)
 				return 0;
@@ -157,7 +159,8 @@ int Formule::preTrait(){
 				return 0;
 		} else {
 			for (int v:(*value)[i]){
-				if (find((*value)[i].begin(), (*value)[i].end(), -v) != (*value)[i].end()){
+				if ((*value)[i].find(-v) != (*value)[i].end()){
+				//if (find((*value)[i].begin(), (*value)[i].end(), -v) != (*value)[i].end()){
 					l.push_back(i);
 					break;
 				}

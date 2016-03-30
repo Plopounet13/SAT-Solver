@@ -17,8 +17,8 @@ public:
 	Formule(Expr& e);
 	Formule(vector<set<int>>* val);
 	virtual void dpll(string fout);
-	virtual int evol(int var, bool val, bool forced);
-	virtual pair<int,bool> choose();
+	virtual int evol(int var, bool forced);
+	virtual int choose();
 	virtual int propage(int var);
 	virtual int preTrait();
 private:
