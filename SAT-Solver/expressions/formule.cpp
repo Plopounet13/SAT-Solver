@@ -4,7 +4,7 @@
 #include <unordered_set>
 
 Formule::Formule(Expr& e){
-    //cout << e.to_string() << endl;
+    cout << e.to_string() << endl;
 	value = toEns(e);
 	/*for (set<int> x: *value){
         for (int y : x)
@@ -69,12 +69,12 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
     int res=0;
 	set<int>* clauses_sup = new set<int>();
 	set<int>* clauses_ret = new set<int>();
-	set<int> activeClausesCopy;//(*activeClauses);
-for(int i:*activeClauses){
+	set<int> activeClausesCopy(*activeClauses);
+/*for(int i:*activeClauses){
 //cout << i << endl;
 activeClausesCopy.insert(i);
 //cout << i << endl;
-}
+}*/
 	if ((*fixed)[var]==true){
         return 0;
 	}
@@ -94,7 +94,11 @@ activeClausesCopy.insert(i);
                 --((*nbApparNeg)[var]);
             // TODO : p->get().del();
             clauses_ret->insert(c);
+if(c==682)
+    cout << (*value)[c].size() << endl;
 			(*value)[c].erase(p);
+if(c==682)
+    cout << (*value)[c].size() << endl;
 			if ((*value)[c].empty()){
                 b.push(var,forced,clauses_sup,clauses_ret);
                 if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg)){
@@ -152,9 +156,9 @@ void Formule::dpll(string fout){
         cout << endl;
 	}*/
     while(res<=0){
-    ++cpt;
+    /*++cpt;
     if((cpt%1000)==0)
-    cout << cpt << endl;
+    cout << cpt << endl;*/
         if(res<=0){
             if(forcedVariables.empty()){
                 choice = choose();
@@ -225,8 +229,13 @@ int Formule::preTrait(queue<int>& forcedVariables){
             if ((*value)[i].size() == 1){
                 nFini = true;
                 int v = *(*value)[i].begin();
-                if ((res=evol(v,true,forcedVariables))>0)
-                    return res;
+                forcedVariables.push(v);
+                while(!forcedVariables.empty()){
+                    v = forcedVariables.front();
+                    forcedVariables.pop();
+                    if ((res = evol(v, true, forcedVariables))>0)
+                        return res;
+                }
             } else {
                 for (int v:(*value)[i]){
                     if ((*value)[i].find(-v) != (*value)[i].end()){
