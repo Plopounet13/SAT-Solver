@@ -1,0 +1,15 @@
+Structure du code
+
+	Rédouane : 
+	Le code a été refondu : dans le corps du dpll, on n'utilise plus des Expr mais des int. Cette modification a été faite pour faciliter les modifications futures. En conséquence, tous les fichiers ont été modifiés.
+
+	Loïs :
+	Le pré-traitement et les déductions demandées ont été ajoutés.
+	
+La déduction de polarité unique a nécessité la mise en place d’une structure de donnée annexe permettant de conserver le nombre d’apparition de chaque variable, pour chaque polarité.
+
+Les tests utilisés sont les tests « uniform random 3SAT » sur SATLIB.
+
+Au niveau performance, les tests insatifiables les plus lourds ne terminent pas en moins de 20 minutes, et certains tests pourtant beaucoup plus courts et prenant moins de place mémoire lors du debug que les tests complexes ont des erreurs core dumped dues à un surplus de mémoire utilisée bien que l’on ai un destructeur sur notre classe d’élément de la pile de backtrack et que l’on utilise seulement les librairies standards pour le reste.
+
+Sur les tests faits, les déductions de polarité unique ont rendus des résultats plus lents que sans.

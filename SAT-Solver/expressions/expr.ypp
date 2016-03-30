@@ -50,11 +50,12 @@ Expr *res=NULL;
 // something silly to echo to the screen what bison gets from flex.  We'll
 // make a real one shortly:
 
-input: expression TK_END{ res = $1; }
+input: expression TK_END TK_BN{ res = $1; }
+	|  expression TK_END {res = $1;}
      ;
 ligne:
-      TK_MNS TK_VAR								{ $$ = new ENot(*new EVar($2));					}
-| TK_VAR										{ if ($1>maxVar) maxVar=$1; $$ = new EVar($1);	}
+      TK_MNS TK_VAR								{ if ($2>maxVar) maxVar=$2; $$ = new ENot(*new EVar($2));					}
+	| TK_VAR									{ if ($1>maxVar) maxVar=$1; $$ = new EVar($1);	}
     | TK_BOOL									{ $$ = new EConst($1);							}
     | TK_LPAREN ligne TK_RPAREN					{ $$ = $2;										}
     | ligne TK_OU ligne							{ $$ = new EOu(*$1, *$3);						}
