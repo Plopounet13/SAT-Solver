@@ -94,11 +94,9 @@ activeClausesCopy.insert(i);
                 --((*nbApparNeg)[var]);
             // TODO : p->get().del();
             clauses_ret->insert(c);
-if(c==682)
-    cout << (*value)[c].size() << endl;
+cout << c << " " << (*value)[c].size() << " " << *p << endl;
 			(*value)[c].erase(p);
-if(c==682)
-    cout << (*value)[c].size() << endl;
+cout << "mr" << endl;
 			if ((*value)[c].empty()){
                 b.push(var,forced,clauses_sup,clauses_ret);
                 if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg)){
