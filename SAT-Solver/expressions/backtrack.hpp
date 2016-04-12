@@ -33,6 +33,7 @@ public:
 	virtual void push(int vr, bool forc, set<int>* clsup, set<int>* clret);
 	virtual bool back(vector<set<int>>* value, set<int>* activeClauses, map<int,bool>* fixed, int* var,vector<int>* nbApparPos,vector<int>* nbApparNeg);
 	virtual void variables(set<int>& s);
+	int lastBack;
 private:
 	stack<ElemBacktrack>* pile;
 };

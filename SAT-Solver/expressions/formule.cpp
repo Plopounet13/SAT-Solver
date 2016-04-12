@@ -3,7 +3,7 @@
 #include "formule.hpp"
 #include <unordered_set>
 
-Formule::Formule(Expr& e){
+Formule::Formule(Expr& e, int heur):heuristique(heur){
     cout << e.to_string() << endl;
 	value = toEns(e);
 	/*for (set<int> x: *value){
@@ -34,7 +34,7 @@ Formule::Formule(Expr& e){
 	}
 }
 
-Formule::Formule(vector<set<int>>* val){
+Formule::Formule(vector<set<int>>* val, int heur)heuristique(heur){
 	value = val;
 	/*for (set<int> x: *value){
         for (int y : x)
@@ -94,9 +94,7 @@ activeClausesCopy.insert(i);
                 --((*nbApparNeg)[var]);
             // TODO : p->get().del();
             clauses_ret->insert(c);
-cout << c << " " << (*value)[c].size() << " " << *p << endl;
 			(*value)[c].erase(p);
-cout << "mr" << endl;
 			if ((*value)[c].empty()){
                 b.push(var,forced,clauses_sup,clauses_ret);
                 if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg)){
@@ -138,7 +136,39 @@ cout << "mr" << endl;
 }
 
 int Formule::choose() {
-    int var = *((*value)[*(activeClauses->begin())].begin());
+	int var;
+	switch (heuristique) {
+		case STANDARD:
+			var = *((*value)[*(activeClauses->begin())].begin());
+			break;
+		case RAND:
+			srand(time(NULL));
+			int c = rand()%activeClauses.size();
+			c = *(activeClauses->begin()+c);
+			var = rand()%(*value)[c].size();
+			var = *((*value)[c].begin()+var);
+			break;
+		case MOMS:
+			cout << "Moms are not yet implemented" << endl;
+			exit(14);
+			break;
+		case DLIS:
+			max=0;
+			for (int i=0; i<nbApparNeg.size(); ++i)
+				if (nbApparNeg[i]>max){
+					max = nbApparNeg[i];
+					var = -i;
+				}
+			for (int i=0; i<nbApparPos.size(); ++i)
+				if (nbApparPos[i]>max){
+					max = nbApparPos[i];
+					var = i;
+				}
+			break;
+
+  default:
+			break;
+	}
     return var;
 }
 
