@@ -36,11 +36,21 @@ char* getExt(char* param){
 //ici c'est le début du main
 int main(int argc, char** argv) {
 
-    if (argc < 2 || argc > 3){
+    if (argc < 2 || argc > 4){
         fprintf(stderr,"Erreur : nombre de parametres incorrect.\n");
         usage();
         exit(1);
     }
+	int heuristique=STANDARD;
+	if (argc == 4){
+		if (!strcmp(argv[3], "-rand"))
+			heuristique=RAND;
+		else if (!strcmp(argv[3], "-moms"))
+			heuristique=MOMS;
+		else if (!strcmp(argv[3], "-dlis"))
+			heuristique=DLIS;
+		--argc;
+	}
 
     if (argc == 3 && strcmp(argv[1], "-tseitin")){
         fprintf(stderr,"Erreur : parametre inconnu : %s.\n", argv[1]);
@@ -66,7 +76,7 @@ int main(int argc, char** argv) {
     if (argc == 3){
         do {
             yyparse();
-            Formule f(res->tseytin(maxVar));
+            Formule f(res->tseytin(maxVar), heuristique);
             f.dpll("plop.out");
         } while (!feof(yyin));
     } else {
@@ -102,7 +112,7 @@ int main(int argc, char** argv) {
                 }
             }
         }
-        Formule f(value);
+        Formule f(value, heuristique);
         if (C){
             fprintf(stderr, "Erreur : Nombre clauses éronné.\n");
         }
