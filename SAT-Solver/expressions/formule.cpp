@@ -149,8 +149,22 @@ int Formule::choose() {
 			var = *((*value)[c].begin()+var);
 			break;
 		case MOMS:
-			cout << "Moms are not yet implemented" << endl;
-			exit(14);
+			int mini=INT_MAX;
+			for (int c:*activeClauses)
+				if ((*value)[c].size()<mini)
+					mini=(*value)[c].size();
+			map<int,int> occur;
+			for (int c:*activeClauses)
+				if ((*value)[c].size()==mini){
+					for (int v:(*value)[c])
+						++occur[v];
+				}
+			int max=0;
+			for (auto& p:occur){
+				if (p.second>max){
+					var = p.first;
+				}
+			}
 			break;
 		case DLIS:
 			max=0;

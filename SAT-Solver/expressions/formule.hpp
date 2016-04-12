@@ -9,6 +9,7 @@
 #include <queue>
 #include <cstdlib>
 #include <ctime>
+#include <climits>
 #include "backtrack.hpp"
 #include "expr.hpp"
 
