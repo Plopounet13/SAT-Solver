@@ -16,7 +16,7 @@ public:
 	ElemBacktrack(int vr, bool forc, set<int>* clsup, set<int>* clret);
 	~ElemBacktrack();
 	virtual bool isForced();
-	virtual void annule(vector<set<int>>* value, set<int>* activeClauses, map<int,bool>* fixed,vector<int>* nbApparPos,vector<int>* nbApparNeg);
+	virtual void annule(vector<set<int>>* value, set<int>* activeClauses, map<int,bool>* fixed,vector<int>* nbApparPos,vector<int>* nbApparNeg, int &lastBack);
 	virtual void revert(vector<set<int>>* value, set<int>* activeClauses, map<int,bool>* fixed, int* vr);
 	virtual int variable();
 private:

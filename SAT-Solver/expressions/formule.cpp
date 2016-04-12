@@ -34,7 +34,7 @@ Formule::Formule(Expr& e, int heur):heuristique(heur){
 	}
 }
 
-Formule::Formule(vector<set<int>>* val, int heur)heuristique(heur){
+Formule::Formule(vector<set<int>>* val, int heur):heuristique(heur){
 	value = val;
 	/*for (set<int> x: *value){
         for (int y : x)

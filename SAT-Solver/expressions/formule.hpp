@@ -12,10 +12,10 @@
 #include "backtrack.hpp"
 #include "expr.hpp"
 
-#define 0 STANDARD
-#define 1 RAND
-#define 2 MOMS
-#define 3 DLIS
+#define STANDARD 0
+#define RAND 1
+#define MOMS 2
+#define DLIS 3
 
 using namespace std;
 
