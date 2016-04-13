@@ -1,14 +1,13 @@
 #!/bin/bash
-echo "Test heuristique normale :"
-time ./resol $*
 
-echo "Test heuristique RAND :"
-time ./resol $* -rand
+for heur in -rand -moms -dlis
+do
+	echo "Test heuristique $heur :"
+	(time ./resol $* $heur) 2>&1|grep '^real'|sed s/real//g
+	echo
+done
 
-echo "Test heuristique MOMS :"
-time ./resol $* -moms
-
-echo "Test heuristique DLIS :"
-time ./resol $* -dlis
+echo "Test heuristique standard :"
+(time ./resol $* $heur) 2>&1|grep '^real'|sed s/real//g
 
 exit 0
