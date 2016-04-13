@@ -20,7 +20,31 @@ extern Expr *res;
 extern int maxVar;
 
 void usage(){
-    fprintf(stderr, "Usage : ./resol [-tseitin] src.[cnf|for]\n");
+    cerr << "Usage : ./resol [help] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis]" << endl;
+}
+
+void help(){
+	usage();
+	cout << endl;
+	cout << "Tseitin :" << endl;
+	cout << "\tFichier source .for" << endl;
+	cout << "\tCompatible heuristique" << endl;
+	cout << endl;
+	cout << "CNF :" << endl;
+	cout << "\tFichier source .cnf" << endl;
+	cout << "\tCompatible heuristique" << endl;
+	cout << endl;
+	cout << "Heuristique :" << endl;
+	cout << "\t-rand : Choix aléatoire de la variable à fixer." << endl;
+	cout << "\t-moms : Choix de la variable ayant le plus d'occurences dans les clauses de taille minimale" << endl;
+	cout << "\t-dlis : Choix de la variable satisfaisant le plus de clauses" << endl;
+	cout << endl;
+	cout << "Exemples :" << endl;
+	cout << "\t./resol -tseitin fic.for -rand" << endl;
+	cout << "\tCet appel applique tseitin à fic.for puis fait tourner dpll en pariant aléatoirement" << endl;
+	cout << "\./resol fic.cnf" << endl;
+	cout << "\tCet appel fait tourner dpll en pariant la première variable libre trouvée" << endl;
+	exit(0);
 }
 
 char* getExt(char* param){
@@ -35,7 +59,8 @@ char* getExt(char* param){
 
 //ici c'est le début du main
 int main(int argc, char** argv) {
-
+	if (!strcmp(argv[1],"help"))
+		help();
     if (argc < 2 || argc > 4){
         fprintf(stderr,"Erreur : nombre de parametres incorrect.\n");
         usage();
