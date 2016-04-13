@@ -79,6 +79,7 @@ activeClausesCopy.insert(i);
         return 0;
 	}
 	if ((*fixed)[-var]==true){
+cout << "ON BACK A CAUSE DE LA VAR " << var << endl;
             if(b.back(value, activeClauses, fixed, &var, nbApparPos, nbApparNeg))
                 return -1;
             else
@@ -97,6 +98,7 @@ activeClausesCopy.insert(i);
 			(*value)[c].erase(p);
 			if ((*value)[c].empty()){
                 b.push(var,forced,clauses_sup,clauses_ret);
+cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
                 if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg)){
                     return -1;
                 }
@@ -104,6 +106,7 @@ activeClausesCopy.insert(i);
                     return 2;
 			}
 			if ((*value)[c].size()==1){
+cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << endl;
                 forcedVariables.push(*(*value)[c].begin());
 			}
 		}
@@ -114,11 +117,15 @@ activeClausesCopy.insert(i);
                     --((*nbApparPos)[i]);
                 else
                     --((*nbApparNeg)[-i]);
-                if((*nbApparPos)[i]+(*nbApparNeg)[i]!=0 and !(*fixed)[i] and !(*fixed)[-i]){
-                    if((*nbApparPos)[abs(i)]==0)
+                if((*nbApparPos)[abs(i)]+(*nbApparNeg)[abs(i)]!=0 and !(*fixed)[i] and !(*fixed)[-i]){
+                    if((*nbApparPos)[abs(i)]==0){
+cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE DANS " << c+1 << endl;
                         forcedVariables.push(-abs(i));
-                    if((*nbApparNeg)[abs(i)]==0)
+                        }
+                    if((*nbApparNeg)[abs(i)]==0){
+cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE DANS " << c+1 << endl;
                         forcedVariables.push(abs(i));
+                        }
                 }
             }
             activeClauses->erase(c);
@@ -141,49 +148,64 @@ int Formule::choose() {
 		case STANDARD:
 			var = *((*value)[*(activeClauses->begin())].begin());
 			break;
-		case RAND:
+		case RAND:{
 			srand(time(NULL));
-			int c = rand()%activeClauses.size();
-			c = *(activeClauses->begin()+c);
+			int c = rand()%activeClauses->size();
+			auto it = activeClauses->begin();
+			advance(it,c);
+			c = *it;
+			auto it2 = (*value)[c].begin();
 			var = rand()%(*value)[c].size();
-			var = *((*value)[c].begin()+var);
+			advance(it2, var);
+			var = *it2;
 			break;
-		case MOMS:
+        }
+		case MOMS:{
 			int mini=INT_MAX;
 			for (int c:*activeClauses)
 				if ((*value)[c].size()<mini)
 					mini=(*value)[c].size();
-			map<int,int> occur;
+            map<int,int> occur;
 			for (int c:*activeClauses)
 				if ((*value)[c].size()==mini){
 					for (int v:(*value)[c])
 						++occur[v];
 				}
-			int max=0;
+			int maxi=0;
 			for (auto& p:occur){
-				if (p.second>max){
+				if (p.second>maxi){
 					var = p.first;
 				}
 			}
 			break;
-		case DLIS:
-			max=0;
-			for (int i=0; i<nbApparNeg.size(); ++i)
-				if (nbApparNeg[i]>max){
-					max = nbApparNeg[i];
+        }
+		case DLIS:{
+			int maxi=0;
+			for (int i=0; i<nbApparNeg->size(); ++i)
+				if ((*nbApparNeg)[i]>maxi){
+					maxi = (*nbApparNeg)[i];
 					var = -i;
 				}
-			for (int i=0; i<nbApparPos.size(); ++i)
-				if (nbApparPos[i]>max){
-					max = nbApparPos[i];
+			for (int i=0; i<nbApparPos->size(); ++i)
+				if ((*nbApparPos)[i]>maxi){
+					maxi = (*nbApparPos)[i];
 					var = i;
 				}
 			break;
-
-  default:
+        }
+        default:
 			break;
 	}
     return var;
+}
+void print(queue<int>& forcedVariables){
+    if(!forcedVariables.empty()){
+        int k = forcedVariables.front();
+        cout << k << " ";
+        forcedVariables.pop();
+        print(forcedVariables);
+        forcedVariables.push(k);
+    }
 }
 
 void Formule::dpll(string fout){
@@ -202,20 +224,29 @@ void Formule::dpll(string fout){
     if((cpt%1000)==0)
     cout << cpt << endl;*/
         if(res<=0){
+/*cout << "FORCED INC ";
+print(forcedVariables);
+cout << endl;
+cout << "FORCED RINC ";
+print(forcedVariables);
+cout << endl;*/
             if(forcedVariables.empty()){
                 choice = choose();
-//cout << choice << "  UN CHOIX" << endl;
+cout << choice << "  UN CHOIX" << endl;
                 res = evol(choice, false, forcedVariables);
             }
             else{
                 choice = forcedVariables.front();
+cout << choice << "  FORCE" << endl;
                 forcedVariables.pop();
                 res = evol(choice, true, forcedVariables);
             }
             while(res==-1){
+cout << "______________BACK" << endl;
                 while(!forcedVariables.empty())
                     forcedVariables.pop();
                 choice = choose();
+cout << -choice << "  FORCE" << endl;
                 res = evol(-choice,true,forcedVariables);
             }
         }
@@ -224,6 +255,7 @@ void Formule::dpll(string fout){
         cout << "s SATISFIABLE" << endl;
 		set<int> s;
 		b.variables(s);
+		//TODO : pour tseitin n'afficher que si vraie variable
         for(int x:s){
             cout << x << " ";
         }

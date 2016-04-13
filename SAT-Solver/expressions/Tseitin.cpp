@@ -98,7 +98,7 @@ Expr& EConst::tseytin1(int& lastvar){
     return selfmod;
 }
 Expr& Expr::tseytin(int lastvar){
-    lastvar;
     EVar& myvar = *new EVar(lastvar+1);
+    ++lastvar;
     return *new EEt(myvar, this->tseytin1(lastvar));
 }
