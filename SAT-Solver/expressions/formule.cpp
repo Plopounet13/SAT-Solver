@@ -1,8 +1,10 @@
 #include <iostream>
 
 #include "formule.hpp"
-#include <unordered_set>
+
 extern int maxVar;
+extern bool bcl;
+
 Formule::Formule(Expr& e, int heur):heuristique(heur){
     cout << e.to_string() << endl;
 	value = toEns(e);
