@@ -1,5 +1,6 @@
 #include "backtrack.hpp"
 extern int maxVar;
+extern bool bcl;
 
 ElemBacktrack::ElemBacktrack(int vr, bool forc, set<int>* clsup, set<int>* clret) : var(vr), forced(forc), clauses_sup(clsup), clauses_ret(clret) {}
 
@@ -12,19 +13,23 @@ void ElemBacktrack::annule(vector<set<int>>* value, set<int>* activeClauses, map
     (*fixed)[var] = false;
 	for (int x: *clauses_sup){
 		activeClauses->insert(x);
-		for(int i:(*value)[x]){
-                if(i>0)
-                    ++((*nbApparPos)[i]);
-                else
-                    ++((*nbApparNeg)[-i]);
-        }
+		if(!bcl){
+            for(int i:(*value)[x]){
+                    if(i>0)
+                        ++((*nbApparPos)[i]);
+                    else
+                        ++((*nbApparNeg)[-i]);
+            }
+		}
     }
 	for (int x: *clauses_ret){
         (*value)[x].insert(-var);
-        if(-var>0)
-            ++(*nbApparPos)[-var];
-        else
-            ++(*nbApparNeg)[var];
+        if(!bcl){
+            if(-var>0)
+                ++(*nbApparPos)[-var];
+            else
+                ++(*nbApparNeg)[var];
+        }
     }
 	lastBack=var;
 }
