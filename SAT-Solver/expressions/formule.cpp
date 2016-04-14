@@ -378,8 +378,32 @@ int Formule::polUnique(queue<int>& forcedVariables){
 	return 0;
 }
 
+//dot -Tpdf foo.dot -o foo.pdf
+void Formule::graphe(vector<pair<int,int>>& edges, int uid){
+	ofstream fic ("tmp.dot",ofstream::trunc);
+	fic << "digraph G{" << endl;
+	map<int,bool> defined;
+	string bleu = ".56 .79 .96";
+	string violet = ".78 .79 . 96";
+	fic << "\t0 [label=\"Conflict\", color=red, style=filled];" << endl;
+	defined[0] = true;
+	fic << "\t" << uid << "[color=red, style=filled];" << endl;
+	defined[uid] = true;
+	for (pair<int,int>& e:edges){
+		if (!defined[e.first]){
+			fic << "\t" << e.first << " [color=\"" << ((*fixed)[e.first]?violet:bleu) << "\", style=filled];" << endl;
+			defined[e.first] = true;
+		}
+		if (!defined[e.second]){
+			fic << "\t" << e.second << " [color=" << bleu << ", style=filled];" << endl;
+			defined[e.second] = true;
+		}
+		fic << "\t" << e.first << " -> " << e.second << " ;" << endl;
+	}
+	cout << "}" << endl;
+}
 
-void Formule::pause(){
+void Formule::pause(vector<pair<int,int>>& edges, int uid){
 	cout << "g : dessiner le graphe des conflits" << endl;
 	cout << "c : continuer jusqu'au prochain conflit" << endl;
 	cout << "t : finir le dérouolement de dpll sans intéruption" << endl;
@@ -388,7 +412,7 @@ debut:
 	cin >> rep;
 	switch(rep){
 		case 'g':
-			//graphe();
+			graphe(edges,uid);
 			cout << "c : continuer jusqu'au prochain conflit" << endl;
 			cout << "t : finir le déroulement de dpll sans intéruption" << endl;
 		sousdebut:
