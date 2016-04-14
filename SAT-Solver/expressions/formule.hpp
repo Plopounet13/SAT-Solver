@@ -10,6 +10,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <climits>
+#include <fstream>
+#include <cstdlib>
 #include "backtrack.hpp"
 #include "expr.hpp"
 
@@ -34,7 +36,7 @@ public:
 	virtual void pause();
 private:
 	int heuristique;
-    map<int,bool>* fixed;
+    map<int,int>* fixed;
 	vector<set<int>>* value;
 	vector<set<int>>* initial_value;
 	set<int>* activeClauses;
@@ -42,6 +44,7 @@ private:
 	Backtrack b;
 	vector<int>* nbApparPos;
 	vector<int>* nbApparNeg;
+	map<int,vector<int> > appar;
 };
 
 

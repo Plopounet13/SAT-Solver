@@ -6,8 +6,9 @@ vector<pair<int,int> > currentLvlLit;
 extern int maxVar;
 extern bool bcl;
 extern bool bInterac;
+int t = 0;
 
-Formule::Formule(Expr& e, int heur):heuristique(heur){
+Formule::Formule(Expr& e, int heur):heuristique(heur),appar(map<int,set<int> >()){
     cout << e.to_string() << endl;
 	value = toEns(e);
 	/*for (set<int> x: *value){
@@ -31,14 +32,19 @@ Formule::Formule(Expr& e, int heur):heuristique(heur){
                 ++((*nbApparNeg)[-i]);
         }
 	}
-	fixed = new map<int,bool>;
+	for(int i=0; i<value->size()){
+        for(int v:value->acces(i)){
+            appar[v].insert(v);
+        }
+	}
+	fixed = new map<int,int>;
 	activeClauses = new set<int>();
 	for (int i=0; i<value->size(); ++i){
 		activeClauses->insert(i);
 	}
 }
 
-Formule::Formule(vector<set<int>>* val, int heur):heuristique(heur){
+Formule::Formule(vector<set<int>>* val, int heur):heuristique(heur),appar(map<int,set<int> >()){
 	value = val;
 	/*for (set<int> x: *value){
         for (int y : x)
@@ -61,7 +67,12 @@ Formule::Formule(vector<set<int>>* val, int heur):heuristique(heur){
                 ++((*nbApparNeg)[-i]);
         }
 	}
-	fixed = new map<int,bool>;
+	for(int i=0; i<value->size()){
+        for(int v:value->acces(i)){
+            appar[v].insert(v);
+        }
+	}
+	fixed = new map<int,int>;
 	activeClauses = new set<int>();
 	for (int i=0; i<value->size(); ++i){
 		activeClauses->insert(i);
@@ -71,9 +82,7 @@ Formule::Formule(vector<set<int>>* val, int heur):heuristique(heur){
 int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
     int res=0;
 	set<int>* clauses_sup = new set<int>();
-	set<int>* clauses_ret = new set<int>();
 	set<int> activeClausesCopy(*activeClauses);
-	(*fixed)[var]=true;
 	for (int c:activeClausesCopy){
 		set<int>::iterator p = (*value)[c].find(-var);
 		if(p != (*value)[c].end()){
@@ -82,26 +91,26 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
             else
                 --((*nbApparNeg)[var]);
             // TODO : p->get().del();
-            clauses_ret->insert(c);
 			(*value)[c].erase(p);
 			if ((*value)[c].empty()){
-                b.push(var,forced,clauses_sup,clauses_ret);
+                b.push(var,forced,clauses_sup,&(appar[-var]));
 //cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
+                currentLvlLit.emplace_back(0,c);
                 if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg)){
                     return -1;
                 }
                 else
                     return 2;
 			}
-			if ((*value)[c].size()==1){
-//cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << endl;
-                if(!(*fixed)[*(*value)[c].begin()]){
-                    forcedVariables.push(*(*value)[c].begin());
-                    (*fixed)[*(*value)[c].begin()]=false;
-                    currentLvlLit.emplace_back(*(*value)[c].begin(),c);
-                }
-			}
 		}
+        if ((*value)[c].size()==1){
+//cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << endl;
+            if(!(*fixed)[*(*value)[c].begin()]){
+                forcedVariables.push(*(*value)[c].begin());
+                (*fixed)[*(*value)[c].begin()]=t;
+                currentLvlLit.emplace_back(*(*value)[c].begin(),c);
+            }
+        }
 		p = (*value)[c].find(var);
 		if(p != (*value)[c].end()){
             if(!bcl){
@@ -113,15 +122,15 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
                     if((*nbApparPos)[abs(i)]+(*nbApparNeg)[abs(i)]!=0 and !(*fixed)[i] and !(*fixed)[-i]){
                         if((*nbApparPos)[abs(i)]==0){
 //cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE DANS " << c+1 << endl;
-                            if(!fixed[-abs(i)]){
-                                fixed[-abs(i)]=true;
+                            if(!(*fixed)[-abs(i)]){
+                                (*fixed)[-abs(i)]=t;
                                 forcedVariables.push(-abs(i));
                             }
                         }
                         if((*nbApparNeg)[abs(i)]==0){
 //cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE DANS " << c+1 << endl;
-                            if(!fixed[-abs(i)]){
-                                fixed[-abs(i)]=true;
+                            if(!(*fixed)[abs(i)]){
+                                (*fixed)[abs(i)]=t;
                                 forcedVariables.push(abs(i));
                             }
                         }
@@ -132,11 +141,11 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
             clauses_sup->insert(c);
         }
 		if (activeClauses->empty()){
-            b.push(var,forced,clauses_sup,clauses_ret);
+            b.push(var,forced,clauses_sup,&appar[-var]);
             return 1;
 		}
 	}
-	b.push(var,forced,clauses_sup,clauses_ret);
+	b.push(var,forced,clauses_sup,&appar[-var]);
 	return 0;
 }
 
@@ -209,6 +218,8 @@ void Formule::dpll(string fout){
             if(forcedVariables.empty()){
                 currentLvlLit.clear();
                 choice = choose();
+                ++t;
+                (*fixed)[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
 //cout << choice << "  UN CHOIX" << endl;
                 res = evol(choice, false, forcedVariables);
@@ -220,13 +231,56 @@ void Formule::dpll(string fout){
                 res = evol(choice, true, forcedVariables);
             }
             while(res==-1){
+                if(bcl){
+                    //creer graphe
+                    initial_value->push_back(set<int>());
+                    value->push_back(set<int>());
+                    set<int> litConflict;
+                    set<int> litSeen;
+                    vector<pair<int,int> > edges;
+                    clConflict.insert(*curentLvlLit.rbegin().second);
+                    litConflict[*curentLvlLit.rbegin()]
+                    while(!currentLvlLit.empty() and (*fixed)[currentLvlLit.back().first]==t){
+                        currentLvlLit.pop_back();
+                    }
+                    for(auto& it = next(curentLvlLit.rbegin();it==currentLvlLit.rend() or fixed->access(it->first)!=0 or litConflict.size()==1;++it){
+                        if(litConflict.count(it->first)){
+                            litConflict.erase(it->first);
+                            for(int v:initial_value->access(it->second)){
+                                if(it->second!=-1){
+                                    if(it->first!=0){
+                                        edge.emplace_back(v,it->first);
+                                    }
+                                    if(!fixed->access(v) and !litSeen[v]){
+                                        litConflict.insert(v);
+                                        litSeen.insert(v);
+                                    }
+                                    else if(fixed->access(v)){
+                                        initial_value.back().insert(-v);
+                                        appar[-v].insert(value->size()-1);
+                                    }
+                                    litConflict.erase(it->first);
+                                }
+                                else{
+                                    edge.emplace_back(b.lastBack,it->first);
+                                    litConflict.erase(it->first);
+                                    litConflict.insert(b.lastBack);
+                                }
+                            }
+                        }
+                    }
+                    if(bInterac){
+                        pause(edges,*(litConflict.begin()));
+                    }
+                }
 //cout << "______________BACK" << endl;
                 while(!forcedVariables.empty()){
-                    (*fixed)[forcedVariables.front()]=false;
+                    (*fixed)[forcedVariables.front()]=0;
                     forcedVariables.pop();
                 }
-                currentLvlLit.clear();
+                --t;
                 choice = b.lastBack;
+                (*fixed)[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
 //cout << -choice << "  FORCE" << endl;
                 res = evol(-choice,true,forcedVariables);
@@ -334,7 +388,7 @@ debut:
 	cin >> rep;
 	switch(rep){
 		case 'g':
-			graphe();
+			//graphe();
 			cout << "c : continuer jusqu'au prochain conflit" << endl;
 			cout << "t : finir le déroulement de dpll sans intéruption" << endl;
 		sousdebut:
