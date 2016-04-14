@@ -1,9 +1,11 @@
 #include <iostream>
 
 #include "formule.hpp"
-#include <unordered_set>
 
 vector<pair<int,int> > currentLvlLit;
+extern int maxVar;
+extern bool bcl;
+extern bool bInterac;
 
 Formule::Formule(Expr& e, int heur):heuristique(heur){
     cout << e.to_string() << endl;
@@ -341,7 +343,7 @@ debut:
 				case 'c':
 					return;
 				case 't':
-					bGraphe=false;
+					bInterac=false;
 					return;
 				default:
 					goto sousdebut;
@@ -349,7 +351,7 @@ debut:
 		case 'c':
 			return;
 		case 't':
-			bGraphe=false;
+			bInterac=false;
 			return;
 		default:
 			cout << "Réponse incorrecte." << endl;
