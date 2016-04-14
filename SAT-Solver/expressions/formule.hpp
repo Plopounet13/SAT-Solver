@@ -31,6 +31,7 @@ public:
 	virtual int propage(int var);
 	virtual int preTrait(queue<int>& forcedVariables);
 	virtual int polUnique(queue<int>& forcedVariables);
+	virtual void pause();
 private:
 	int heuristique;
     map<int,bool>* fixed;
