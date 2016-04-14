@@ -42,7 +42,7 @@ void help(){
 	cout << "Exemples :" << endl;
 	cout << "\t./resol -tseitin fic.for -rand" << endl;
 	cout << "\tCet appel applique tseitin à fic.for puis fait tourner dpll en pariant aléatoirement" << endl;
-	cout << "\./resol fic.cnf" << endl;
+	cout << "\t./resol fic.cnf" << endl;
 	cout << "\tCet appel fait tourner dpll en pariant la première variable libre trouvée" << endl;
 	exit(0);
 }

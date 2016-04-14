@@ -347,6 +347,42 @@ int Formule::polUnique(queue<int>& forcedVariables){
 }
 
 
+void Formule::pause(){
+	cout << "g : dessiner le graphe des conflits" << endl;
+	cout << "c : continuer jusqu'au prochain conflit" << endl;
+	cout << "t : finir le dérouolement de dpll sans intéruption" << endl;
+	char rep;
+debut:
+	cin >> rep;
+	switch(rep){
+		case 'g':
+			graphe();
+			cout << "c : continuer jusqu'au prochain conflit" << endl;
+			cout << "t : finir le déroulement de dpll sans intéruption" << endl;
+		sousdebut:
+			cin >> rep;
+			switch(rep){
+				case 'c':
+					return;
+				case 't':
+					bcl=false;
+					return;
+				default:
+					goto sousdebut;
+			}
+		case 'c':
+			return;
+		case 't':
+			bcl=false;
+			return;
+		default:
+			cout << "Réponse incorrecte." << endl;
+			goto debut;
+	}
+	
+}
+
+
 
 
 
