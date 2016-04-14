@@ -10,6 +10,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <climits>
+#include <string>
+#include <fstream>
 #include "backtrack.hpp"
 #include "expr.hpp"
 
@@ -31,7 +33,8 @@ public:
 	virtual int propage(int var);
 	virtual int preTrait(queue<int>& forcedVariables);
 	virtual int polUnique(queue<int>& forcedVariables);
-	virtual void pause();
+	virtual void pause(vector<pair<int,int>>& edges, int uid);
+	virtual void graphe(vector<pair<int,int>>& edges, int uid);
 private:
 	int heuristique;
     map<int,bool>* fixed;
