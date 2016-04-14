@@ -19,9 +19,10 @@ extern "C" FILE *yyin;
 extern Expr *res;
 extern int maxVar;
 bool bcl;
+bool bInteract;
 
 void usage(){
-    cerr << "Usage : ./resol [help] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis]" << endl;
+    cerr << "Usage : ./resol [help] [-cl | -interact] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis]" << endl;
 }
 
 void help(){
@@ -63,15 +64,18 @@ int main(int argc, char** argv) {
 	if (!strcmp(argv[1],"help"))
 		help();
 	int decal=0;
+	bcl = bInteract = false;
 	for(int i=0; i<argc; ++i){
 		if (!strcmp(argv[i], "-cl")){
 			bcl = true;
-			decal = 1;
+			++decal;
+		}else if (!strcmp(argv[i], "-interact")){
+			bInteract=true;
+			++decal;
 		}
 		argv[i-decal] = argv[i];
 	}
-	if (bcl)
-		--argc;
+	argc = argc-decal;
 	
     if (argc < 2 || argc > 4){
         fprintf(stderr,"Erreur : nombre de parametres incorrect.\n");
