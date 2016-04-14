@@ -71,12 +71,14 @@ int main(int argc, char** argv) {
         usage();
         exit(3);
     }
+    int backin = dup(0);
 	dup2(fd, 0);
     // parse through the input until there is no more:
     if (argc == 3){
         do {
             yyparse();
             Formule f(res->tseytin(maxVar), heuristique);
+            dup2(backin,0);
             f.dpll("plop.out");
         } while (!feof(yyin));
     } else {
@@ -116,6 +118,7 @@ int main(int argc, char** argv) {
         if (C){
             fprintf(stderr, "Erreur : Nombre clauses éronné.\n");
         }
+        dup2(backin,0);
         f.dpll("tash.out");
     }
     return 0;

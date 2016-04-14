@@ -35,6 +35,7 @@ private:
 	int heuristique;
     map<int,bool>* fixed;
 	vector<set<int>>* value;
+	vector<set<int>>* initial_value;
 	set<int>* activeClauses;
 	vector<pair<int,int> >* watched;
 	Backtrack b;

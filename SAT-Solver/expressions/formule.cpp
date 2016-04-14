@@ -2,7 +2,7 @@
 
 #include "formule.hpp"
 #include <unordered_set>
-
+extern int maxVar;
 Formule::Formule(Expr& e, int heur):heuristique(heur){
     cout << e.to_string() << endl;
 	value = toEns(e);
@@ -47,8 +47,8 @@ Formule::Formule(vector<set<int>>* val, int heur):heuristique(heur){
             if(abs(i)>nbVar)
                 nbVar=abs(i);
 	}
-	nbApparPos = new vector<int>(nbVar,0);
-	nbApparNeg = new vector<int>(nbVar,0);
+	nbApparPos = new vector<int>(nbVar+1,0);
+	nbApparNeg = new vector<int>(nbVar+1,0);
 	for(auto& x:*value){
         for(int i:x){
             if(i>0)
@@ -213,7 +213,8 @@ void Formule::dpll(string fout){
     int res = 0;
     int choice;
     queue<int> forcedVariables;
-    res=this->preTrait(forcedVariables);
+    res=preTrait(forcedVariables);
+    initial_value = new vector<set<int>>(*value);
 	/*for (int i: *activeClauses){
         for (int y : (*value)[i])
             cout << y << " ";
@@ -255,9 +256,9 @@ cout << -choice << "  FORCE" << endl;
         cout << "s SATISFIABLE" << endl;
 		set<int> s;
 		b.variables(s);
-		//TODO : pour tseitin n'afficher que si vraie variable
         for(int x:s){
-            cout << x << " ";
+            if(x<=maxVar)
+                cout << x << " ";
         }
         cout << 0 << endl;
     }
