@@ -19,10 +19,10 @@ extern "C" FILE *yyin;
 extern Expr *res;
 extern int maxVar;
 bool bcl;
-bool bInteract;
+bool bInterac;
 
 void usage(){
-    cerr << "Usage : ./resol [help] [-cl | -interact] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis]" << endl;
+    cerr << "Usage : ./resol [help] [-cl | -interac] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis]" << endl;
 }
 
 void help(){
@@ -61,22 +61,22 @@ char* getExt(char* param){
 
 //ici c'est le début du main
 int main(int argc, char** argv) {
-	if (!strcmp(argv[1],"help"))
+	if (argc == 2 && !strcmp(argv[1],"help"))
 		help();
 	int decal=0;
-	bcl = bInteract = false;
+	bcl = bInterac = false;
 	for(int i=0; i<argc; ++i){
 		if (!strcmp(argv[i], "-cl")){
 			bcl = true;
 			++decal;
-		}else if (!strcmp(argv[i], "-interact")){
-			bInteract=true;
+		}else if (!strcmp(argv[i], "-interac")){
+			bInterac=true;
 			++decal;
 		}
 		argv[i-decal] = argv[i];
 	}
 	argc = argc-decal;
-	
+
     if (argc < 2 || argc > 4){
         fprintf(stderr,"Erreur : nombre de parametres incorrect.\n");
         usage();
@@ -160,6 +160,7 @@ int main(int argc, char** argv) {
             fprintf(stderr, "Erreur : Nombre clauses éronné.\n");
         }
         dup2(backin,0);
+        //scanf("%*[^\n]%*c");
         f.dpll("tash.out");
     }
     return 0;

@@ -8,8 +8,8 @@ extern bool bcl;
 extern bool bInterac;
 int t = 0;
 
-Formule::Formule(Expr& e, int heur):heuristique(heur),appar(map<int,set<int> >()){
-    cout << e.to_string() << endl;
+Formule::Formule(Expr& e, int heur):heuristique(heur){
+    //cout << e.to_string() << endl;
 	value = toEns(e);
 	/*for (set<int> x: *value){
         for (int y : x)
@@ -32,9 +32,9 @@ Formule::Formule(Expr& e, int heur):heuristique(heur),appar(map<int,set<int> >()
                 ++((*nbApparNeg)[-i]);
         }
 	}
-	for(int i=0; i<value->size()){
-        for(int v:value->acces(i)){
-            appar[v].insert(v);
+	for(int i=0; i<value->size();++i){
+        for(int v:value->at(i)){
+            appar[v].insert(i);
         }
 	}
 	fixed = new map<int,int>;
@@ -44,7 +44,7 @@ Formule::Formule(Expr& e, int heur):heuristique(heur),appar(map<int,set<int> >()
 	}
 }
 
-Formule::Formule(vector<set<int>>* val, int heur):heuristique(heur),appar(map<int,set<int> >()){
+Formule::Formule(vector<set<int>>* val, int heur):heuristique(heur){
 	value = val;
 	/*for (set<int> x: *value){
         for (int y : x)
@@ -67,9 +67,9 @@ Formule::Formule(vector<set<int>>* val, int heur):heuristique(heur),appar(map<in
                 ++((*nbApparNeg)[-i]);
         }
 	}
-	for(int i=0; i<value->size()){
-        for(int v:value->acces(i)){
-            appar[v].insert(v);
+	for(int i=0; i<value->size();++i){
+        for(int v:value->at(i)){
+            appar[v].insert(i);
         }
 	}
 	fixed = new map<int,int>;
@@ -94,7 +94,7 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
 			(*value)[c].erase(p);
 			if ((*value)[c].empty()){
                 b.push(var,forced,clauses_sup,&(appar[-var]));
-//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
+cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
                 currentLvlLit.emplace_back(0,c);
                 if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg)){
                     return -1;
@@ -103,14 +103,6 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
                     return 2;
 			}
 		}
-        if ((*value)[c].size()==1){
-//cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << endl;
-            if(!(*fixed)[*(*value)[c].begin()]){
-                forcedVariables.push(*(*value)[c].begin());
-                (*fixed)[*(*value)[c].begin()]=t;
-                currentLvlLit.emplace_back(*(*value)[c].begin(),c);
-            }
-        }
 		p = (*value)[c].find(var);
 		if(p != (*value)[c].end()){
             if(!bcl){
@@ -140,12 +132,20 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
             activeClauses->erase(c);
             clauses_sup->insert(c);
         }
+        if ((*value)[c].size()==1){
+//cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << endl;
+            if(!(*fixed)[*(*value)[c].begin()]){
+                forcedVariables.push(*(*value)[c].begin());
+                (*fixed)[*(*value)[c].begin()]=t;
+                currentLvlLit.emplace_back(*(*value)[c].begin(),c);
+            }
+        }
 		if (activeClauses->empty()){
-            b.push(var,forced,clauses_sup,&appar[-var]);
+            b.push(var,forced,clauses_sup,&(appar[-var]));
             return 1;
 		}
 	}
-	b.push(var,forced,clauses_sup,&appar[-var]);
+	b.push(var,forced,clauses_sup,&(appar[-var]));
 	return 0;
 }
 
@@ -238,36 +238,53 @@ void Formule::dpll(string fout){
                     set<int> litConflict;
                     set<int> litSeen;
                     vector<pair<int,int> > edges;
-                    clConflict.insert(*curentLvlLit.rbegin().second);
-                    litConflict[*curentLvlLit.rbegin()]
+                    for(int v:initial_value->at((*currentLvlLit.rbegin()).second)){
+                        if(!(*fixed)[v] and !litSeen.count(v)){
+                            litConflict.insert(v);
+                            litSeen.insert(v);
+                        }
+                        else if((*fixed)[v]){
+                            initial_value->back().insert(-v);
+                            appar[-v].insert(value->size()-1);
+                        }
+                        edges.emplace_back(v,0);
+                    }
                     while(!currentLvlLit.empty() and (*fixed)[currentLvlLit.back().first]==t){
                         currentLvlLit.pop_back();
                     }
-                    for(auto& it = next(curentLvlLit.rbegin();it==currentLvlLit.rend() or fixed->access(it->first)!=0 or litConflict.size()==1;++it){
+                    for(auto it = next(currentLvlLit.rbegin());it==currentLvlLit.rend() or (*fixed)[it->first]!=0 or litConflict.size()==1;++it){
                         if(litConflict.count(it->first)){
                             litConflict.erase(it->first);
-                            for(int v:initial_value->access(it->second)){
+                            for(int v:initial_value->at(it->second)){
                                 if(it->second!=-1){
                                     if(it->first!=0){
-                                        edge.emplace_back(v,it->first);
+                                        edges.emplace_back(v,it->first);
                                     }
-                                    if(!fixed->access(v) and !litSeen[v]){
+                                    if(!(*fixed)[v] and !litSeen.count(v)){
                                         litConflict.insert(v);
                                         litSeen.insert(v);
                                     }
-                                    else if(fixed->access(v)){
-                                        initial_value.back().insert(-v);
+                                    else if((*fixed)[v]){
+                                        initial_value->back().insert(-v);
                                         appar[-v].insert(value->size()-1);
                                     }
                                     litConflict.erase(it->first);
                                 }
                                 else{
-                                    edge.emplace_back(b.lastBack,it->first);
+                                    edges.emplace_back(b.lastBack,it->first);
                                     litConflict.erase(it->first);
                                     litConflict.insert(b.lastBack);
                                 }
                             }
                         }
+                    }
+                    activeClauses->insert(value->size()-1);
+                    initial_value->back().insert(-*(litConflict.begin()));
+                    value->back().insert(-*(litConflict.begin()));
+                    appar[-*(litConflict.begin())].insert(value->size()-1);
+
+                    while(!(*fixed)[currentLvlLit.back().first]){
+                        currentLvlLit.pop_back();
                     }
                     if(bInterac){
                         pause(edges,*(litConflict.begin()));
@@ -384,10 +401,10 @@ void Formule::graphe(vector<pair<int,int>>& edges, int uid){
 	fic << "digraph G{" << endl;
 	map<int,bool> defined;
 	string bleu = ".56 .79 .96";
-	string violet = ".78 .79 . 96";
+	string violet = ".78 .79 .96";
 	fic << "\t0 [label=\"Conflict\", color=red, style=filled];" << endl;
 	defined[0] = true;
-	fic << "\t" << uid << "[color=red, style=filled];" << endl;
+	fic << "\t" << uid << "[color=yellow, style=filled];" << endl;
 	defined[uid] = true;
 	for (pair<int,int>& e:edges){
 		if (!defined[e.first]){
@@ -400,7 +417,8 @@ void Formule::graphe(vector<pair<int,int>>& edges, int uid){
 		}
 		fic << "\t" << e.first << " -> " << e.second << " ;" << endl;
 	}
-	cout << "}" << endl;
+	fic << "}" << endl;
+	fic.close();
 }
 
 void Formule::pause(vector<pair<int,int>>& edges, int uid){
@@ -409,14 +427,15 @@ void Formule::pause(vector<pair<int,int>>& edges, int uid){
 	cout << "t : finir le dérouolement de dpll sans intéruption" << endl;
 	char rep;
 debut:
-	cin >> rep;
+	scanf("%c",&rep);
+	cout << rep << endl;
 	switch(rep){
 		case 'g':
 			graphe(edges,uid);
 			cout << "c : continuer jusqu'au prochain conflit" << endl;
 			cout << "t : finir le déroulement de dpll sans intéruption" << endl;
 		sousdebut:
-			cin >> rep;
+			scanf("%c",&rep);
 			switch(rep){
 				case 'c':
 					return;

@@ -65,10 +65,12 @@ bool Backtrack::back(vector<set<int>>* value, set<int>* activeClauses, map<int,i
 		pile->pop();
 	}
 	if (pile->empty()){
+//cout << "ENDBACK UNSAT" << endl;
 		return false;
 	}else{
 		pile->top().annule(value, activeClauses, fixed,nbApparPos,nbApparNeg, lastBack);
 		pile->pop();
+//cout << "ENDBACK" << endl;
 		return true;
 	}
 }

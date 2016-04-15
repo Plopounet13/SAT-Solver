@@ -46,7 +46,7 @@ private:
 	Backtrack b;
 	vector<int>* nbApparPos;
 	vector<int>* nbApparNeg;
-	map<int,vector<int> > appar;
+	map<int,set<int> > appar;
 };
 
 
