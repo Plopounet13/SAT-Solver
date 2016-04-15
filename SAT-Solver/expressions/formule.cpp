@@ -400,7 +400,10 @@ void Formule::graphe(vector<pair<int,int>>& edges, int uid){
 		}
 		fic << "\t" << e.first << " -> " << e.second << " ;" << endl;
 	}
-	cout << "}" << endl;
+	fic << "}" << endl;
+	fic.close();
+	system("dot -Tpdf tmp.dot -o tmp.pdf");
+	system("evince -f tmp.pdf");
 }
 
 void Formule::pause(vector<pair<int,int>>& edges, int uid){
