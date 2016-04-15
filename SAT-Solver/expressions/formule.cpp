@@ -409,7 +409,7 @@ void Formule::graphe(vector<pair<int,int>>& edges, int uid){
 void Formule::pause(vector<pair<int,int>>& edges, int uid){
 	cout << "g : dessiner le graphe des conflits" << endl;
 	cout << "c : continuer jusqu'au prochain conflit" << endl;
-	cout << "t : finir le dérouolement de dpll sans intéruption" << endl;
+	cout << "t : finir le déroulement de dpll sans intéruption" << endl;
 	char rep;
 debut:
 	cin >> rep;
