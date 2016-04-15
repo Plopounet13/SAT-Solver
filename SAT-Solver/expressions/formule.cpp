@@ -417,8 +417,15 @@ void Formule::graphe(vector<pair<int,int>>& edges, int uid){
 		}
 		fic << "\t" << e.first << " -> " << e.second << " ;" << endl;
 	}
+<<<<<<< HEAD
 	fic << "}" << endl;
 	fic.close();
+=======
+	fic << "}" << endl;
+	fic.close();
+	system("dot -Tpdf tmp.dot -o tmp.pdf");
+	system("evince -f tmp.pdf");
+>>>>>>> 6db678c9d77fb4b78550a0cddb7b588795119e30
 }
 
 void Formule::pause(vector<pair<int,int>>& edges, int uid){
