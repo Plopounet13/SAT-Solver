@@ -65,6 +65,7 @@ int main(int argc, char** argv) {
 		help();
 	int decal=0;
 	bcl = bInterac = false;
+	int heuristique=STANDARD;
 	for(int i=0; i<argc; ++i){
 		if (!strcmp(argv[i], "-cl")){
 			bcl = true;
@@ -72,8 +73,17 @@ int main(int argc, char** argv) {
 		}else if (!strcmp(argv[i], "-interac")){
 			bInterac=true;
 			++decal;
-		}
-		argv[i-decal] = argv[i];
+		}else if (!strcmp(argv[i], "-rand")){
+			heuristique=RAND;
+			++decal;
+		}else if (!strcmp(argv[3], "-moms")){
+			heuristique=MOMS;
+			++decal;
+		}else if (!strcmp(argv[3], "-dlis")){
+			heuristique=DLIS;
+			++decal;
+		}else
+			argv[i-decal] = argv[i];
 	}
 	argc = argc-decal;
 
@@ -82,14 +92,7 @@ int main(int argc, char** argv) {
         usage();
         exit(1);
     }
-	int heuristique=STANDARD;
 	if (argc == 4){
-		if (!strcmp(argv[3], "-rand"))
-			heuristique=RAND;
-		else if (!strcmp(argv[3], "-moms"))
-			heuristique=MOMS;
-		else if (!strcmp(argv[3], "-dlis"))
-			heuristique=DLIS;
 		--argc;
 	}
 
@@ -117,10 +120,10 @@ int main(int argc, char** argv) {
     // parse through the input until there is no more:
     if (argc == 3){
         do {
-            yyparse();
-            Formule f(res->tseytin(maxVar), heuristique);
+           // yyparse();
+		   // Formule f(res->tseytin(maxVar), heuristique);
             dup2(backin,0);
-            f.dpll("plop.out");
+            //f.dpll("plop.out");
         } while (!feof(yyin));
     } else {
         int var, V, C;
