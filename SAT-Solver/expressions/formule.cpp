@@ -150,6 +150,7 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
 }
 
 int Formule::choose() {
+	cout << "HEY" <<endl;
 	int var;
 	switch (heuristique) {
 		case STANDARD:
@@ -168,6 +169,7 @@ int Formule::choose() {
 			break;
         }
 		case MOMS:{
+cout << "start moms" << endl;
 			int mini=INT_MAX;
 			for (int c:*activeClauses)
 				if ((*value)[c].size()<mini)
@@ -184,6 +186,7 @@ int Formule::choose() {
 					var = p.first;
 				}
 			}
+cout << "end moms" << endl;
 			break;
         }
 		case DLIS:{

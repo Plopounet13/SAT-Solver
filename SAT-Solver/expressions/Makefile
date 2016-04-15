@@ -21,3 +21,4 @@ $(NAME).tab.cpp : $(NAME).ypp
 
 clean:
 	rm -f *~ $(NAME).yy.c $(NAME).tab.cpp $(NAME).tab.hpp $(NAME).output $(EXTENSION:=.o) $(NAME).o resol
+	rm -r resol.dSYM
