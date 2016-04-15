@@ -94,7 +94,7 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
 			(*value)[c].erase(p);
 			if ((*value)[c].empty()){
                 b.push(var,forced,clauses_sup,&(appar[-var]));
-cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
+//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
                 currentLvlLit.emplace_back(0,c);
                 if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg)){
                     return -1;
@@ -216,7 +216,6 @@ void Formule::dpll(string fout){
     while(res<=0){
         if(res<=0){
             if(forcedVariables.empty()){
-                currentLvlLit.clear();
                 choice = choose();
                 ++t;
                 (*fixed)[choice]=t;
@@ -239,42 +238,48 @@ void Formule::dpll(string fout){
                     set<int> litSeen;
                     vector<pair<int,int> > edges;
                     for(int v:initial_value->at((*currentLvlLit.rbegin()).second)){
-                        if(!(*fixed)[v] and !litSeen.count(v)){
-                            litConflict.insert(v);
-                            litSeen.insert(v);
+                        if(!(*fixed)[-v] and !litSeen.count(-v)){
+                            litConflict.insert(-v);
+                            litSeen.insert(-v);
                         }
                         else if((*fixed)[v]){
                             initial_value->back().insert(-v);
                             appar[-v].insert(value->size()-1);
                         }
-                        edges.emplace_back(v,0);
+                        edges.emplace_back(-v,0);
                     }
+                    pair<int,int> e = currentLvlLit.back();
+                    currentLvlLit.pop_back();
                     while(!currentLvlLit.empty() and (*fixed)[currentLvlLit.back().first]==t){
                         currentLvlLit.pop_back();
                     }
-                    for(auto it = next(currentLvlLit.rbegin());it==currentLvlLit.rend() or (*fixed)[it->first]!=0 or litConflict.size()==1;++it){
+                    currentLvlLit.push_back(e);
+                    for(auto it = next(currentLvlLit.rbegin());it!=currentLvlLit.rend() and (*fixed)[it->first]==0 and litConflict.size()!=1;++it){
                         if(litConflict.count(it->first)){
                             litConflict.erase(it->first);
-                            for(int v:initial_value->at(it->second)){
-                                if(it->second!=-1){
-                                    if(it->first!=0){
-                                        edges.emplace_back(v,it->first);
+                            if(it->second!=-1){
+                                for(int v:initial_value->at(it->second)){
+                                    if(v!=it->first){
+                                        if(it->first!=0){
+                                            edges.emplace_back(-v,it->first);
+                                        }
+                                        if(!(*fixed)[-v] and !litSeen.count(-v)){
+                                            litConflict.insert(-v);
+                                            litSeen.insert(-v);
+                                        }
+                                        else if((*fixed)[-v]){
+                                            initial_value->back().insert(v);
+                                            appar[v].insert(value->size()-1);
+                                        }
+                                        litConflict.erase(it->first);
                                     }
-                                    if(!(*fixed)[v] and !litSeen.count(v)){
-                                        litConflict.insert(v);
-                                        litSeen.insert(v);
-                                    }
-                                    else if((*fixed)[v]){
-                                        initial_value->back().insert(-v);
-                                        appar[-v].insert(value->size()-1);
-                                    }
-                                    litConflict.erase(it->first);
                                 }
-                                else{
+                            }
+                            else{
+                                if(b.lastBack!=it->first)
                                     edges.emplace_back(b.lastBack,it->first);
-                                    litConflict.erase(it->first);
-                                    litConflict.insert(b.lastBack);
-                                }
+                                litConflict.erase(it->first);
+                                litConflict.insert(b.lastBack);
                             }
                         }
                     }
@@ -296,11 +301,11 @@ void Formule::dpll(string fout){
                     forcedVariables.pop();
                 }
                 --t;
-                choice = b.lastBack;
+                choice = -b.lastBack;
                 (*fixed)[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
 //cout << -choice << "  FORCE" << endl;
-                res = evol(-choice,true,forcedVariables);
+                res = evol(choice,true,forcedVariables);
             }
         }
     }
@@ -421,6 +426,8 @@ void Formule::graphe(vector<pair<int,int>>& edges, int uid){
 	fic.close();
 	system("dot -Tpdf tmp.dot -o tmp.pdf");
 	system("evince -f tmp.pdf");
+	system("rm tmp.dot");
+	system("rm tmp.pdf");
 }
 
 void Formule::pause(vector<pair<int,int>>& edges, int uid){
@@ -430,7 +437,6 @@ void Formule::pause(vector<pair<int,int>>& edges, int uid){
 	char rep;
 debut:
 	scanf("%c",&rep);
-	cout << rep << endl;
 	switch(rep){
 		case 'g':
 			graphe(edges,uid);
