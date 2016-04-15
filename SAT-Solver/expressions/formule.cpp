@@ -387,7 +387,7 @@ void Formule::graphe(vector<pair<int,int>>& edges, int uid){
 	string violet = ".78 .79 . 96";
 	fic << "\t0 [label=\"Conflict\", color=red, style=filled];" << endl;
 	defined[0] = true;
-	fic << "\t" << uid << "[color=red, style=filled];" << endl;
+	fic << "\t" << uid << "[color=yellow, style=filled];" << endl;
 	defined[uid] = true;
 	for (pair<int,int>& e:edges){
 		if (!defined[e.first]){
