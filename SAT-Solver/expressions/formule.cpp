@@ -218,12 +218,12 @@ void Formule::dpll(string fout){
                 ++t;
                 (*fixed)[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
-//cout << choice << "  UN CHOIX" << endl;
+cout << choice << "  UN CHOIX" << endl;
                 res = evol(choice, false, forcedVariables);
             }
             else{
                 choice = forcedVariables.front();
-//cout << choice << "  FORCE" << endl;
+cout << choice << "  FORCE" << endl;
                 forcedVariables.pop();
                 res = evol(choice, true, forcedVariables);
             }
@@ -293,16 +293,17 @@ void Formule::dpll(string fout){
                         pause(edges,*(litConflict.begin()));
                     }
                 }
-//cout << "______________BACK" << endl;
+cout << "______________BACK" << endl;
                 while(!forcedVariables.empty()){
                     (*fixed)[forcedVariables.front()]=0;
                     forcedVariables.pop();
                 }
                 --t;
                 choice = -b.lastBack;
+cout << "lastback : " << b.lastBack << endl;
                 (*fixed)[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
-//cout << -choice << "  FORCE" << endl;
+cout << choice << "  FORCE" << endl;
                 res = evol(choice,true,forcedVariables);
             }
         }
