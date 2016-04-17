@@ -120,9 +120,9 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
                     }
                     if((*nbApparNeg)[abs(i)]==0){
 //cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE DANS " << c+1 << endl;
-                        if(!(*fixed)[abs(i)]){
-                            (*fixed)[abs(i)]=t;
-                            forcedVariables.push(abs(i));
+                        if(!(*fixed)[-abs(i)]){
+                            (*fixed)[-abs(i)]=t;
+                            forcedVariables.push(-abs(i));
                         }
                     }
                 }
