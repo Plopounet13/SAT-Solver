@@ -131,8 +131,8 @@ cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE POSITIF" << end
             clauses_sup->insert(c);
         }
         if ((*value)[c].size()==1){
-cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << endl;
             if(!(*fixed)[*(*value)[c].begin()]){
+cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
                 forcedVariables.push(*(*value)[c].begin());
                 (*fixed)[*(*value)[c].begin()]=t;
                 currentLvlLit.emplace_back(*(*value)[c].begin(),c);
