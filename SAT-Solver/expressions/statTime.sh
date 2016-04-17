@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-for heur in "" -rand -moms -dlis
+for heur in -dlis "" -moms -rand
 do
 	if [ "$heur" = "" ]
 	then

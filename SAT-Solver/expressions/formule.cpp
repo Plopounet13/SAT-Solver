@@ -150,7 +150,6 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
 }
 
 int Formule::choose() {
-	cout << "HEY" <<endl;
 	int var;
 	switch (heuristique) {
 		case STANDARD:
@@ -169,7 +168,6 @@ int Formule::choose() {
 			break;
         }
 		case MOMS:{
-cout << "start moms" << endl;
 			int mini=INT_MAX;
 			for (int c:*activeClauses)
 				if ((*value)[c].size()<mini)
@@ -186,18 +184,17 @@ cout << "start moms" << endl;
 					var = p.first;
 				}
 			}
-cout << "end moms" << endl;
 			break;
         }
 		case DLIS:{
 			int maxi=0;
 			for (int i=0; i<nbApparNeg->size(); ++i)
-				if ((*nbApparNeg)[i]>maxi){
+				if ((*nbApparNeg)[i]>maxi and !(*fixed)[i] and !(*fixed)[-i]){
 					maxi = (*nbApparNeg)[i];
 					var = -i;
 				}
 			for (int i=0; i<nbApparPos->size(); ++i)
-				if ((*nbApparPos)[i]>maxi){
+				if ((*nbApparPos)[i]>maxi and !(*fixed)[i] and !(*fixed)[-i]){
 					maxi = (*nbApparPos)[i];
 					var = i;
 				}
@@ -290,8 +287,8 @@ void Formule::dpll(string fout){
                     initial_value->back().insert(-*(litConflict.begin()));
                     value->back().insert(-*(litConflict.begin()));
                     appar[-*(litConflict.begin())].insert(value->size()-1);
-
-                    while(!(*fixed)[currentLvlLit.back().first]){
+					
+                    while(!currentLvlLit.empty() && !(*fixed)[currentLvlLit.back().first]){
                         currentLvlLit.pop_back();
                     }
                     if(bInterac){

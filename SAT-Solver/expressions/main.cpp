@@ -76,10 +76,10 @@ int main(int argc, char** argv) {
 		}else if (!strcmp(argv[i], "-rand")){
 			heuristique=RAND;
 			++decal;
-		}else if (!strcmp(argv[3], "-moms")){
+		}else if (!strcmp(argv[i], "-moms")){
 			heuristique=MOMS;
 			++decal;
-		}else if (!strcmp(argv[3], "-dlis")){
+		}else if (!strcmp(argv[i], "-dlis")){
 			heuristique=DLIS;
 			++decal;
 		}else

@@ -9,3 +9,4 @@ SAT-Solver/expressions/expr.o
 SAT-Solver/SAT-Solver.xcodeproj/project.xcworkspace/xcuserdata/lois.xcuserdatad/UserInterfaceState.xcuserstate
 
 SAT-Solver/expressions/expr.o
+SAT-Solver/expressions/tests/*
