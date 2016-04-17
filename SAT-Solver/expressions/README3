@@ -1,0 +1,35 @@
+Heuristiques :
+	Les heuristiques ont été implémentées.
+	pour rand, on tire aléatoirement une clause puis on choisi une variable dans cette clause, cette stratégie avantage les variables apparaissant beaucoup dans de petites clauses.
+	pour moms, on recherche la taille minimale puis on compte le nombre d'apparences des variables dans les clauses de taille min.
+	pour dlis, on utilise les tableaux apparNeg et apparPos qui nous permettent de connaitre le nombre d'occurence positive et négative de chaque variable. On envisage de tester la fonction à maximiser pour comparer les performances.
+
+Tests - stats :
+	Un scrypt de test des 4 heuristiques utilisé :
+		./statTime.sh params
+	où param correspond aux paramêtres de resol autre que l'heuristique
+	et qui donne les résultats de notre solveur pour chacune des heuristique
+	Cela nous a permis de vérifier que dlis est beaucoup plus efficace que les autres heuristiques et que le clause learning n'a pas d'apport apparent sur nos fichiers de test.
+
+Mode interractif :
+	menu de gestion du mode intéractif + création du .dot et du .pdf du graphe.
+	Ces deux fichiers sont temporaires, libre à l'utilisateur de les copier avant la fermeture de la fenêtre d'apperçu du graphe.
+
+Clause Learning :
+
+
+
+
+
+Repartition du travail :
+	Rédouane :
+		Clause learning
+		Explication du format .dot
+
+	Loïs Paulin :
+		Heuristiques
+		Stats
+		Mode intéractif
+		Explication du concept de deadline
+
+
