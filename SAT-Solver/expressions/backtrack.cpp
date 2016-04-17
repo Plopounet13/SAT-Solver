@@ -12,23 +12,19 @@ void ElemBacktrack::annule(vector<set<int>>* value, set<int>* activeClauses, map
     (*fixed)[var] = 0;
 	for (int x: *clauses_sup){
 		activeClauses->insert(x);
-		if(!bcl){
-            for(int i:(*value)[x]){
-                    if(i>0)
-                        ++((*nbApparPos)[i]);
-                    else
-                        ++((*nbApparNeg)[-i]);
-            }
-		}
+        for(int i:(*value)[x]){
+                if(i>0)
+                    ++((*nbApparPos)[i]);
+                else
+                    ++((*nbApparNeg)[-i]);
+        }
     }
 	for (int x: *clauses_ret){
         (*value)[x].insert(-var);
-        if(!bcl){
-            if(-var>0)
-                ++(*nbApparPos)[-var];
-            else
-                ++(*nbApparNeg)[var];
-        }
+        if(-var>0)
+            ++(*nbApparPos)[-var];
+        else
+            ++(*nbApparNeg)[var];
     }
 	lastBack=var;
 }

@@ -105,26 +105,24 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
 		}
 		p = (*value)[c].find(var);
 		if(p != (*value)[c].end()){
-            if(!bcl){
-                for(int i:(*value)[c]){
-                    if(i>0)
-                        --((*nbApparPos)[i]);
-                    else
-                        --((*nbApparNeg)[-i]);
-                    if((*nbApparPos)[abs(i)]+(*nbApparNeg)[abs(i)]!=0 and !(*fixed)[i] and !(*fixed)[-i]){
-                        if((*nbApparPos)[abs(i)]==0){
+            for(int i:(*value)[c]){
+                if(i>0)
+                    --((*nbApparPos)[i]);
+                else
+                    --((*nbApparNeg)[-i]);
+                if(!bcl and (*nbApparPos)[abs(i)]+(*nbApparNeg)[abs(i)]!=0 and !(*fixed)[i] and !(*fixed)[-i]){
+                    if((*nbApparPos)[abs(i)]==0){
 //cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE DANS " << c+1 << endl;
-                            if(!(*fixed)[-abs(i)]){
-                                (*fixed)[-abs(i)]=t;
-                                forcedVariables.push(-abs(i));
-                            }
+                        if(!(*fixed)[-abs(i)]){
+                            (*fixed)[-abs(i)]=t;
+                            forcedVariables.push(-abs(i));
                         }
-                        if((*nbApparNeg)[abs(i)]==0){
+                    }
+                    if((*nbApparNeg)[abs(i)]==0){
 //cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE DANS " << c+1 << endl;
-                            if(!(*fixed)[abs(i)]){
-                                (*fixed)[abs(i)]=t;
-                                forcedVariables.push(abs(i));
-                            }
+                        if(!(*fixed)[abs(i)]){
+                            (*fixed)[abs(i)]=t;
+                            forcedVariables.push(abs(i));
                         }
                     }
                 }
@@ -287,7 +285,7 @@ void Formule::dpll(string fout){
                     initial_value->back().insert(-*(litConflict.begin()));
                     value->back().insert(-*(litConflict.begin()));
                     appar[-*(litConflict.begin())].insert(value->size()-1);
-					
+
                     while(!currentLvlLit.empty() && !(*fixed)[currentLvlLit.back().first]){
                         currentLvlLit.pop_back();
                     }
