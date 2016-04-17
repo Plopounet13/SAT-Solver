@@ -6,7 +6,7 @@ vector<pair<int,int> > currentLvlLit;
 extern int maxVar;
 extern bool bcl;
 extern bool bInterac;
-int t = 0;
+int t = 1;
 
 Formule::Formule(Expr& e, int heur):heuristique(heur){
     //cout << e.to_string() << endl;
@@ -112,14 +112,14 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
                     --((*nbApparNeg)[-i]);
                 if(!bcl and (*nbApparPos)[abs(i)]+(*nbApparNeg)[abs(i)]!=0 and !(*fixed)[i] and !(*fixed)[-i]){
                     if((*nbApparPos)[abs(i)]==0){
-cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE NEGATIF" << endl;
+//cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE NEGATIF" << endl;
                         if(!(*fixed)[-abs(i)]){
                             (*fixed)[-abs(i)]=t;
                             forcedVariables.push(-abs(i));
                         }
                     }
                     if((*nbApparNeg)[-abs(i)]==0){
-cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE POSITIF" << endl;
+//cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE POSITIF" << endl;
                         if(!(*fixed)[abs(i)]){
                             (*fixed)[abs(i)]=t;
                             forcedVariables.push(abs(i));
@@ -132,7 +132,7 @@ cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE POSITIF" << end
         }
         if ((*value)[c].size()==1){
             if(!(*fixed)[*(*value)[c].begin()]){
-cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
+//cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
                 forcedVariables.push(*(*value)[c].begin());
                 (*fixed)[*(*value)[c].begin()]=t;
                 currentLvlLit.emplace_back(*(*value)[c].begin(),c);
@@ -218,12 +218,12 @@ void Formule::dpll(string fout){
                 ++t;
                 (*fixed)[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
-cout << choice << "  UN CHOIX" << endl;
+//cout << choice << "  UN CHOIX" << endl;
                 res = evol(choice, false, forcedVariables);
             }
             else{
                 choice = forcedVariables.front();
-cout << choice << "  FORCE" << endl;
+//cout << choice << "  FORCE" << endl;
                 forcedVariables.pop();
                 res = evol(choice, true, forcedVariables);
             }
@@ -249,6 +249,7 @@ cout << choice << "  FORCE" << endl;
                     pair<int,int> e = currentLvlLit.back();
                     currentLvlLit.pop_back();
                     while(!currentLvlLit.empty() and (*fixed)[currentLvlLit.back().first]==t){
+			(*fixed)[currentLvlLit.back().first]=0;
                         currentLvlLit.pop_back();
                     }
                     currentLvlLit.push_back(e);
@@ -293,17 +294,17 @@ cout << choice << "  FORCE" << endl;
                         pause(edges,*(litConflict.begin()));
                     }
                 }
-cout << "______________BACK" << endl;
+//cout << "______________BACK" << endl;
                 while(!forcedVariables.empty()){
                     (*fixed)[forcedVariables.front()]=0;
                     forcedVariables.pop();
                 }
                 --t;
                 choice = -b.lastBack;
-cout << "lastback : " << b.lastBack << endl;
+//cout << "lastback : " << b.lastBack << endl;
                 (*fixed)[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
-cout << choice << "  FORCE" << endl;
+//cout << choice << "  FORCE" << endl;
                 res = evol(choice,true,forcedVariables);
             }
         }
