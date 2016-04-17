@@ -112,17 +112,17 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
                     --((*nbApparNeg)[-i]);
                 if(!bcl and (*nbApparPos)[abs(i)]+(*nbApparNeg)[abs(i)]!=0 and !(*fixed)[i] and !(*fixed)[-i]){
                     if((*nbApparPos)[abs(i)]==0){
-//cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE DANS " << c+1 << endl;
+cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE NEGATIF" << endl;
                         if(!(*fixed)[-abs(i)]){
                             (*fixed)[-abs(i)]=t;
                             forcedVariables.push(-abs(i));
                         }
                     }
-                    if((*nbApparNeg)[abs(i)]==0){
-//cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE DANS " << c+1 << endl;
-                        if(!(*fixed)[-abs(i)]){
-                            (*fixed)[-abs(i)]=t;
-                            forcedVariables.push(-abs(i));
+                    if((*nbApparNeg)[-abs(i)]==0){
+cout << "ON FORCE " << forcedVariables.back() << " QUI N'EST QUE POSITIF" << endl;
+                        if(!(*fixed)[abs(i)]){
+                            (*fixed)[abs(i)]=t;
+                            forcedVariables.push(abs(i));
                         }
                     }
                 }
@@ -131,7 +131,7 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
             clauses_sup->insert(c);
         }
         if ((*value)[c].size()==1){
-//cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << endl;
+cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << endl;
             if(!(*fixed)[*(*value)[c].begin()]){
                 forcedVariables.push(*(*value)[c].begin());
                 (*fixed)[*(*value)[c].begin()]=t;
