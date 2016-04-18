@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ $# -lt 1 ]
+then
+	echo "Nombre de paramêtres incorrect" >&2
+	exit
+fi
+
 
 for heur in -dlis "" -moms -rand
 do

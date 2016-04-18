@@ -10,4 +10,7 @@ SAT-Solver/SAT-Solver.xcodeproj/project.xcworkspace/xcuserdata/lois.xcuserdatad/
 
 SAT-Solver/expressions/expr.o
 
+SAT-Solver/expressions/tests/uf*
+SAT-Solver/expressions/tests/uuf*
+
 SAT-Solver/SAT-Solver.xcodeproj/xcuserdata/lois.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist

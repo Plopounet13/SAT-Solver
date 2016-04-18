@@ -1,0 +1,3 @@
+tests/test1.cnf SATISFIABLE
+formule.cpp UNSATISFIABLE
+tests/test3.cnf SATISFIABLE
