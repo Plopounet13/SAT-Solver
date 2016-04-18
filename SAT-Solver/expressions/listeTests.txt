@@ -1,3 +1,15 @@
 tests/test1.cnf SATISFIABLE
-formule.cpp UNSATISFIABLE
+tests/test1.cnf SATISFIABLE
 tests/test3.cnf SATISFIABLE
+tests/test4.cnf SATISFIABLE
+tests/test4.cnf SATISFIABLE
+tests/seasy/uf20-01.cnf SATISFIABLE
+tests/seasy/uf20-02.cnf SATISFIABLE
+tests/seasy/uf20-03.cnf SATISFIABLE
+tests/seasy/uf20-04.cnf SATISFIABLE
+tests/seasy/uf20-05.cnf SATISFIABLE
+tests/seasy/uf20-06.cnf SATISFIABLE
+tests/seasy/uf20-07.cnf SATISFIABLE
+tests/seasy/uf20-08.cnf SATISFIABLE
+tests/seasy/uf20-09.cnf SATISFIABLE
+tests/seasy/uf20-010.cnf SATISFIABLE

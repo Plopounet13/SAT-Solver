@@ -7,6 +7,13 @@ then
 	exit 1
 fi
 
+if [ ! -f resol ]
+then
+	echo "Le projet n'a pas été compilé" >&2
+	echo "(resol n'existe pas)" >&2
+	exit 2
+fi
+
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0`
@@ -26,7 +33,6 @@ do
 		continue
 	fi
 	echo "$fichier $*:"
-	grep '^real' jeuTests.tmp | sed s/real//g
 	repDon=`grep '^s ' resolAnswer.tmp | sed s/'s '//g`
 	if [ $repDon == $repAtt ]
 	then
@@ -34,6 +40,7 @@ do
 	else
 		echo "$repDon [${RED}KO${NC}]"
 	fi
+	grep '^real' jeuTests.tmp | sed s/real//g
 	echo
 done <listeTests.txt
 rm -f jeuTests.tmp resolAnswer.tmp
