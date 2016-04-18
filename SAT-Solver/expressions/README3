@@ -16,9 +16,13 @@ Mode interractif :
 	Ces deux fichiers sont temporaires, libre à l'utilisateur de les copier avant la fermeture de la fenêtre d'apperçu du graphe.
 
 Clause Learning :
+	on crée la clause à ajouter à la volée en faisant le graphe.
+	En effet, avec un parcourt adéquat du graphe lors de sa création, on obtient directement l'UIP et tous les sommets à ajouter.
+	Pour cela, il nous a suffit de donner une date à chaque sommet au sein du niveau courant de décision.
+	Pour le graphe, nous n'affichons que le graphe à partir de l'UIP, car il nous semblait que seule cette partie du graphe était significative. Afficher une plus grande partie du graphe est facilement faisable si nécessaire.
+	Afin d'implémenter le clause learning, nous avons dû revoir quelques points de notre code.
 
-
-
+Pour ce qui est des tests, nous avons continué à utiliser ceux de http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html
 
 
 Repartition du travail :
@@ -31,5 +35,3 @@ Repartition du travail :
 		Stats
 		Mode intéractif
 		Explication du concept de deadline
-
-
