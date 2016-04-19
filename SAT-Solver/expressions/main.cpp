@@ -143,20 +143,20 @@ int main(int argc, char** argv) {
             fprintf(stderr,"Erreur : Le fichier doit commencer par \"p cnf\".\n");
             exit(4);
         }
-        vector<set<int>>* value = new vector<set<int>>();
+		vector<set<int>> value;
         while (getline(cin, line)){
             if (line != "" && line[0] != 'c' and line != "0" and line != "%"){
                 --C;
                 stringstream streamline2(line);
                 streamline2 >> var;
-                value->push_back(set<int>());
+                value.push_back(set<int>());
                 while(var != 0){
                     Expr* e;
                     if (abs(var) > V){
                         fprintf(stderr, "Erreur : Borne max variables dépassée : %d.\n", abs(var));
                         maxVar = abs(var);
                     }
-                    value->back().insert(var);
+                    value.back().insert(var);
                     streamline2 >> var;
                 }
             }

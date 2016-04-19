@@ -16,8 +16,8 @@ public:
 	ElemBacktrack(int vr, bool forc, set<int>* clsup, set<int>* clret);
 	~ElemBacktrack();
 	virtual bool isForced();
-	virtual void annule(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed,vector<int>* nbApparPos,vector<int>* nbApparNeg, int &lastBack);
-	virtual void revert(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed, int* vr);
+	virtual void annule(vector<set<int>>& value, set<int>& activeClauses, map<int,int>& fixed,vector<int>& nbApparPos,vector<int>& nbApparNeg, int &lastBack);
+	virtual void revert(vector<set<int>>& value, set<int>& activeClauses, map<int,int>& fixed, int* vr);
 	virtual int variable();
 private:
 	int var;			   //etiq
@@ -31,7 +31,7 @@ class Backtrack{
 public:
 	Backtrack();
 	virtual void push(int vr, bool forc, set<int>* clsup, set<int>* clret);
-	virtual bool back(vector<set<int>>* value, set<int>* activeClauses, map<int,int>* fixed, int* var,vector<int>* nbApparPos,vector<int>* nbApparNeg);
+	virtual bool back(vector<set<int>>& value, set<int>& activeClauses, map<int,int>& fixed, int* var,vector<int>& nbApparPos,vector<int>& nbApparNeg);
 	virtual void variables(set<int>& s);
 	int lastBack;
 private:

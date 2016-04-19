@@ -10,89 +10,85 @@ int t = 1;
 
 Formule::Formule(Expr& e, int heur):heuristique(heur){
     //cout << e.to_string() << endl;
-	value = toEns(e);
-	/*for (set<int> x: *value){
+	value = *toEns(e);
+	/*for (set<int> x: value){
         for (int y : x)
             cout << y << " ";
         cout << endl;
 	}*/
 	int nbVar=0;
-	for(auto& x:*value){
+	for(auto& x:value){
         for(int i:x)
             if(abs(i)>nbVar)
                 nbVar=abs(i);
 	}
-	nbApparPos = new vector<int>(nbVar+1,0);
-	nbApparNeg = new vector<int>(nbVar+1,0);
-	for(auto& x:*value){
+	nbApparPos = vector<int>(nbVar+1,0);
+	nbApparNeg = vector<int>(nbVar+1,0);
+	for(auto& x:value){
         for(int i:x){
             if(i>0)
-                ++((*nbApparPos)[i]);
+                ++(nbApparPos[i]);
             else
-                ++((*nbApparNeg)[-i]);
+                ++(nbApparNeg[-i]);
         }
 	}
-	for(int i=0; i<value->size();++i){
-        for(int v:value->at(i)){
+	for(int i=0; i<value.size();++i){
+        for(int v:value.at(i)){
             appar[v].insert(i);
         }
 	}
-	fixed = new map<int,int>;
-	activeClauses = new set<int>();
-	for (int i=0; i<value->size(); ++i){
-		activeClauses->insert(i);
+	for (int i=0; i<value.size(); ++i){
+		activeClauses.insert(i);
 	}
 }
 
-Formule::Formule(vector<set<int>>* val, int heur):heuristique(heur){
+Formule::Formule(vector<set<int>>& val, int heur):heuristique(heur){
 	value = val;
-	/*for (set<int> x: *value){
+	/*for (set<int> x: value){
         for (int y : x)
             cout << y << " ";
         cout << endl;
 	}*/
 	int nbVar=0;
-	for(auto& x:*value){
+	for(auto& x:value){
         for(int i:x)
             if(abs(i)>nbVar)
                 nbVar=abs(i);
 	}
-	nbApparPos = new vector<int>(nbVar+1,0);
-	nbApparNeg = new vector<int>(nbVar+1,0);
-	for(auto& x:*value){
+	nbApparPos = vector<int>(nbVar+1,0);
+	nbApparNeg = vector<int>(nbVar+1,0);
+	for(auto& x:value){
         for(int i:x){
             if(i>0)
-                ++((*nbApparPos)[i]);
+                ++(nbApparPos[i]);
             else
-                ++((*nbApparNeg)[-i]);
+                ++(nbApparNeg[-i]);
         }
 	}
-	for(int i=0; i<value->size();++i){
-        for(int v:value->at(i)){
+	for(int i=0; i<value.size();++i){
+        for(int v:value.at(i)){
             appar[v].insert(i);
         }
 	}
-	fixed = new map<int,int>;
-	activeClauses = new set<int>();
-	for (int i=0; i<value->size(); ++i){
-		activeClauses->insert(i);
+	for (int i=0; i<value.size(); ++i){
+		activeClauses.insert(i);
 	}
 }
 //0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
     int res=0;
 	set<int>* clauses_sup = new set<int>();
-	set<int> activeClausesCopy(*activeClauses);
+	set<int> activeClausesCopy(activeClauses);
 	for (int c:activeClausesCopy){
-		set<int>::iterator p = (*value)[c].find(-var);
-		if(p != (*value)[c].end()){
+		set<int>::iterator p = value[c].find(-var);
+		if(p != value[c].end()){
             if(-var>0)
-                --((*nbApparPos)[-var]);
+                --(nbApparPos[-var]);
             else
-                --((*nbApparNeg)[var]);
+                --(nbApparNeg[var]);
             // TODO : p->get().del();
-			(*value)[c].erase(p);
-			if ((*value)[c].empty()){
+			value[c].erase(p);
+			if (value[c].empty()){
                 b.push(var,forced,clauses_sup,&(appar[-var]));
 //cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
                 currentLvlLit.emplace_back(0,c);
@@ -103,42 +99,42 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
                     return 2;
 			}
 		}
-		p = (*value)[c].find(var);
-		if(p != (*value)[c].end()){
-            for(int i:(*value)[c]){
+		p = value[c].find(var);
+		if(p != value[c].end()){
+            for(int i:value[c]){
                 if(i>0)
-                    --((*nbApparPos)[i]);
+                    --(nbApparPos[i]);
                 else
-                    --((*nbApparNeg)[-i]);
-                if(!bcl and (*nbApparPos)[abs(i)]+(*nbApparNeg)[abs(i)]!=0 and !(*fixed)[i] and !(*fixed)[-i]){
-                    if((*nbApparPos)[abs(i)]==0){
+                    --(nbApparNeg[-i]);
+                if(!bcl and nbApparPos[abs(i)]+nbApparNeg[abs(i)]!=0 and !fixed[i] and !fixed[-i]){
+                    if(nbApparPos[abs(i)]==0){
 //cout << "ON FORCE " << -abs(i) << " QUI N'EST QUE NEGATIF" << endl;
-                        if(!(*fixed)[-abs(i)]){
-                            (*fixed)[-abs(i)]=t;
+                        if(!fixed[-abs(i)]){
+                            fixed[-abs(i)]=t;
                             forcedVariables.push(-abs(i));
                         }
                     }
-                    if((*nbApparNeg)[abs(i)]==0){
+                    if(nbApparNeg[abs(i)]==0){
 //cout << "ON FORCE " << abs(i) << " QUI N'EST QUE POSITIF" << endl;
-                        if(!(*fixed)[abs(i)]){
-                            (*fixed)[abs(i)]=t;
+                        if(!fixed[abs(i)]){
+                            fixed[abs(i)]=t;
                             forcedVariables.push(abs(i));
                         }
                     }
                 }
             }
-            activeClauses->erase(c);
+            activeClauses.erase(c);
             clauses_sup->insert(c);
         }
-        if ((*value)[c].size()==1){
-            if(!(*fixed)[*(*value)[c].begin()]){
-//cout << "ON FORCE " << *(*value)[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
-                forcedVariables.push(*(*value)[c].begin());
-                (*fixed)[*(*value)[c].begin()]=t;
-                currentLvlLit.emplace_back(*(*value)[c].begin(),c);
+        if (value[c].size()==1){
+            if(!fixed[*value[c].begin()]){
+//cout << "ON FORCE " << *value[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
+                forcedVariables.push(*value[c].begin());
+                fixed[*value[c].begin()]=t;
+                currentLvlLit.emplace_back(*value[c].begin(),c);
             }
         }
-		if (activeClauses->empty()){
+		if (activeClauses.empty()){
             b.push(var,forced,clauses_sup,&(appar[-var]));
             return 1;
 		}
@@ -151,29 +147,29 @@ int Formule::choose() {
 	int var;
 	switch (heuristique) {
 		case STANDARD:
-			var = *((*value)[*(activeClauses->begin())].begin());
+			var = *(value[*(activeClauses.begin())].begin());
 			break;
 		case RAND:{
 			srand(time(NULL));
-			int c = rand()%activeClauses->size();
-			auto it = activeClauses->begin();
+			int c = rand()%activeClauses.size();
+			auto it = activeClauses.begin();
 			advance(it,c);
 			c = *it;
-			auto it2 = (*value)[c].begin();
-			var = rand()%(*value)[c].size();
+			auto it2 = value[c].begin();
+			var = rand()%value[c].size();
 			advance(it2, var);
 			var = *it2;
 			break;
         }
 		case MOMS:{
 			int mini=INT_MAX;
-			for (int c:*activeClauses)
-				if ((*value)[c].size()<mini)
-					mini=(*value)[c].size();
+			for (int c:activeClauses)
+				if (value[c].size()<mini)
+					mini=value[c].size();
             map<int,int> occur;
-			for (int c:*activeClauses)
-				if ((*value)[c].size()==mini){
-					for (int v:(*value)[c])
+			for (int c:activeClauses)
+				if (value[c].size()==mini){
+					for (int v:value[c])
 						++occur[v];
 				}
 			int maxi=0;
@@ -186,14 +182,14 @@ int Formule::choose() {
         }
 		case DLIS:{
 			int maxi=0;
-			for (int i=0; i<nbApparNeg->size(); ++i)
-				if ((*nbApparNeg)[i]>maxi and !(*fixed)[i] and !(*fixed)[-i]){
-					maxi = (*nbApparNeg)[i];
+			for (int i=0; i<nbApparNeg.size(); ++i)
+				if (nbApparNeg[i]>maxi and !fixed[i] and !fixed[-i]){
+					maxi = nbApparNeg[i];
 					var = -i;
 				}
-			for (int i=0; i<nbApparPos->size(); ++i)
-				if ((*nbApparPos)[i]>maxi and !(*fixed)[i] and !(*fixed)[-i]){
-					maxi = (*nbApparPos)[i];
+			for (int i=0; i<nbApparPos.size(); ++i)
+				if (nbApparPos[i]>maxi and !fixed[i] and !fixed[-i]){
+					maxi = nbApparPos[i];
 					var = i;
 				}
 			break;
@@ -214,13 +210,13 @@ void Formule::dpll(string fout){
     int choice;
     queue<int> forcedVariables;
     res=preTrait(forcedVariables);
-    initial_value = new vector<set<int>>(*value);
+    initial_value = value;
     while(res<=0){
         if(res<=0){
             if(forcedVariables.empty()){
                 choice = choose();
                 ++t;
-                (*fixed)[choice]=t;
+                fixed[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
 //cout << choice << "  UN CHOIX" << endl;
                 res = evol(choice, false, forcedVariables);
@@ -234,45 +230,45 @@ void Formule::dpll(string fout){
             while(res==-1){
                 if(bcl){
                     //creer graphe
-                    initial_value->push_back(set<int>());
-                    value->push_back(set<int>());
+                    initial_value.push_back(set<int>());
+                    value.push_back(set<int>());
                     set<int> litConflict;
                     set<int> litSeen;
                     vector<pair<int,int> > edges;
-                    for(int v:initial_value->at((*currentLvlLit.rbegin()).second)){
-                        if(!(*fixed)[-v] and !litSeen.count(-v)){
+                    for(int v:initial_value.at((*currentLvlLit.rbegin()).second)){
+                        if(!fixed[-v] and !litSeen.count(-v)){
                             litConflict.insert(-v);
                             litSeen.insert(-v);
                         }
-                        else if((*fixed)[v]){
-                            initial_value->back().insert(-v);
-                            appar[-v].insert(value->size()-1);
+                        else if(fixed[v]){
+                            initial_value.back().insert(-v);
+                            appar[-v].insert(value.size()-1);
                         }
                         edges.emplace_back(-v,0);
                     }
                     pair<int,int> e = currentLvlLit.back();
                     currentLvlLit.pop_back();
-                    while(!currentLvlLit.empty() and (*fixed)[currentLvlLit.back().first]==t){
-			(*fixed)[currentLvlLit.back().first]=0;
+                    while(!currentLvlLit.empty() and fixed[currentLvlLit.back().first]==t){
+			fixed[currentLvlLit.back().first]=0;
                         currentLvlLit.pop_back();
                     }
                     currentLvlLit.push_back(e);
-                    for(auto it = next(currentLvlLit.rbegin());it!=currentLvlLit.rend() and (*fixed)[it->first]==0 and litConflict.size()!=1;++it){
+                    for(auto it = next(currentLvlLit.rbegin());it!=currentLvlLit.rend() and fixed[it->first]==0 and litConflict.size()!=1;++it){
                         if(litConflict.count(it->first)){
                             litConflict.erase(it->first);
                             if(it->second!=-1){
-                                for(int v:initial_value->at(it->second)){
+                                for(int v:initial_value.at(it->second)){
                                     if(v!=it->first){
                                         if(it->first!=0){
                                             edges.emplace_back(-v,it->first);
                                         }
-                                        if(!(*fixed)[-v] and !litSeen.count(-v)){
+                                        if(!fixed[-v] and !litSeen.count(-v)){
                                             litConflict.insert(-v);
                                             litSeen.insert(-v);
                                         }
-                                        else if((*fixed)[-v]){
-                                            initial_value->back().insert(v);
-                                            appar[v].insert(value->size()-1);
+                                        else if(fixed[-v]){
+                                            initial_value.back().insert(v);
+                                            appar[v].insert(value.size()-1);
                                         }
                                         litConflict.erase(it->first);
                                     }
@@ -286,12 +282,12 @@ void Formule::dpll(string fout){
                             }
                         }
                     }
-                    activeClauses->insert(value->size()-1);
-                    initial_value->back().insert(-*(litConflict.begin()));
-                    value->back().insert(-*(litConflict.begin()));
-                    appar[-*(litConflict.begin())].insert(value->size()-1);
+                    activeClauses.insert(value.size()-1);
+                    initial_value.back().insert(-*(litConflict.begin()));
+                    value.back().insert(-*(litConflict.begin()));
+                    appar[-*(litConflict.begin())].insert(value.size()-1);
 
-                    while(!currentLvlLit.empty() && !(*fixed)[currentLvlLit.back().first]){
+                    while(!currentLvlLit.empty() && !fixed[currentLvlLit.back().first]){
                         currentLvlLit.pop_back();
                     }
                     if(bInterac){
@@ -300,13 +296,13 @@ void Formule::dpll(string fout){
                 }
 //cout << "______________BACK" << endl;
                 while(!forcedVariables.empty()){
-                    (*fixed)[forcedVariables.front()]=0;
+                    fixed[forcedVariables.front()]=0;
                     forcedVariables.pop();
                 }
                 --t;
                 choice = -b.lastBack;
 //cout << "lastback : " << b.lastBack << endl;
-                (*fixed)[choice]=t;
+                fixed[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
 //cout << choice << "  FORCE" << endl;
                 res = evol(choice,true,forcedVariables);
@@ -333,20 +329,20 @@ void Formule::dpll(string fout){
 int Formule::propage(int var){
 	list<int> l;
 	set<int>::iterator pos;
-	for (int i:*activeClauses){
-        if ((*value)[i].find(var) != (*value)[i].end()){
+	for (int i:activeClauses){
+        if (value[i].find(var) != value[i].end()){
 			l.push_back(i);
-		}else if ((pos = (*value)[i].find(-var)) != (*value)[i].end()){
-			(*value)[i].erase(pos);
-			if ((*value)[i].size() == 0)
+		}else if ((pos = value[i].find(-var)) != value[i].end()){
+			value[i].erase(pos);
+			if (value[i].size() == 0)
 				return 0;
-			else if ((*value)[i].size() == 1)
-				if (!propage(*(*value)[i].begin()))
+			else if (value[i].size() == 1)
+				if (!propage(*value[i].begin()))
 					return 0;
 		}
 	}
 	for (int sup:l)
-		activeClauses->erase(sup);
+		activeClauses.erase(sup);
 	return 1;
 }
 
@@ -357,11 +353,11 @@ int Formule::preTrait(queue<int>& forcedVariables){
 	bool nFini = true;
 	while(nFini){
         nFini = false;
-        set<int> activeClausesCopy(*activeClauses);
+        set<int> activeClausesCopy(activeClauses);
         for (int i:activeClausesCopy){
-            if ((*value)[i].size() == 1){
+            if (value[i].size() == 1){
                 nFini = true;
-                int v = *(*value)[i].begin();
+                int v = *value[i].begin();
                 forcedVariables.push(v);
                 while(!forcedVariables.empty()){
                     v = forcedVariables.front();
@@ -370,9 +366,9 @@ int Formule::preTrait(queue<int>& forcedVariables){
                         return res;
                 }
             } else {
-                for (int v:(*value)[i]){
-                    if ((*value)[i].find(-v) != (*value)[i].end()){
-                        activeClauses->erase(i);
+                for (int v:value[i]){
+                    if (value[i].find(-v) != value[i].end()){
+                        activeClauses.erase(i);
                         break;
                     }
                 }
@@ -384,19 +380,19 @@ int Formule::preTrait(queue<int>& forcedVariables){
             res = evol(choice, true, forcedVariables);
         }
     }
-	return activeClauses->empty();
+	return activeClauses.empty();
 }
 
 //return values :
 //0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::polUnique(queue<int>& forcedVariables){
-    for(int i = 1; i<nbApparPos->size();++i){
-        if((*nbApparPos)[i]+(*nbApparNeg)[i]!=0 and !(*fixed)[i] and !(*fixed)[-i]){
+    for(int i = 1; i<nbApparNeg.size();++i){
+        if(nbApparPos[i]+nbApparNeg[i]!=0 and !fixed[i] and !fixed[-i]){
             int res;
-            if((*nbApparPos)[i]==0)
+            if(nbApparPos[i]==0)
                 if((res = evol(-i,true,forcedVariables))!=0)
                     return res;
-            if((*nbApparNeg)[i]==0)
+            if(nbApparNeg[i]==0)
                 if((res = evol(i,true,forcedVariables))!=0)
                     return res;
         }
@@ -417,7 +413,7 @@ void Formule::graphe(vector<pair<int,int>>& edges, int uid){
 	defined[uid] = true;
 	for (pair<int,int>& e:edges){
 		if (!defined[e.first]){
-			fic << "\t" << e.first << " [color=\"" << ((*fixed)[e.first]?violet:bleu) << "\", style=filled];" << endl;
+			fic << "\t" << e.first << " [color=\"" << (fixed[e.first]?violet:bleu) << "\", style=filled];" << endl;
 			defined[e.first] = true;
 		}
 		if (!defined[e.second]){

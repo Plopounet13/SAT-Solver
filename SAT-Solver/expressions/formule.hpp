@@ -28,7 +28,7 @@ class Formule
 {
 public:
 	Formule(Expr& e, int heur);
-	Formule(vector<set<int>>* val, int heur);
+	Formule(vector<set<int>>& val, int heur);
 	virtual void dpll(string fout);
 	virtual int evol(int var, bool forced, queue<int>& forcedVariables);
 	virtual int choose();
@@ -39,14 +39,15 @@ public:
 	virtual void graphe(vector<pair<int,int>>& edges, int uid);
 private:
 	int heuristique;
-    map<int,int>* fixed;
-	vector<set<int>>* value;
-	vector<set<int>>* initial_value;
-	set<int>* activeClauses;
-	vector<pair<int,int> >* watched;
+	map<int,int> scoreVsids;
+    map<int,int> fixed;
+	vector<set<int>> value;
+	vector<set<int>> initial_value;
+	set<int> activeClauses;
+	vector<pair<int,int> > watched;
 	Backtrack b;
-	vector<int>* nbApparPos;
-	vector<int>* nbApparNeg;
+	vector<int> nbApparPos;
+	vector<int> nbApparNeg;
 	map<int,set<int> > appar;
 };
 
