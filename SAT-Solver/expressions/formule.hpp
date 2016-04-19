@@ -20,6 +20,7 @@
 #define RAND 1
 #define MOMS 2
 #define DLIS 3
+#define VSIDS 4
 
 using namespace std;
 

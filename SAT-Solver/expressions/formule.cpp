@@ -198,6 +198,10 @@ int Formule::choose() {
 				}
 			break;
         }
+		case VSIDS:{
+			
+			break;
+		}
         default:
 			break;
 	}

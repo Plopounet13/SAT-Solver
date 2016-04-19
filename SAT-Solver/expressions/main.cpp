@@ -82,7 +82,10 @@ int main(int argc, char** argv) {
 		}else if (!strcmp(argv[i], "-dlis")){
 			heuristique=DLIS;
 			++decal;
-		}else
+		}else if (!strcmp(argv[i], "-vsids")){
+			heuristique=VSIDS;
+			++decal;
+		} else
 			argv[i-decal] = argv[i];
 	}
 	argc = argc-decal;
