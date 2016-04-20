@@ -90,6 +90,11 @@ int main(int argc, char** argv) {
 	}
 	argc = argc-decal;
 
+	if (heuristique == VSIDS && !bcl){
+		cerr << "Erreur : L'heuristique vsids nécessite le clause learning (-cl)" << endl;
+		exit(5);
+	}
+	
     if (argc < 2 || argc > 4){
         fprintf(stderr,"Erreur : nombre de parametres incorrect.\n");
         usage();

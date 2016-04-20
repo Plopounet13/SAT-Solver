@@ -22,6 +22,8 @@
 #define DLIS 3
 #define VSIDS 4
 
+#define INC_SCORE 128
+
 using namespace std;
 
 class Formule

@@ -195,7 +195,15 @@ int Formule::choose() {
 			break;
         }
 		case VSIDS:{
-			
+			var = *(value[*(activeClauses.begin())].begin());
+			int maxi = scoreVsids[abs(var)];
+			for (auto& p:scoreVsids){
+				if (!fixed[p.first] && !fixed[-p.first] && p.second > maxi){
+					maxi=p.second;
+					var=p.first;
+				}
+				p.second=p.second/2;
+			}
 			break;
 		}
         default:
@@ -241,7 +249,8 @@ void Formule::dpll(string fout){
                             litSeen.insert(-v);
                         }
                         else if(fixed[v]){
-                            initial_value.back().insert(-v);
+							initial_value.back().insert(-v);
+							scoreVsids[abs(v)]+=INC_SCORE;
                             appar[-v].insert(value.size()-1);
                         }
                         edges.emplace_back(-v,0);
@@ -249,7 +258,7 @@ void Formule::dpll(string fout){
                     pair<int,int> e = currentLvlLit.back();
                     currentLvlLit.pop_back();
                     while(!currentLvlLit.empty() and fixed[currentLvlLit.back().first]==t){
-			fixed[currentLvlLit.back().first]=0;
+						fixed[currentLvlLit.back().first]=0;
                         currentLvlLit.pop_back();
                     }
                     currentLvlLit.push_back(e);
@@ -257,7 +266,7 @@ void Formule::dpll(string fout){
                         if(litConflict.count(it->first)){
                             litConflict.erase(it->first);
                             if(it->second!=-1){
-                                for(int v:initial_value.at(it->second)){
+                                for(int v:initial_value[it->second]){
                                     if(v!=it->first){
                                         if(it->first!=0){
                                             edges.emplace_back(-v,it->first);
@@ -268,6 +277,7 @@ void Formule::dpll(string fout){
                                         }
                                         else if(fixed[-v]){
                                             initial_value.back().insert(v);
+											scoreVsids[abs(v)]+=INC_SCORE;
                                             appar[v].insert(value.size()-1);
                                         }
                                         litConflict.erase(it->first);
@@ -283,7 +293,8 @@ void Formule::dpll(string fout){
                         }
                     }
                     activeClauses.insert(value.size()-1);
-                    initial_value.back().insert(-*(litConflict.begin()));
+					initial_value.back().insert(-*(litConflict.begin()));
+					scoreVsids[abs(*(litConflict.begin()))]+=INC_SCORE;
                     value.back().insert(-*(litConflict.begin()));
                     appar[-*(litConflict.begin())].insert(value.size()-1);
 
