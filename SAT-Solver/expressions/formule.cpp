@@ -195,7 +195,7 @@ int Formule::choose() {
 			break;
         }
 		case VSIDS:{
-			
+
 			break;
 		}
         default:
@@ -240,9 +240,9 @@ void Formule::dpll(string fout){
                             litConflict.insert(-v);
                             litSeen.insert(-v);
                         }
-                        else if(fixed[v]){
-                            initial_value.back().insert(-v);
-                            appar[-v].insert(value.size()-1);
+                        else if(fixed[-v]){
+                            initial_value.back().insert(v);
+                            appar[v].insert(value.size()-1);
                         }
                         edges.emplace_back(-v,0);
                     }
