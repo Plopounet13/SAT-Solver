@@ -130,10 +130,10 @@ int main(int argc, char** argv) {
     // parse through the input until there is no more:
     if (argc == 3){
         do {
-           // yyparse();
-		   // Formule f(res->tseytin(maxVar), heuristique);
-            dup2(backin,0);
-            //f.dpll("plop.out");
+			yyparse();
+			Formule f(res->tseytin(maxVar), heuristique);
+            //dup2(backin,0);
+			f.dpll("plop.out");
         } while (!feof(yyin));
     } else {
 		fclose(yyin);
