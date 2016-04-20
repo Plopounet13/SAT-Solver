@@ -446,32 +446,35 @@ void Formule::pause(vector<pair<int,int>>& edges, int uid){
 	cout << "c : continuer jusqu'au prochain conflit" << endl;
 	cout << "t : finir le déroulement de dpll sans intéruption" << endl;
 	char rep;
-debut:
-	scanf("%c",&rep);
-	switch(rep){
-		case 'g':
-			graphe(edges,uid);
-			cout << "c : continuer jusqu'au prochain conflit" << endl;
-			cout << "t : finir le déroulement de dpll sans intéruption" << endl;
-		sousdebut:
-			scanf("%c",&rep);
-			switch(rep){
-				case 'c':
-					return;
-				case 't':
-					bInterac=false;
-					return;
-				default:
-					goto sousdebut;
-			}
-		case 'c':
-			return;
-		case 't':
-			bInterac=false;
-			return;
-		default:
-			cout << "Réponse incorrecte." << endl;
-			goto debut;
+	while(true){
+		scanf(" %c", &rep);
+		switch(rep){
+			case 'g':
+				graphe(edges,uid);
+				cout << "c : continuer jusqu'au prochain conflit" << endl;
+				cout << "t : finir le déroulement de dpll sans intéruption" << endl;
+				while (true){
+					scanf(" %c",&rep);
+					switch(rep){
+						case 'c':
+							return;
+						case 't':
+							bInterac=false;
+							return;
+						default:
+							cout << "Réponse incorrecte." << endl;
+							break;
+					}
+				}
+			case 'c':
+				return;
+			case 't':
+				bInterac=false;
+				return;
+			default:
+				cout << "Réponse incorrecte." << endl;
+				break;
+		}
 	}
 
 }

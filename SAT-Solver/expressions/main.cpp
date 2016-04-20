@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
+#include <fstream>
 
 using namespace std;
 
@@ -61,6 +62,7 @@ char* getExt(char* param){
 
 //ici c'est le début du main
 int main(int argc, char** argv) {
+	int backin = dup(0);
 	if (argc == 2 && !strcmp(argv[1],"help"))
 		help();
 	int decal=0;
@@ -118,13 +120,13 @@ int main(int argc, char** argv) {
     }
     int fd, dstd;
 
-    if (!(fd = open(argv[argc-1], O_RDONLY))){
+    if (!(yyin = fopen(argv[argc-1], "r"))){
         fprintf(stderr,"Erreur : Ouverture fichier source impossible.\n");
         usage();
         exit(3);
     }
-    int backin = dup(0);
-	dup2(fd, 0);
+	
+	//dup2(fd, 0);
     // parse through the input until there is no more:
     if (argc == 3){
         do {
@@ -134,12 +136,14 @@ int main(int argc, char** argv) {
             //f.dpll("plop.out");
         } while (!feof(yyin));
     } else {
+		fclose(yyin);
+		ifstream fic(argv[argc-1]);
         int var, V, C;
         char p;
         string line, cnf;
-        getline(cin, line);
+        getline(fic, line);
         while (line[0] == 'c'){
-            getline(cin, line);
+            getline(fic, line);
         }
         stringstream streamline(line);
         streamline >> p >> cnf >> V >> C;
@@ -149,7 +153,7 @@ int main(int argc, char** argv) {
             exit(4);
         }
 		vector<set<int>> value;
-        while (getline(cin, line)){
+        while (getline(fic, line)){
             if (line != "" && line[0] != 'c' and line != "0" and line != "%"){
                 --C;
                 stringstream streamline2(line);
@@ -169,8 +173,8 @@ int main(int argc, char** argv) {
         Formule f(value, heuristique);
         if (C){
             fprintf(stderr, "Erreur : Nombre clauses éronné.\n");
-        }
-        dup2(backin,0);
+		}
+        //dup2(backin,0);
         //scanf("%*[^\n]%*c");
         f.dpll("tash.out");
     }
