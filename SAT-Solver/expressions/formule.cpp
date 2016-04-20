@@ -195,6 +195,7 @@ int Formule::choose() {
 			break;
         }
 		case VSIDS:{
+<<<<<<< HEAD
 			var = *(value[*(activeClauses.begin())].begin());
 			int maxi = scoreVsids[abs(var)];
 			for (auto& p:scoreVsids){
@@ -204,6 +205,9 @@ int Formule::choose() {
 				}
 				p.second=p.second/2;
 			}
+=======
+
+>>>>>>> origin/master
 			break;
 		}
         default:
@@ -248,10 +252,10 @@ void Formule::dpll(string fout){
                             litConflict.insert(-v);
                             litSeen.insert(-v);
                         }
-                        else if(fixed[v]){
-							initial_value.back().insert(-v);
+                        else if(fixed[-v]){
+							initial_value.back().insert(v);
 							scoreVsids[abs(v)]+=INC_SCORE;
-                            appar[-v].insert(value.size()-1);
+                            appar[v].insert(value.size()-1);
                         }
                         edges.emplace_back(-v,0);
                     }
