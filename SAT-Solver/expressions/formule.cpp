@@ -195,7 +195,6 @@ int Formule::choose() {
 			break;
         }
 		case VSIDS:{
-<<<<<<< HEAD
 			var = *(value[*(activeClauses.begin())].begin());
 			int maxi = scoreVsids[abs(var)];
 			for (auto& p:scoreVsids){
@@ -205,9 +204,6 @@ int Formule::choose() {
 				}
 				p.second=p.second/2;
 			}
-=======
-
->>>>>>> origin/master
 			break;
 		}
         default:
