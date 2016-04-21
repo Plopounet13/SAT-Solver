@@ -40,6 +40,7 @@ Formule::Formule(Expr& e, int heur):heuristique(heur){
 	for (int i=0; i<value.size(); ++i){
 		activeClauses.insert(i);
 	}
+	nbClauseInit = activeClauses.size();
 }
 
 Formule::Formule(vector<set<int>>& val, int heur):heuristique(heur){
@@ -73,6 +74,7 @@ Formule::Formule(vector<set<int>>& val, int heur):heuristique(heur){
 	for (int i=0; i<value.size(); ++i){
 		activeClauses.insert(i);
 	}
+	nbClauseInit = activeClauses.size();
 }
 //0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
@@ -204,6 +206,9 @@ int Formule::choose() {
 				}
 				p.second=p.second/2;
 			}
+			break;
+		}
+		case FORGET:{
 			break;
 		}
         default:
@@ -456,14 +461,14 @@ void Formule::pause(vector<pair<int,int>>& edges, int uid){
 	cout << "t : finir le déroulement de dpll sans intéruption" << endl;
 	char rep;
 	while(true){
-		scanf("\n%c",&rep);
+		scanf(" %c", &rep);
 		switch(rep){
 			case 'g':
 				graphe(edges,uid);
 				cout << "c : continuer jusqu'au prochain conflit" << endl;
 				cout << "t : finir le déroulement de dpll sans intéruption" << endl;
 				while(true){
-					scanf("\n%c",&rep);
+					scanf(" %c",&rep);
 					switch(rep){
 						case 'c':
 							return;
@@ -471,7 +476,8 @@ void Formule::pause(vector<pair<int,int>>& edges, int uid){
 							bInterac=false;
 							return;
 						default:
-							cout << "Réponqe incorrecte" << endl;
+							cout << "Réponse incorrecte." << endl;
+							break;
 					}
 				}
 			case 'c':
@@ -480,7 +486,8 @@ void Formule::pause(vector<pair<int,int>>& edges, int uid){
 				bInterac=false;
 				return;
 			default:
-				cout << "Réponse incorrecte." << endl;	
+				cout << "Réponse incorrecte." << endl;
+				break;
 		}
 	}
 }
@@ -518,8 +525,4 @@ void Formule::pause(vector<pair<int,int>>& edges, int uid){
 
 
 
-
-#include <iostream>
-
-#include "formule.hpp"
 
