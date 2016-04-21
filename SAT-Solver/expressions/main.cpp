@@ -87,6 +87,9 @@ int main(int argc, char** argv) {
 		}else if (!strcmp(argv[i], "-vsids")){
 			heuristique=VSIDS;
 			++decal;
+		}else if (!strcmp(argv[i], "-forget")){
+			heuristique=FORGET;
+			++decal;
 		} else
 			argv[i-decal] = argv[i];
 	}
@@ -94,6 +97,10 @@ int main(int argc, char** argv) {
 
 	if (heuristique == VSIDS && !bcl){
 		cerr << "Erreur : L'heuristique vsids nécessite le clause learning (-cl)" << endl;
+		exit(5);
+	}
+	if (heuristique == FORGET && !bcl){
+		cerr << "Erreur : L'heuristique forget nécessite le clause learning (-cl)" << endl;
 		exit(5);
 	}
 	
@@ -132,7 +139,6 @@ int main(int argc, char** argv) {
         do {
 			yyparse();
 			Formule f(res->tseytin(maxVar), heuristique);
-            //dup2(backin,0);
 			f.dpll("plop.out");
         } while (!feof(yyin));
     } else {
@@ -174,8 +180,6 @@ int main(int argc, char** argv) {
         if (C){
             fprintf(stderr, "Erreur : Nombre clauses éronné.\n");
 		}
-        //dup2(backin,0);
-        //scanf("%*[^\n]%*c");
         f.dpll("tash.out");
     }
     return 0;

@@ -21,6 +21,7 @@
 #define MOMS 2
 #define DLIS 3
 #define VSIDS 4
+#define FORGET 5
 
 #define INC_SCORE 128
 
@@ -41,6 +42,7 @@ public:
 	virtual void graphe(vector<pair<int,int>>& edges, int uid);
 private:
 	int heuristique;
+	int nbClauseInit;
 	map<int,int> scoreVsids;
     map<int,int> fixed;
 	vector<set<int>> value;

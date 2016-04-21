@@ -40,6 +40,7 @@ Formule::Formule(Expr& e, int heur):heuristique(heur){
 	for (int i=0; i<value.size(); ++i){
 		activeClauses.insert(i);
 	}
+	nbClauseInit = activeClauses.size();
 }
 
 Formule::Formule(vector<set<int>>& val, int heur):heuristique(heur){
@@ -73,6 +74,7 @@ Formule::Formule(vector<set<int>>& val, int heur):heuristique(heur){
 	for (int i=0; i<value.size(); ++i){
 		activeClauses.insert(i);
 	}
+	nbClauseInit = activeClauses.size();
 }
 //0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
@@ -204,6 +206,9 @@ int Formule::choose() {
 				}
 				p.second=p.second/2;
 			}
+			break;
+		}
+		case FORGET:{
 			break;
 		}
         default:
