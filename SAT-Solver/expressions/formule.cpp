@@ -301,6 +301,10 @@ void Formule::dpll(string fout){
                     while(!currentLvlLit.empty() && !fixed[currentLvlLit.back().first]){
                         currentLvlLit.pop_back();
                     }
+/*for(int i:initial_value.back())
+cout << i << " ";
+cout << endl;
+cout << "UID " << *(litConflict.begin()) << endl;*/
                     if(bInterac){
                         pause(edges,*(litConflict.begin()));
                     }
@@ -314,12 +318,17 @@ void Formule::dpll(string fout){
                 choice = -b.lastBack;
 //cout << "lastback : " << b.lastBack << endl;
                 fixed[choice]=t;
-                currentLvlLit.emplace_back(choice,-1);
+                currentLvlLit.emplace_back(choice,value.size()-1);
 //cout << choice << "  FORCE" << endl;
                 res = evol(choice,true,forcedVariables);
             }
         }
     }
+/*for(auto& x:initial_value){
+for(int i:x)
+cout << i << " ";
+cout << 0 << endl;
+}*/
     if(res==1){
         cout << "s SATISFIABLE" << endl;
 		set<int> s;
@@ -446,34 +455,34 @@ void Formule::pause(vector<pair<int,int>>& edges, int uid){
 	cout << "c : continuer jusqu'au prochain conflit" << endl;
 	cout << "t : finir le déroulement de dpll sans intéruption" << endl;
 	char rep;
-debut:
-	scanf("%c",&rep);
-	switch(rep){
-		case 'g':
-			graphe(edges,uid);
-			cout << "c : continuer jusqu'au prochain conflit" << endl;
-			cout << "t : finir le déroulement de dpll sans intéruption" << endl;
-		sousdebut:
-			scanf("%c",&rep);
-			switch(rep){
-				case 'c':
-					return;
-				case 't':
-					bInterac=false;
-					return;
-				default:
-					goto sousdebut;
-			}
-		case 'c':
-			return;
-		case 't':
-			bInterac=false;
-			return;
-		default:
-			cout << "Réponse incorrecte." << endl;
-			goto debut;
+	while(true){
+		scanf("\n%c",&rep);
+		switch(rep){
+			case 'g':
+				graphe(edges,uid);
+				cout << "c : continuer jusqu'au prochain conflit" << endl;
+				cout << "t : finir le déroulement de dpll sans intéruption" << endl;
+				while(true){
+					scanf("\n%c",&rep);
+					switch(rep){
+						case 'c':
+							return;
+						case 't':
+							bInterac=false;
+							return;
+						default:
+							cout << "Réponqe incorrecte" << endl;
+					}
+				}
+			case 'c':
+				return;
+			case 't':
+				bInterac=false;
+				return;
+			default:
+				cout << "Réponse incorrecte." << endl;	
+		}
 	}
-
 }
 
 
@@ -509,4 +518,8 @@ debut:
 
 
 
+
+#include <iostream>
+
+#include "formule.hpp"
 
