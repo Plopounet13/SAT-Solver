@@ -303,6 +303,12 @@ void Formule::dpll(string fout){
                     value.back().insert(-*(litConflict.begin()));
                     appar[-*(litConflict.begin())].insert(value.size()-1);
 
+                    int maxi_t = 1;
+                    for(int x:initial_value.back()){
+                        if(fixed[x]>maxi_t){
+                            maxi_t = fixed[x];
+                        }
+                    }
                     while(!currentLvlLit.empty() && !fixed[currentLvlLit.back().first]){
                         currentLvlLit.pop_back();
                     }
@@ -313,19 +319,28 @@ cout << "UID " << *(litConflict.begin()) << endl;*/
                     if(bInterac){
                         pause(edges,*(litConflict.begin()));
                     }
+                    //currentlit
+                    --t;
+                    while(t!=mini_t){
+                        res = b.back(value,activeClauses,fixed,&choice,nbApparPos,nbApparNeg);
+                        --t;
+                    }
+                    res = evol(-*(litConflict.begin()),true,forcedVariables);
                 }
+                else{
 //cout << "______________BACK" << endl;
-                while(!forcedVariables.empty()){
-                    fixed[forcedVariables.front()]=0;
-                    forcedVariables.pop();
-                }
-                --t;
-                choice = -b.lastBack;
+                    while(!forcedVariables.empty()){
+                        fixed[forcedVariables.front()]=0;
+                        forcedVariables.pop();
+                    }
+                    --t;
+                    choice = -b.lastBack;
 //cout << "lastback : " << b.lastBack << endl;
-                fixed[choice]=t;
-                currentLvlLit.emplace_back(choice,value.size()-1);
+                    fixed[choice]=t;
+                    currentLvlLit.emplace_back(choice,value.size()-1);
 //cout << choice << "  FORCE" << endl;
-                res = evol(choice,true,forcedVariables);
+                    res = evol(choice,true,forcedVariables);
+                }
             }
         }
     }
