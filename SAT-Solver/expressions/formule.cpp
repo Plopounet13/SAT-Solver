@@ -99,7 +99,7 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
 			value[c].erase(p);
 			if (value[c].empty()){
                 b.push(var,forced,clauses_sup,&(appar[-var]));
-//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
+cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
                 currentLvlLit.emplace_back(0,c);
                 if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg)){
                     return -1;
@@ -117,14 +117,14 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
                     --(nbApparNeg[-i]);
                 if(!bcl and nbApparPos[abs(i)]+nbApparNeg[abs(i)]!=0 and !fixed[i] and !fixed[-i]){
                     if(nbApparPos[abs(i)]==0){
-//cout << "ON FORCE " << -abs(i) << " QUI N'EST QUE NEGATIF" << endl;
+cout << "ON FORCE " << -abs(i) << " QUI N'EST QUE NEGATIF" << endl;
                         if(!fixed[-abs(i)]){
                             fixed[-abs(i)]=t;
                             forcedVariables.push(-abs(i));
                         }
                     }
                     if(nbApparNeg[abs(i)]==0){
-//cout << "ON FORCE " << abs(i) << " QUI N'EST QUE POSITIF" << endl;
+cout << "ON FORCE " << abs(i) << " QUI N'EST QUE POSITIF" << endl;
                         if(!fixed[abs(i)]){
                             fixed[abs(i)]=t;
                             forcedVariables.push(abs(i));
@@ -137,7 +137,7 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
         }
         if (value[c].size()==1){
             if(!fixed[*value[c].begin()]){
-//cout << "ON FORCE " << *value[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
+cout << "ON FORCE " << *value[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
 				if (bForget){
 					if(scoreForget.count(c))
 						scoreForget[c]+=10;
@@ -239,22 +239,24 @@ void Formule::dpll(string fout){
     res=preTrait(forcedVariables);
     initial_value = value;
     while(res<=0){
+cout << "Time " << t << endl;
         if(res<=0){
             if(forcedVariables.empty()){
                 choice = choose();
                 ++t;
                 fixed[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
-//cout << choice << "  UN CHOIX" << endl;
+cout << choice << "  UN CHOIX" << endl;
                 res = evol(choice, false, forcedVariables);
             }
             else{
                 choice = forcedVariables.front();
-//cout << choice << "  FORCE" << endl;
+cout << choice << "  FORCE" << endl;
                 forcedVariables.pop();
                 res = evol(choice, true, forcedVariables);
             }
-            while(res==-1){
+			while(res==-1){
+cout << "______________BACK" << endl;
                 if(bcl){
                     //creer graphe
                     initial_value.push_back(set<int>());
@@ -320,13 +322,12 @@ void Formule::dpll(string fout){
 						scoreForget[value.size()-1]=10;
                     int maxi_t = 1;
                     for(int x:initial_value.back()){
-                        if(fixed[x]>maxi_t){
-                            maxi_t = fixed[x];
+cout << "fixed " << -x << " " << fixed[-x] << endl;
+                        if(fixed[-x]>maxi_t){
+                            maxi_t = fixed[-x];
                         }
                     }
-                    while(!currentLvlLit.empty() && !fixed[currentLvlLit.back().first]){
-                        currentLvlLit.pop_back();
-                    }
+					
 /*for(int i:initial_value.back())
 cout << i << " ";
 cout << endl;
@@ -336,14 +337,20 @@ cout << "UID " << *(litConflict.begin()) << endl;*/
                     }
                     //currentlit
                     --t;
+cout << "maxit " << maxi_t << endl;
                     while(t!=maxi_t){
                         res = b.back(value,activeClauses,fixed,&choice,nbApparPos,nbApparNeg);
                         --t;
-                    }
-                    res = evol(-*(litConflict.begin()),true,forcedVariables);
+					}
+					while(!currentLvlLit.empty() && !fixed[currentLvlLit.back().first]){
+						currentLvlLit.pop_back();
+					}
+					choice = -*(litConflict.begin());
+					fixed[choice]=t;
+					currentLvlLit.emplace_back(choice,value.size()-1);
+                    res = evol(choice,true,forcedVariables);
                 }
                 else{
-//cout << "______________BACK" << endl;
                     while(!forcedVariables.empty()){
                         fixed[forcedVariables.front()]=0;
                         forcedVariables.pop();

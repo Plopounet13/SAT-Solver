@@ -42,12 +42,16 @@ void help(){
 	cout << "\t-rand : Choix aléatoire de la variable à fixer." << endl;
 	cout << "\t-moms : Choix de la variable ayant le plus d'occurences dans les clauses de taille minimale" << endl;
 	cout << "\t-dlis : Choix de la variable satisfaisant le plus de clauses" << endl;
+	cout << "\t-vsids : Choix de la variable la plus active dans des clauses apprises" << endl;
+	cout << endl << "Options :" << endl;
+	cout << "\t-interac : Mode interactif permettant de proposer la visualisation du graphe de conflit" << endl;
+	cout << "\t-forget : Oubli des clauses apprises non utilisées" << endl;
 	cout << endl;
 	cout << "Exemples :" << endl;
 	cout << "\t./resol -tseitin fic.for -rand" << endl;
 	cout << "\tCet appel applique tseitin à fic.for puis fait tourner dpll en pariant aléatoirement" << endl;
 	cout << "\t./resol fic.cnf" << endl;
-	cout << "\tCet appel fait tourner dpll en pariant la première variable libre trouvée" << endl;
+	cout << "\tCet appel fait tourner dpll en pariant la première variable libre trouvée" << endl << endl;
 	exit(0);
 }
 
@@ -92,7 +96,7 @@ int main(int argc, char** argv) {
 		}else if (!strcmp(argv[i], "-forget")){
 			bForget=true;
 			++decal;
-		}else if (!strcmp(argv[i], "-cl-interact")){
+		}else if (!strcmp(argv[i], "-cl-interac")){
 			bcl = true;
 			bInterac=true;
 			++decal;
@@ -100,7 +104,11 @@ int main(int argc, char** argv) {
 			argv[i-decal] = argv[i];
 	}
 	argc = argc-decal;
-
+	
+	if (bInterac && !bcl){
+		cerr << "Erreur : Le mode intéractif nécessite le clause learning (-cl)" << endl;
+		exit(5);
+	}
 	if (heuristique == VSIDS && !bcl){
 		cerr << "Erreur : L'heuristique vsids nécessite le clause learning (-cl)" << endl;
 		exit(5);
