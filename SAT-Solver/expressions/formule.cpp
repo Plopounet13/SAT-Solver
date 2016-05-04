@@ -79,6 +79,10 @@ Formule::Formule(vector<set<int>>& val, int heur):heuristique(heur){
 	nbClauseInit = activeClauses.size();
 }
 
+void retire(int c){
+	return;
+}
+
 //0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
     int res=0;
@@ -134,6 +138,16 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
         if (value[c].size()==1){
             if(!fixed[*value[c].begin()]){
 //cout << "ON FORCE " << *value[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
+				if (bForget){
+					if(scoreForget.count(c))
+						scoreForget[c]+=10;
+					for (auto& s:scoreForget){
+						if (s.first != c)
+							--s.second;
+						if (s.second <= 0)
+							retire(s.first);
+					}
+				}
                 forcedVariables.push(*value[c].begin());
                 fixed[*value[c].begin()]=t;
                 currentLvlLit.emplace_back(*value[c].begin(),c);
@@ -302,7 +316,8 @@ void Formule::dpll(string fout){
 					scoreVsids[abs(*(litConflict.begin()))]+=INC_SCORE;
                     value.back().insert(-*(litConflict.begin()));
                     appar[-*(litConflict.begin())].insert(value.size()-1);
-
+					if (bForget)
+						scoreForget[value.size()-1]=10;
                     int maxi_t = 1;
                     for(int x:initial_value.back()){
                         if(fixed[x]>maxi_t){

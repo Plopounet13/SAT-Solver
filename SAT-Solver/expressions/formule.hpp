@@ -54,7 +54,7 @@ private:
 	vector<int> nbApparPos;
 	vector<int> nbApparNeg;
 	map<int,set<int> > appar;
-	map
+	map<int,int> scroreForget;
 };
 
 

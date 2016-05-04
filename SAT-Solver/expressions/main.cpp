@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
 			heuristique=VSIDS;
 			++decal;
 		}else if (!strcmp(argv[i], "-forget")){
-			forget=true;
+			bForget=true;
 			++decal;
 		}else if (!strcmp(argv[i], "-cl-interact")){
 			bcl = true;
@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
 		cerr << "Erreur : L'heuristique vsids nécessite le clause learning (-cl)" << endl;
 		exit(5);
 	}
-	if (forget && !bcl){
+	if (bForget && !bcl){
 		cerr << "Erreur : L'heuristique forget nécessite le clause learning (-cl)" << endl;
 		exit(5);
 	}
