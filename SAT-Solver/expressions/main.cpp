@@ -63,6 +63,7 @@ char* getExt(char* param){
 
 //ici c'est le début du main
 int main(int argc, char** argv) {
+	bForget=false;
 	int backin = dup(0);
 	if (argc == 2 && !strcmp(argv[1],"help"))
 		help();
