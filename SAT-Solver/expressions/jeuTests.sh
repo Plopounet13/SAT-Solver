@@ -17,7 +17,7 @@ fi
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0`
-
+i=0
 while read test
 do
 	line=($test)
@@ -38,9 +38,11 @@ do
 	then
 		echo "$repDon [${GREEN}OK${NC}]"
 	else
+		i=$((i+1))
 		echo "$repDon [${RED}KO${NC}]"
 	fi
 	grep '^real' jeuTests.tmp | sed s/real//g
 	echo
 done <listeTests.txt
+echo "$i ERREUR(S)"
 rm -f jeuTests.tmp resolAnswer.tmp

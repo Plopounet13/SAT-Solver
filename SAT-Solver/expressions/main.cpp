@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
 			argv[i-decal] = argv[i];
 	}
 	argc = argc-decal;
-	
+
 	if (bInterac && !bcl){
 		cerr << "Erreur : Le mode intéractif nécessite le clause learning (-cl)" << endl;
 		exit(5);
@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
 		cerr << "Erreur : L'heuristique forget nécessite le clause learning (-cl)" << endl;
 		exit(5);
 	}
-	
+
     if (argc < 2 || argc > 4){
         fprintf(stderr,"Erreur : nombre de parametres incorrect.\n");
         usage();
@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
         usage();
         exit(3);
     }
-	
+
 	//dup2(fd, 0);
     // parse through the input until there is no more:
     if (argc == 3){
@@ -172,13 +172,13 @@ int main(int argc, char** argv) {
             fprintf(stderr,"Erreur : Le fichier doit commencer par \"p cnf\".\n");
             exit(4);
         }
-		vector<set<int>> value;
+		vector<unordered_set<int>> value;
         while (getline(fic, line)){
             if (line != "" && line[0] != 'c' and line != "0" and line != "%"){
                 --C;
                 stringstream streamline2(line);
                 streamline2 >> var;
-                value.push_back(set<int>());
+                value.push_back(unordered_set<int>());
                 while(var != 0){
                     Expr* e;
                     if (abs(var) > V){

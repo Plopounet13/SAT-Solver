@@ -42,10 +42,10 @@ Formule::Formule(Expr& e, int heur):heuristique(heur){
 		activeClauses.insert(i);
 	}
 	nbClauseInit = activeClauses.size();
-	
+
 }
 
-Formule::Formule(vector<set<int>>& val, int heur):heuristique(heur){
+Formule::Formule(vector<unordered_set<int>>& val, int heur):heuristique(heur){
 	value = val;
 	/*for (set<int> x: value){
         for (int y : x)
@@ -89,7 +89,7 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
 	set<int>* clauses_sup = new set<int>();
 	set<int> activeClausesCopy(activeClauses);
 	for (int c:activeClausesCopy){
-		set<int>::iterator p = value[c].find(-var);
+		unordered_set<int>::iterator p = value[c].find(-var);
 		if(p != value[c].end()){
             if(-var>0)
                 --(nbApparPos[-var]);
@@ -99,7 +99,7 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
 			value[c].erase(p);
 			if (value[c].empty()){
                 b.push(var,forced,clauses_sup,&(appar[-var]));
-cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
+//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
                 currentLvlLit.emplace_back(0,c);
                 if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg)){
                     return -1;
@@ -117,14 +117,14 @@ cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
                     --(nbApparNeg[-i]);
                 if(!bcl and nbApparPos[abs(i)]+nbApparNeg[abs(i)]!=0 and !fixed[i] and !fixed[-i]){
                     if(nbApparPos[abs(i)]==0){
-cout << "ON FORCE " << -abs(i) << " QUI N'EST QUE NEGATIF" << endl;
+//cout << "ON FORCE " << -abs(i) << " QUI N'EST QUE NEGATIF" << endl;
                         if(!fixed[-abs(i)]){
                             fixed[-abs(i)]=t;
                             forcedVariables.push(-abs(i));
                         }
                     }
                     if(nbApparNeg[abs(i)]==0){
-cout << "ON FORCE " << abs(i) << " QUI N'EST QUE POSITIF" << endl;
+//cout << "ON FORCE " << abs(i) << " QUI N'EST QUE POSITIF" << endl;
                         if(!fixed[abs(i)]){
                             fixed[abs(i)]=t;
                             forcedVariables.push(abs(i));
@@ -137,7 +137,7 @@ cout << "ON FORCE " << abs(i) << " QUI N'EST QUE POSITIF" << endl;
         }
         if (value[c].size()==1){
             if(!fixed[*value[c].begin()]){
-cout << "ON FORCE " << *value[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
+//cout << "ON FORCE " << *value[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
 				if (bForget){
 					if(scoreForget.count(c))
 						scoreForget[c]+=10;
@@ -239,28 +239,32 @@ void Formule::dpll(string fout){
     res=preTrait(forcedVariables);
     initial_value = value;
     while(res<=0){
-cout << "Time " << t << endl;
+//cout << "Time " << t << endl;
         if(res<=0){
             if(forcedVariables.empty()){
                 choice = choose();
                 ++t;
                 fixed[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
-cout << choice << "  UN CHOIX" << endl;
+//cout << choice << "  UN CHOIX" << endl;
                 res = evol(choice, false, forcedVariables);
             }
             else{
                 choice = forcedVariables.front();
-cout << choice << "  FORCE" << endl;
+//cout << choice << "  FORCE" << endl;
                 forcedVariables.pop();
                 res = evol(choice, true, forcedVariables);
             }
 			while(res==-1){
-cout << "______________BACK" << endl;
+//cout << "______________BACK" << endl;
+                while(!forcedVariables.empty()){
+                    fixed[forcedVariables.front()]=0;
+                    forcedVariables.pop();
+                }
                 if(bcl){
                     //creer graphe
-                    initial_value.push_back(set<int>());
-                    value.push_back(set<int>());
+                    initial_value.push_back(unordered_set<int>());
+                    value.push_back(unordered_set<int>());
                     set<int> litConflict;
                     set<int> litSeen;
                     vector<pair<int,int> > edges;
@@ -322,22 +326,20 @@ cout << "______________BACK" << endl;
 						scoreForget[value.size()-1]=10;
                     int maxi_t = 1;
                     for(int x:initial_value.back()){
-cout << "fixed " << -x << " " << fixed[-x] << endl;
                         if(fixed[-x]>maxi_t){
                             maxi_t = fixed[-x];
                         }
                     }
-					
+
 /*for(int i:initial_value.back())
 cout << i << " ";
-cout << endl;
-cout << "UID " << *(litConflict.begin()) << endl;*/
+cout << endl;*/
+//cout << "UID " << *(litConflict.begin()) << endl;
                     if(bInterac){
                         pause(edges,*(litConflict.begin()));
                     }
                     //currentlit
                     --t;
-cout << "maxit " << maxi_t << endl;
                     while(t!=maxi_t){
                         res = b.back(value,activeClauses,fixed,&choice,nbApparPos,nbApparNeg);
                         --t;
@@ -351,10 +353,6 @@ cout << "maxit " << maxi_t << endl;
                     res = evol(choice,true,forcedVariables);
                 }
                 else{
-                    while(!forcedVariables.empty()){
-                        fixed[forcedVariables.front()]=0;
-                        forcedVariables.pop();
-                    }
                     --t;
                     choice = -b.lastBack;
 //cout << "lastback : " << b.lastBack << endl;
@@ -390,7 +388,7 @@ cout << 0 << endl;
 //	0 if fails
 int Formule::propage(int var){
 	list<int> l;
-	set<int>::iterator pos;
+	unordered_set<int>::iterator pos;
 	for (int i:activeClauses){
         if (value[i].find(var) != value[i].end()){
 			l.push_back(i);

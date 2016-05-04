@@ -2,16 +2,17 @@
 NAME=expr
 EXTENSION=toEns Tseitin formule backtrack
 #compiler name
-CC=clang++
+CC=g++
 #lex name+path
 LEX=flex
+FLAG= -O3
 STD = -std=c++11
 LIBLEX=-L/usr/local/Cellar/flex/2.6.0/lib/ -lfl
 #yacc/bison
 YACC=bison
 
 all: $(NAME).tab.cpp $(NAME).yy.c $(NAME).cpp main.cpp formule.cpp $(EXTENSION:=.cpp)
-	$(CC) -g -Wno-write-strings -o resol $^ $(LIBLEX) $(STD)
+	$(CC) -Wno-write-strings -o resol $^ $(FLAG) $(LIBLEX) $(STD)
 
 $(NAME).yy.c :  $(NAME).l
 	$(LEX)  -o $@ $^

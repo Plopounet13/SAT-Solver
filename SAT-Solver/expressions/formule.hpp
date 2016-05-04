@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <set>
+#include <unordered_set>
+#include <map>
+#include <unordered_map>
 #include <stack>
 #include <list>
 #include <functional>
@@ -31,7 +34,7 @@ class Formule
 {
 public:
 	Formule(Expr& e, int heur);
-	Formule(vector<set<int>>& val, int heur);
+	Formule(vector<unordered_set<int>>& val, int heur);
 	virtual void dpll(string fout);
 	virtual int evol(int var, bool forced, queue<int>& forcedVariables);
 	virtual int choose();
@@ -45,9 +48,9 @@ private:
 	int nbClauseInit;
 	map<int,int> scoreVsids;
 	map<int,int> scoreForget;
-    map<int,int> fixed;
-	vector<set<int>> value;
-	vector<set<int>> initial_value;
+    unordered_map<int,int> fixed;
+	vector<unordered_set<int>> value;
+	vector<unordered_set<int>> initial_value;
 	set<int> activeClauses;
 	vector<pair<int,int> > watched;
 	Backtrack b;

@@ -3,7 +3,9 @@
 
 #include <vector>
 #include <set>
+#include <unordered_set>
 #include <stack>
+#include <unordered_map>
 #include <functional>
 #include "expr.hpp"
 
@@ -16,8 +18,8 @@ public:
 	ElemBacktrack(int vr, bool forc, set<int>* clsup, set<int>* clret);
 	~ElemBacktrack();
 	virtual bool isForced();
-	virtual void annule(vector<set<int>>& value, set<int>& activeClauses, map<int,int>& fixed,vector<int>& nbApparPos,vector<int>& nbApparNeg, int &lastBack);
-	virtual void revert(vector<set<int>>& value, set<int>& activeClauses, map<int,int>& fixed, int* vr);
+	virtual void annule(vector<unordered_set<int>>& value, set<int>& activeClauses, unordered_map<int,int>& fixed,vector<int>& nbApparPos,vector<int>& nbApparNeg, int &lastBack);
+	virtual void revert(vector<unordered_set<int>>& value, set<int>& activeClauses, unordered_map<int,int>& fixed, int* vr);
 	virtual int variable();
 private:
 	int var;			   //etiq
@@ -31,7 +33,7 @@ class Backtrack{
 public:
 	Backtrack();
 	virtual void push(int vr, bool forc, set<int>* clsup, set<int>* clret);
-	virtual bool back(vector<set<int>>& value, set<int>& activeClauses, map<int,int>& fixed, int* var,vector<int>& nbApparPos,vector<int>& nbApparNeg);
+	virtual bool back(vector<unordered_set<int>>& value, set<int>& activeClauses, unordered_map<int,int>& fixed, int* var,vector<int>& nbApparPos,vector<int>& nbApparNeg);
 	virtual void variables(set<int>& s);
 	int lastBack;
 private:
