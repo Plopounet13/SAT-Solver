@@ -6,6 +6,7 @@ vector<pair<int,int> > currentLvlLit;
 extern int maxVar;
 extern bool bcl;
 extern bool bInterac;
+extern bool bForget;
 int t = 1;
 
 Formule::Formule(Expr& e, int heur):heuristique(heur){
@@ -41,6 +42,7 @@ Formule::Formule(Expr& e, int heur):heuristique(heur){
 		activeClauses.insert(i);
 	}
 	nbClauseInit = activeClauses.size();
+	
 }
 
 Formule::Formule(vector<set<int>>& val, int heur):heuristique(heur){
@@ -76,6 +78,7 @@ Formule::Formule(vector<set<int>>& val, int heur):heuristique(heur){
 	}
 	nbClauseInit = activeClauses.size();
 }
+
 //0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
     int res=0;
@@ -206,9 +209,6 @@ int Formule::choose() {
 				}
 				p.second=p.second/2;
 			}
-			break;
-		}
-		case FORGET:{
 			break;
 		}
         default:

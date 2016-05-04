@@ -21,9 +21,9 @@
 #define MOMS 2
 #define DLIS 3
 #define VSIDS 4
-#define FORGET 5
 
-#define INC_SCORE 128
+#define FOR_SCORE 10
+#define INC_SCORE 64
 
 using namespace std;
 
@@ -44,6 +44,7 @@ private:
 	int heuristique;
 	int nbClauseInit;
 	map<int,int> scoreVsids;
+	map<int,int> scoreForget;
     map<int,int> fixed;
 	vector<set<int>> value;
 	vector<set<int>> initial_value;
@@ -53,6 +54,7 @@ private:
 	vector<int> nbApparPos;
 	vector<int> nbApparNeg;
 	map<int,set<int> > appar;
+	map
 };
 
 

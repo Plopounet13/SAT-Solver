@@ -21,6 +21,7 @@ extern Expr *res;
 extern int maxVar;
 bool bcl;
 bool bInterac;
+bool bForget;
 
 void usage(){
     cerr << "Usage : ./resol [help] [-cl | -interac] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis]" << endl;
@@ -88,7 +89,11 @@ int main(int argc, char** argv) {
 			heuristique=VSIDS;
 			++decal;
 		}else if (!strcmp(argv[i], "-forget")){
-			heuristique=FORGET;
+			forget=true;
+			++decal;
+		}else if (!strcmp(argv[i], "-cl-interact")){
+			bcl = true;
+			bInterac=true;
 			++decal;
 		} else
 			argv[i-decal] = argv[i];
@@ -99,7 +104,7 @@ int main(int argc, char** argv) {
 		cerr << "Erreur : L'heuristique vsids nécessite le clause learning (-cl)" << endl;
 		exit(5);
 	}
-	if (heuristique == FORGET && !bcl){
+	if (forget && !bcl){
 		cerr << "Erreur : L'heuristique forget nécessite le clause learning (-cl)" << endl;
 		exit(5);
 	}
@@ -137,9 +142,9 @@ int main(int argc, char** argv) {
     // parse through the input until there is no more:
     if (argc == 3){
         do {
-			yyparse();
-			Formule f(res->tseytin(maxVar), heuristique);
-			f.dpll("plop.out");
+			//yyparse();
+			//Formule f(res->tseytin(maxVar), heuristique);
+			//f.dpll("plop.out");
         } while (!feof(yyin));
     } else {
 		fclose(yyin);
