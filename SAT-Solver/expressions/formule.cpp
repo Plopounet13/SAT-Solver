@@ -321,7 +321,7 @@ cout << "UID " << *(litConflict.begin()) << endl;*/
                     }
                     //currentlit
                     --t;
-                    while(t!=mini_t){
+                    while(t!=maxi_t){
                         res = b.back(value,activeClauses,fixed,&choice,nbApparPos,nbApparNeg);
                         --t;
                     }
