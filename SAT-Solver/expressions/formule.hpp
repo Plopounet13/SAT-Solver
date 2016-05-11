@@ -18,6 +18,7 @@
 #include <fstream>
 #include "backtrack.hpp"
 #include "expr.hpp"
+#include "myv.hpp"
 
 #define STANDARD 0
 #define RAND 1
@@ -29,6 +30,7 @@
 #define INC_SCORE 64
 
 using namespace std;
+
 
 class Formule
 {
@@ -48,7 +50,7 @@ private:
 	int nbClauseInit;
 	map<int,int> scoreVsids;
 	map<int,int> scoreForget;
-    unordered_map<int,int> fixed;
+    myv<int> fixed;
 	vector<unordered_set<int>> value;
 	vector<unordered_set<int>> initial_value;
 	set<int> activeClauses;

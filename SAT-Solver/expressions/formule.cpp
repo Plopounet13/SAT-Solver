@@ -9,7 +9,8 @@ extern bool bInterac;
 extern bool bForget;
 int t = 1;
 
-Formule::Formule(Expr& e, int heur):heuristique(heur){
+
+Formule::Formule(Expr& e, int heur):heuristique(heur),fixed(0,0){
     //cout << e.to_string() << endl;
 	value = *toEns(e);
 	/*for (set<int> x: value){
@@ -23,6 +24,7 @@ Formule::Formule(Expr& e, int heur):heuristique(heur){
             if(abs(i)>nbVar)
                 nbVar=abs(i);
 	}
+	fixed = myv<int>(2*nbVar+1,nbVar);
 	nbApparPos = vector<int>(nbVar+1,0);
 	nbApparNeg = vector<int>(nbVar+1,0);
 	for(auto& x:value){
@@ -45,7 +47,7 @@ Formule::Formule(Expr& e, int heur):heuristique(heur){
 
 }
 
-Formule::Formule(vector<unordered_set<int>>& val, int heur):heuristique(heur){
+Formule::Formule(vector<unordered_set<int>>& val, int heur):heuristique(heur),fixed(2*maxVar+1,maxVar){
 	value = val;
 	/*for (set<int> x: value){
         for (int y : x)
@@ -88,15 +90,22 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
     int res=0;
 	set<int>* clauses_sup = new set<int>();
 	set<int> activeClausesCopy(activeClauses);
+	set<int>::iterator itP = appar[var].begin();
+	set<int>::iterator endP = appar[var].end();
+
+	set<int>::iterator itN = appar[-var].begin();
+	set<int>::iterator endN = appar[-var].end();
+
 	for (int c:activeClausesCopy){
-		unordered_set<int>::iterator p = value[c].find(-var);
-		if(p != value[c].end()){
+        while(itN!=endN and *itN < c)
+            ++itN;
+		if(itN!=endN and *itN == c){
             if(-var>0)
                 --(nbApparPos[-var]);
             else
                 --(nbApparNeg[var]);
             // TODO : p->get().del();
-			value[c].erase(p);
+			value[c].erase(-var);
 			if (value[c].empty()){
                 b.push(var,forced,clauses_sup,&(appar[-var]));
 //cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
@@ -108,8 +117,9 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
                     return 2;
 			}
 		}
-		p = value[c].find(var);
-		if(p != value[c].end()){
+        while(itP!=endP and *itP < c)
+            ++itP;
+		if(itP!=endP and *itP == c){
             for(int i:value[c]){
                 if(i>0)
                     --(nbApparPos[i]);

@@ -34,7 +34,7 @@ do
 	fi
 	echo "$fichier $*:"
 	repDon=`grep '^s ' resolAnswer.tmp | sed s/'s '//g`
-	if [ $repDon == $repAtt ]
+	if [ "$repDon" == "$repAtt" ]
 	then
 		echo "$repDon [${GREEN}OK${NC}]"
 	else

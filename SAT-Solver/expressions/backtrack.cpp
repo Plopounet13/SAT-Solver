@@ -1,4 +1,5 @@
 #include "backtrack.hpp"
+
 extern int maxVar;
 extern bool bcl;
 
@@ -8,7 +9,7 @@ ElemBacktrack::~ElemBacktrack(){
 	delete clauses_sup;
 }
 
-void ElemBacktrack::annule(vector<unordered_set<int>>& value, set<int>& activeClauses, unordered_map<int,int>& fixed,vector<int>& nbApparPos,vector<int>& nbApparNeg, int &lastBack){
+void ElemBacktrack::annule(vector<unordered_set<int>>& value, set<int>& activeClauses, myv<int>& fixed,vector<int>& nbApparPos,vector<int>& nbApparNeg, int &lastBack){
     fixed[var] = 0;
 	for (int x: *clauses_sup){
 		activeClauses.insert(x);
@@ -33,7 +34,7 @@ bool ElemBacktrack::isForced(){
 	return forced;
 }
 
-void ElemBacktrack::revert(vector<unordered_set<int>>& value, set<int>& activeClauses, unordered_map<int,int>& fixed, int* vr){
+void ElemBacktrack::revert(vector<unordered_set<int>>& value, set<int>& activeClauses, myv<int>& fixed, int* vr){
     //annule(value,activeClauses,fixed);
 	*vr = -var;
 }
@@ -54,7 +55,7 @@ void Backtrack::push(int vr, bool forc, set<int>* clsup, set<int>* clret){
 	pile->emplace(vr,forc,clsup,clret);
 }
 
-bool Backtrack::back(vector<unordered_set<int>>& value, set<int>& activeClauses, unordered_map<int,int>& fixed, int* var,vector<int>& nbApparPos,vector<int>& nbApparNeg){
+bool Backtrack::back(vector<unordered_set<int>>& value, set<int>& activeClauses, myv<int>& fixed, int* var,vector<int>& nbApparPos,vector<int>& nbApparNeg){
 //cout << "BACK"<< endl;
 	while (!pile->empty() && pile->top().isForced()){
 		pile->top().annule(value, activeClauses, fixed,nbApparPos,nbApparNeg, lastBack);

@@ -1,8 +1,8 @@
 #example name
 NAME=expr
-EXTENSION=toEns Tseitin formule backtrack
+EXTENSION=toEns Tseitin formule backtrack myv
 #compiler name
-CC=g++
+CC=clang++
 #lex name+path
 LEX=flex
 FLAG= -O3
@@ -11,8 +11,9 @@ LIBLEX=-L/usr/local/Cellar/flex/2.6.0/lib/ -lfl
 #yacc/bison
 YACC=bison
 
-all: $(NAME).tab.cpp $(NAME).yy.c $(NAME).cpp main.cpp formule.cpp $(EXTENSION:=.cpp)
-	$(CC) -Wno-write-strings -o resol $^ $(FLAG) $(LIBLEX) $(STD)
+all: $(NAME).tab.cpp $(NAME).yy.c $(NAME).cpp main.cpp $(EXTENSION:=.cpp)
+	$(CC) -c myv.cpp
+	$(CC) -Wno-write-strings -o resol myv.o $^ $(FLAG) $(LIBLEX) $(STD)
 
 $(NAME).yy.c :  $(NAME).l
 	$(LEX)  -o $@ $^
