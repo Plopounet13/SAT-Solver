@@ -88,15 +88,16 @@ void retire(int c){
 //0:continue, 1:succeed, 2:fail, -1 backtrack
 int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
     int res=0;
+    bool bBack = false;
+    int cBack;
 	set<int>* clauses_sup = new set<int>();
-	set<int> activeClausesCopy(activeClauses);
 	set<int>::iterator itP = appar[var].begin();
 	set<int>::iterator endP = appar[var].end();
 
 	set<int>::iterator itN = appar[-var].begin();
 	set<int>::iterator endN = appar[-var].end();
-
-	for (int c:activeClausesCopy){
+    vector<int> clausesToDel;
+	for (int c:activeClauses){
         while(itN!=endN and *itN < c)
             ++itN;
 		if(itN!=endN and *itN == c){
@@ -107,14 +108,16 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
             // TODO : p->get().del();
 			value[c].erase(-var);
 			if (value[c].empty()){
+                bBack=true;
+                cBack = c;
+/*                clauses_sup->clear();
                 b.push(var,forced,clauses_sup,&(appar[-var]));
-//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
+cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
                 currentLvlLit.emplace_back(0,c);
-                if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg)){
+                if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg))
                     return -1;
-                }
                 else
-                    return 2;
+                    return 2;*/
 			}
 		}
         while(itP!=endP and *itP < c)
@@ -142,7 +145,7 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
                     }
                 }
             }
-            activeClauses.erase(c);
+            clausesToDel.push_back(c);
             clauses_sup->insert(c);
         }
         if (value[c].size()==1){
@@ -163,12 +166,23 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
                 currentLvlLit.emplace_back(*value[c].begin(),c);
             }
         }
-		if (activeClauses.empty()){
-            b.push(var,forced,clauses_sup,&(appar[-var]));
-            return 1;
-		}
 	}
+	for(int c:clausesToDel){
+        activeClauses.erase(c);
+    }
+    if (activeClauses.empty()){
+        b.push(var,forced,clauses_sup,&(appar[-var]));
+        return 1;
+    }
 	b.push(var,forced,clauses_sup,&(appar[-var]));
+	if(bBack){
+//cout << "ON BACK A CAUSE DE LA CLAUSE " << cBack+1 << endl;
+        currentLvlLit.emplace_back(0,cBack);
+        if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg))
+            return -1;
+        else
+            return 2;
+    }
 	return 0;
 }
 

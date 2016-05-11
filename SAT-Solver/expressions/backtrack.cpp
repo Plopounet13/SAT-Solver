@@ -22,10 +22,10 @@ void ElemBacktrack::annule(vector<unordered_set<int>>& value, set<int>& activeCl
     }
 	for (int x: *clauses_ret){
         value[x].insert(-var);
-        if(-var>0)
-            ++nbApparPos[-var];
-        else
-            ++nbApparNeg[var];
+            if(-var>0)
+                ++nbApparPos[-var];
+            else
+                ++nbApparNeg[var];
     }
 	lastBack=var;
 }
