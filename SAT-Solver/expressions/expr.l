@@ -19,6 +19,8 @@ using namespace std;
 X				{ return TK_XOR; }
 "=>"			{ return TK_IMP; }
 "<=>"			{ return TK_EQIV; }
+" = "			{ return TK_EGAL; }
+"!="			{ return TK_DIF; }
 \n            { return TK_BN; }
 0				{ return TK_END; }
 c[a-zA-Z0-9 ]*\n				{ return TK_COM; }
