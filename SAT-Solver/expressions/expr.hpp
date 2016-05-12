@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <set>
 #include <functional>
+#include "equality.hpp"
 
 using namespace std;
 /***********************************/
@@ -60,6 +61,7 @@ class EVar : public Expr
 {
 public:
     EVar(int et);
+	EVar(int x, int y, bool eq);
     virtual string to_string() const;
 	virtual bool eval(map<int,int>& sigma);
 	virtual int getEtiq();
@@ -67,6 +69,7 @@ public:
 	void toEns(vector<unordered_set<int>>* v, int negation);
 private:
     int etiq;
+	Equality e;
 };
 
 /***********************************/

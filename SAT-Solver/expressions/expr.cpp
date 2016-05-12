@@ -39,7 +39,9 @@ bool EConst::getValue(){
 /***********  Variables  ***********/
 /***********************************/
 
-EVar::EVar(int et) : etiq(et) {}
+EVar::EVar(int et) : etiq(et), e(0,0,false) {}
+
+EVar::EVar(int x, int y, bool eq) : e(x,y,eq) {}
 
 string EVar::to_string() const
 {
