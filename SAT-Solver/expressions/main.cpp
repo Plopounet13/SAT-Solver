@@ -22,6 +22,7 @@ extern int maxVar;
 bool bcl;
 bool bInterac;
 bool bForget;
+bool bwl;
 
 void usage(){
     cerr << "Usage : ./resol [help] [-cl | -interac] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis]" << endl;
@@ -100,6 +101,9 @@ int main(int argc, char** argv) {
 			bcl = true;
 			bInterac=true;
 			++decal;
+		}else if (!strcmp(argv[i], "-wl")){
+            bwl = true;
+            ++decal;
 		} else
 			argv[i-decal] = argv[i];
 	}
@@ -115,6 +119,10 @@ int main(int argc, char** argv) {
 	}
 	if (bForget && !bcl){
 		cerr << "Erreur : L'heuristique forget nécessite le clause learning (-cl)" << endl;
+		exit(5);
+	}
+	if (bwl && heuristique==MOMS){
+		cerr << "Erreur : L'heuristique moms n'est pas compatible avec les watched litterals" << endl;
 		exit(5);
 	}
 

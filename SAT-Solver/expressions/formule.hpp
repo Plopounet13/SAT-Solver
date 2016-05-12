@@ -39,7 +39,9 @@ public:
 	Formule(vector<unordered_set<int>>& val, int heur);
 	virtual void dpll(string fout);
 	virtual int evol(int var, bool forced, queue<int>& forcedVariables);
+	virtual int evolWL(bool forced, queue<int>& forcedVariables);
 	virtual int choose();
+	virtual int chooseWL();
 	virtual int propage(int var);
 	virtual int preTrait(queue<int>& forcedVariables);
 	virtual int polUnique(queue<int>& forcedVariables);
@@ -54,12 +56,14 @@ private:
 	vector<unordered_set<int>> value;
 	vector<unordered_set<int>> initial_value;
 	set<int> activeClauses;
-	vector<pair<int,int> > watched;
 	Backtrack b;
 	vector<int> nbApparPos;
 	vector<int> nbApparNeg;
 	map<int,set<int> > appar;
 	map<int,int> scroreForget;
+	vector<vector<int> > valueWL;
+	vector<vector<int>::iterator> watched1;
+	vector<vector<int>::reverse_iterator> watched2;
 };
 
 
