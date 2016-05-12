@@ -1,8 +1,8 @@
 #example name
 NAME=expr
-EXTENSION=toEns Tseitin formule backtrack myv
+EXTENSION=toEns Tseitin formule backtrack myv equality union_find
 #compiler name
-CC=g++
+CC=clang++
 #lex name+path
 LEX=flex
 FLAG= -O3
