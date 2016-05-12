@@ -9,6 +9,7 @@ extern bool bcl;
 extern bool bInterac;
 extern bool bForget;
 extern bool bwl;
+int nbVar=0;
 int t;
 
 void reset(vector<vector<int>::iterator>& watched1, vector<vector<int>::reverse_iterator>& watched2, vector<vector<int>>& valueWL){
@@ -35,7 +36,6 @@ Formule::Formule(Expr& e, int heur):heuristique(heur),fixed(0,0){
             cout << y << " ";
         cout << endl;
 	}*/
-	int nbVar=0;
 	for(auto& x:value){
         for(int i:x)
             if(abs(i)>nbVar)
@@ -83,7 +83,6 @@ Formule::Formule(vector<unordered_set<int>>& val, int heur):heuristique(heur),fi
             cout << y << " ";
         cout << endl;
 	}*/
-	int nbVar=0;
 	for(auto& x:value){
         for(int i:x)
             if(abs(i)>nbVar)
@@ -130,6 +129,7 @@ void reduceAppar(int i, queue<int>& forcedVariables, vector<int>& nbApparPos, ve
             if(!fixed[-abs(i)]){
                 fixed[-abs(i)]=t;
                 forcedVariables.push(-abs(i));
+                currentLvlLit.emplace_back(-abs(i),0);
             }
         }
         if(nbApparNeg[abs(i)]==0){
@@ -137,6 +137,7 @@ void reduceAppar(int i, queue<int>& forcedVariables, vector<int>& nbApparPos, ve
             if(!fixed[abs(i)]){
                 fixed[abs(i)]=t;
                 forcedVariables.push(abs(i));
+                currentLvlLit.emplace_back(abs(i),0);
             }
         }
     }
@@ -177,7 +178,6 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
         }
 ///* On vérifie si c est une clause unitaire *///
         else if(watched1[c] == watched2[c].base()-1){
-//cout << "ON FORCE " << *value[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
             if (bForget){
                 if(scoreForget.count(c))
                     scoreForget[c]+=10;
@@ -188,6 +188,7 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
                         retire(s.first);
                 }
             }
+//cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
             forcedVariables.push(*watched1[c]);
             fixed[*watched1[c]]=t;
             currentLvlLit.emplace_back(*watched1[c],c);
@@ -310,18 +311,47 @@ int Formule::chooseWL() {
 			var = *it2;*/
 			break;
         }
+		case MOMS:{
+			int mini=INT_MAX;
+			vector<int> clauses;
+			for (int c:activeClauses){
+                int d=distance(watched1[c],watched2[c].base());
+				if (d<mini){
+					mini=d;
+					clauses.clear();
+                }
+                if (d==mini){
+                    clauses.push_back(c);
+                }
+            }
+            myv<int> occur(2*nbVar+1,nbVar);
+            int maxi=0;
+			for (int c:clauses){
+                for (auto it=watched1[c]; it != watched2[c].base();++it){
+                    int v= *it;
+                    ++occur[v];
+                    if(occur[v]>maxi and !fixed[v] and !fixed[-v]){
+                        var = v;
+                        maxi = occur[v];
+                    }
+                }
+            }
+			break;
+        }
 		case DLIS:{
 			int maxi=0;
-			for (int i=0; i<nbApparNeg.size(); ++i)
+			for (int i=0; i<nbApparNeg.size(); ++i){
 				if (nbApparNeg[i]>maxi and !fixed[i] and !fixed[-i]){
 					maxi = nbApparNeg[i];
 					var = -i;
 				}
-			for (int i=0; i<nbApparPos.size(); ++i)
+            }
+			for (int i=0; i<nbApparPos.size(); ++i){
 				if (nbApparPos[i]>maxi and !fixed[i] and !fixed[-i]){
 					maxi = nbApparPos[i];
 					var = i;
 				}
+            }
 			break;
         }
 		case VSIDS:{
@@ -368,18 +398,18 @@ int Formule::choose() {
 			for (int c:activeClauses)
 				if (value[c].size()<mini)
 					mini=value[c].size();
-            map<int,int> occur;
+            myv<int> occur(2*nbVar+1,nbVar);
+            int maxi=0;
 			for (int c:activeClauses)
 				if (value[c].size()==mini){
-					for (int v:value[c])
+					for (int v:value[c]){
 						++occur[v];
+						if(occur[v]>maxi){
+                            var = v;
+                            maxi = occur[v];
+						}
+                    }
 				}
-			int maxi=0;
-			for (auto& p:occur){
-				if (p.second>maxi){
-					var = p.first;
-				}
-			}
 			break;
         }
 		case DLIS:{
@@ -422,6 +452,8 @@ void Formule::dpll(string fout){
     queue<int> forcedVariables;
     res=preTrait(forcedVariables);
     initial_value = value;
+    vector<int> nbApparNegInit(nbApparNeg);
+    vector<int> nbApparPosInit(nbApparPos);
     while(res<=0){
 //cout << "Time " << t << endl;
         if(res<=0){
@@ -441,51 +473,72 @@ void Formule::dpll(string fout){
             }
 			while(res==-1){
 //cout << "______________BACK" << endl;
-                while(!forcedVariables.empty()){
+                while(!bwl and !forcedVariables.empty()){
                     fixed[forcedVariables.front()]=0;
                     forcedVariables.pop();
                 }
 ///* WATCHED *///
                 if(bwl){
                     reset(watched1,watched2,valueWL);
+                    nbApparNeg = nbApparNegInit;
+                    nbApparPos = nbApparPosInit;
                 }
                 if(bcl){
                     //creer graphe
                     initial_value.push_back(unordered_set<int>());
                     value.push_back(unordered_set<int>());
+                    if(bwl)
+                        valueWL.emplace_back();
                     set<int> litConflict;
                     set<int> litSeen;
                     vector<pair<int,int> > edges;
-                    for(int v:initial_value.at((*currentLvlLit.rbegin()).second)){
-                        if(!fixed[-v] and !litSeen.count(-v)){
-                            litConflict.insert(-v);
-                            litSeen.insert(-v);
-                        }
-                        else if(fixed[-v]){
-							initial_value.back().insert(v);
-							scoreVsids[abs(v)]+=INC_SCORE;
-                            appar[v].insert(value.size()-1);
-                        }
-                        edges.emplace_back(-v,0);
-                    }
-                    pair<int,int> e = currentLvlLit.back();
-                    currentLvlLit.pop_back();
-                    while(!bwl and !currentLvlLit.empty() and fixed[currentLvlLit.back().first]==t){
-						fixed[currentLvlLit.back().first]=0;
-                        currentLvlLit.pop_back();
-                    }
                     if(bwl){
+                        for(int v:initial_value.at((*currentLvlLit.rbegin()).second)){
+                            if(fixed[-v]==t and !litSeen.count(-v)){
+                                litConflict.insert(-v);
+                                litSeen.insert(-v);
+                            }
+                            else if(fixed[-v]!=t){
+                                initial_value.back().insert(v);
+                                if(bwl)
+                                    valueWL.back().push_back(v);
+                                scoreVsids[abs(v)]+=INC_SCORE;
+                                appar[v].insert(value.size()-1);
+                            }
+                            edges.emplace_back(-v,0);
+                        }
+                        pair<int,int> e = currentLvlLit.back();
+                        currentLvlLit.pop_back();
                         int i = currentLvlLit.size()-1;
-                        while(i!=-1 && fixed[currentLvlLit.back().first]==t){
+                        while(i!=-1 && (fixed[currentLvlLit[i].first]==t)){
                             fixed[currentLvlLit[i].first]=0;
                             choice=currentLvlLit[i].first;
                             --i;
                         }
+                        currentLvlLit.push_back(e);
 					}
 					else{
+                        for(int v:initial_value.at((*currentLvlLit.rbegin()).second)){
+                            if(!fixed[-v] and !litSeen.count(-v)){
+                                litConflict.insert(-v);
+                                litSeen.insert(-v);
+                            }
+                            else if(fixed[-v]){
+                                initial_value.back().insert(v);
+                                scoreVsids[abs(v)]+=INC_SCORE;
+                                appar[v].insert(value.size()-1);
+                            }
+                            edges.emplace_back(-v,0);
+                        }
+                        pair<int,int> e = currentLvlLit.back();
+                        currentLvlLit.pop_back();
+                        while(!currentLvlLit.empty() and fixed[currentLvlLit.back().first]==t){
+                            fixed[currentLvlLit.back().first]=0;
+                            currentLvlLit.pop_back();
+                        }
                         choice = b.lastBack;
+                        currentLvlLit.push_back(e);
 					}
-                    currentLvlLit.push_back(e);
                     for(auto it = next(currentLvlLit.rbegin());it!=currentLvlLit.rend() and fixed[it->first]==0 and litConflict.size()!=1;++it){
                         if(litConflict.count(it->first)){
                             litConflict.erase(it->first);
@@ -501,6 +554,17 @@ void Formule::dpll(string fout){
                                         }
                                         else if(fixed[-v]){
                                             initial_value.back().insert(v);
+                                            if(v>0)
+                                                ++nbApparPos[v];
+                                            else
+                                                ++nbApparNeg[-v];
+                                            if(bwl){
+                                                valueWL.back().push_back(v);
+                                                if(v>0)
+                                                    ++nbApparPosInit[v];
+                                                else
+                                                    ++nbApparNegInit[-v];
+                                            }
 											scoreVsids[abs(v)]+=INC_SCORE;
                                             appar[v].insert(value.size()-1);
                                         }
@@ -516,11 +580,25 @@ void Formule::dpll(string fout){
                             }
                         }
                     }
+                    int v = -*(litConflict.begin());
                     activeClauses.insert(value.size()-1);
-					initial_value.back().insert(-*(litConflict.begin()));
-					scoreVsids[abs(*(litConflict.begin()))]+=INC_SCORE;
-                    value.back().insert(-*(litConflict.begin()));
-                    appar[-*(litConflict.begin())].insert(value.size()-1);
+					initial_value.back().insert(v);
+                    if(v>0)
+                        ++nbApparPos[v];
+                    else
+                        ++nbApparNeg[-v];
+                    if(bwl){
+                        valueWL.back().push_back(v);
+                        watched1.push_back(valueWL.back().begin());
+                        watched2.push_back(valueWL.back().rbegin());
+                        if(v>0)
+                            ++nbApparPosInit[v];
+                        else
+                            ++nbApparNegInit[-v];
+                    }
+					scoreVsids[abs(v)]+=INC_SCORE;
+                    value.back().insert(v);
+                    appar[v].insert(value.size()-1);
 					if (bForget)
 						scoreForget[value.size()-1]=10;
                     int maxi_t = 1;
@@ -529,8 +607,8 @@ void Formule::dpll(string fout){
                             maxi_t = fixed[-x];
                         }
                     }
-
-/*for(int i:initial_value.back())
+/*cout << "NEW CLAUSE ";
+for(int i:initial_value.back())
 cout << i << " ";
 cout << endl;*/
 //cout << "UID " << *(litConflict.begin()) << endl;
@@ -539,13 +617,14 @@ cout << endl;*/
                     }
                     //currentlit
                     if(bwl){
+            //cout << "BACK JUSQUE " << maxi_t << endl;
                         while(!currentLvlCl.empty() && currentLvlCl.back().second == t){
                             activeClauses.insert(currentLvlCl.back().first);
                             currentLvlCl.pop_back();
                         }
+                        currentLvlLit.pop_back();
                         while(!currentLvlLit.empty() && fixed[currentLvlLit.back().first]==0){
-                            fixed[currentLvlLit.back().first]=0;
-                            choice=currentLvlLit.back().first;
+            //cout << "ANNULE  " << currentLvlLit.back().first << " " << fixed[currentLvlLit.back().first] << endl;
                             currentLvlLit.pop_back();
                         }
                         --t;
@@ -555,6 +634,7 @@ cout << endl;*/
                                 currentLvlCl.pop_back();
                             }
                             while(!currentLvlLit.empty() && fixed[currentLvlLit.back().first]==t){
+            //cout << "ANNULE " << currentLvlLit.back().first << " " << fixed[currentLvlLit.back().first] << endl;
                                 fixed[currentLvlLit.back().first]=0;
                                 currentLvlLit.pop_back();
                             }
@@ -574,6 +654,8 @@ cout << endl;*/
 					choice = -*(litConflict.begin());
 					fixed[choice]=t;
 					currentLvlLit.emplace_back(choice,value.size()-1);
+//cout << choice << "  FORCE" << endl;
+
                     res = evol(choice,true,forcedVariables);
                 }
                 else{
@@ -582,9 +664,11 @@ cout << endl;*/
                             activeClauses.insert(currentLvlCl.back().first);
                             currentLvlCl.pop_back();
                         }
+                        currentLvlLit.pop_back();
                         while(!currentLvlLit.empty() && fixed[currentLvlLit.back().first]==t){
+//cout << currentLvlLit.back().first << " ANNULE" << endl;
                             fixed[currentLvlLit.back().first]=0;
-                            choice=currentLvlLit.back().first;
+                            choice=-currentLvlLit.back().first;
                             currentLvlLit.pop_back();
                         }
 					}
@@ -607,10 +691,11 @@ cout << 0 << endl;
 }*/
     if(res==1){
         cout << "s SATISFIABLE" << endl;
-		set<int> s;
-		b.variables(s);
-        for(int x:s){
-            cout << x << " ";
+        for(int i=1;i<=maxVar;++i){
+            if(fixed[-i])
+                cout << -i << " ";
+            else
+                cout << i << " ";
         }
         cout << 0 << endl;
     }
@@ -657,6 +742,9 @@ int Formule::preTrait(queue<int>& forcedVariables){
             for (int v:value[i]){
                 if (value[i].find(-v) != value[i].end()){
                     activeClauses.erase(i);
+                    for(int l:value[i]){
+                        reduceAppar(l,forcedVariables,nbApparPos,nbApparNeg,fixed);
+                    }
                     break;
                 }
             }

@@ -2,7 +2,7 @@
 NAME=expr
 EXTENSION=toEns Tseitin formule backtrack myv equality union_find
 #compiler name
-CC=clang++
+CC=g++
 #lex name+path
 LEX=flex
 FLAG= -O3

@@ -121,10 +121,6 @@ int main(int argc, char** argv) {
 		cerr << "Erreur : L'heuristique forget nécessite le clause learning (-cl)" << endl;
 		exit(5);
 	}
-	if (bwl && heuristique==MOMS){
-		cerr << "Erreur : L'heuristique moms n'est pas compatible avec les watched litterals" << endl;
-		exit(5);
-	}
 
     if (argc < 2 || argc > 4){
         fprintf(stderr,"Erreur : nombre de parametres incorrect.\n");

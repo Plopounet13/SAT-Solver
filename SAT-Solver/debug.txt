@@ -1,0 +1,4 @@
+todo
+	-penser à passer des set aux list pour tester les perf
+	-fonction retire
+	-vérifier consistance de nbAppar dans le cas de forget
