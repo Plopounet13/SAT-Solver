@@ -47,6 +47,7 @@ public:
 	virtual int polUnique(queue<int>& forcedVariables);
 	virtual void pause(vector<pair<int,int>>& edges, int uid);
 	virtual void graphe(vector<pair<int,int>>& edges, int uid);
+	virtual void reset();
 private:
 	int heuristique;
 	int nbClauseInit;
@@ -64,6 +65,10 @@ private:
 	vector<vector<int> > valueWL;
 	vector<vector<int>::iterator> watched1;
 	vector<vector<int>::reverse_iterator> watched2;
+	vector<vector<int>> nbApparNegInit;
+    vector<vector<int>> nbApparPosInit;
+	vector<vector<vector<int>::iterator>> watched1Init;
+	vector<vector<vector<int>::reverse_iterator>> watched2Init;
 };
 
 
