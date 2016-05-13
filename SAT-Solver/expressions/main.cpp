@@ -68,6 +68,7 @@ char* getExt(char* param){
 
 //ici c'est le début du main
 int main(int argc, char** argv) {
+	bool bsmte=false;
 	bForget=false;
 	int backin = dup(0);
 	if (argc == 2 && !strcmp(argv[1],"help"))
@@ -104,11 +105,18 @@ int main(int argc, char** argv) {
 		}else if (!strcmp(argv[i], "-wl")){
             bwl = true;
             ++decal;
+		}else if (!strcmp(argv[i], "-smte")){
+			bsmte = true;
+			++decal;
 		} else
 			argv[i-decal] = argv[i];
 	}
 	argc = argc-decal;
 
+	if (bsmte && (bcl || heuristique != STANDARD || bwl || bForget || bInterac)){
+		cerr << "Erreur : Le mode smt ne s'utilise avec aucune option" << endl;
+		exit(5);
+	}
 	if (bInterac && !bcl){
 		cerr << "Erreur : Le mode intéractif nécessite le clause learning (-cl)" << endl;
 		exit(5);
@@ -153,7 +161,13 @@ int main(int argc, char** argv) {
 
 	//dup2(fd, 0);
     // parse through the input until there is no more:
-    if (argc == 3){
+	if (bsmte){/*
+		do {
+			yyparse();
+			Formule f(res->tseitin2(maxVar));
+			f.smt();
+		}while(!feof(yyin));*/
+	}else if (argc == 3){
         do {
 			//yyparse();
 			//Formule f(res->tseytin(maxVar), heuristique);
