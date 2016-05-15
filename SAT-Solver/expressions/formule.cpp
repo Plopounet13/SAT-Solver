@@ -270,12 +270,15 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 			threads.emplace_back(&Formule::boucleThread, this , start, end, &forcedVariables, &clausesToDel, &returns[i]);
 	}
 	
+	int valReturn=0;
 	for (int i=0; i<threads.size(); ++i){
 		threads[i].join();
-		if (returns[i]){
-			return(returns[i]);
+		if (returns[i] && !valReturn){
+			valReturn=returns[i];
 		}
 	}
+	if (valReturn)
+		return valReturn;
 	/*
 	for (int c:activeClauses){
 		// Actualisation de watched1[c]
