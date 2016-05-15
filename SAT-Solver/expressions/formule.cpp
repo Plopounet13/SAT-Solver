@@ -12,14 +12,18 @@ extern bool bwl;
 int nbVar=0;
 int t;
 
-void reset(vector<vector<int>::iterator>& watched1, vector<vector<int>::reverse_iterator>& watched2, vector<vector<int>>& valueWL){
-    watched1.clear();
-    watched2.clear();
-    for(auto& c:valueWL){
-        watched1.push_back(c.begin());
-        watched2.push_back(c.rbegin());
-    }
+void Formule::reset(){
+    watched1=watched1Init[t-1];
+    watched1Init.resize(t-1);
+    watched2=watched2Init[t-1];
+    watched2Init.resize(t-1);
+    nbApparPos=nbApparPosInit[t-1];
+    nbApparPosInit.resize(t-1);
+    nbApparNeg=nbApparNegInit[t-1];
+    nbApparNegInit.resize(t-1);
 }
+
+
 Formule::Formule(Expr& e, int heur):heuristique(heur),fixed(0,0), lockFixed(0,0){
     //cout << e.to_string() << endl;
     value = *toEns(e);
@@ -66,7 +70,12 @@ Formule::Formule(Expr& e, int heur):heuristique(heur),fixed(0,0), lockFixed(0,0)
 
 ///* WATCHED *///
     if(bwl){
-        reset(watched1,watched2,valueWL);
+        watched1.clear();
+        watched2.clear();
+        for(auto& c:valueWL){
+            watched1.push_back(c.begin());
+            watched2.push_back(c.rbegin());
+        }
     }
 }
 
@@ -113,7 +122,12 @@ Formule::Formule(vector<unordered_set<int>>& val, int heur):heuristique(heur),fi
 
 ///* WATCHED *///
     if(bwl){
-        reset(watched1,watched2,valueWL);
+        watched1.clear();
+        watched2.clear();
+        for(auto& c:valueWL){
+            watched1.push_back(c.begin());
+            watched2.push_back(c.rbegin());
+        }
     }
 }
 
@@ -523,14 +537,18 @@ void Formule::dpll(string fout){
     queue<int> forcedVariables;
     res=preTrait(forcedVariables);
     initial_value = value;
-    vector<int> nbApparNegInit(nbApparNeg);
-    vector<int> nbApparPosInit(nbApparPos);
     while(res<=0){
 //cout << "Time " << t << endl;
         if(res<=0){
             if(forcedVariables.empty()){
                 choice = choose();
                 ++t;
+                if(bwl){
+                    nbApparNegInit.push_back(nbApparNeg);
+                    nbApparPosInit.push_back(nbApparPos);
+                    watched1Init.push_back(watched1);
+                    watched2Init.push_back(watched2);
+                }
                 fixed[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
 //cout << choice << "  UN CHOIX" << endl;
@@ -547,12 +565,6 @@ void Formule::dpll(string fout){
                 while(!bwl and !forcedVariables.empty()){
                     fixed[forcedVariables.front()]=0;
                     forcedVariables.pop();
-                }
-///* WATCHED *///
-                if(bwl){
-                    reset(watched1,watched2,valueWL);
-                    nbApparNeg = nbApparNegInit;
-                    nbApparPos = nbApparPosInit;
                 }
                 if(bcl){
                     //creer graphe
@@ -632,9 +644,11 @@ void Formule::dpll(string fout){
                                             if(bwl){
                                                 valueWL.back().push_back(v);
                                                 if(v>0)
-                                                    ++nbApparPosInit[v];
+                                                    for(auto& vec:nbApparPosInit)
+                                                        ++vec[v];
                                                 else
-                                                    ++nbApparNegInit[-v];
+                                                    for(auto& vec:nbApparNegInit)
+                                                        ++vec[-v];
                                             }
 											scoreVsids[abs(v)]+=INC_SCORE;
                                             appar[v].insert(value.size()-1);
@@ -660,12 +674,16 @@ void Formule::dpll(string fout){
                         ++nbApparNeg[-v];
                     if(bwl){
                         valueWL.back().push_back(v);
-                        watched1.push_back(valueWL.back().begin());
-                        watched2.push_back(valueWL.back().rbegin());
+                        for(auto& vec:watched1Init)
+                            vec.push_back(valueWL.back().begin());
+                        for(auto& vec:watched2Init)
+                            vec.push_back(valueWL.back().rbegin());
                         if(v>0)
-                            ++nbApparPosInit[v];
+                            for(auto& vec:nbApparPosInit)
+                                ++vec[v];
                         else
-                            ++nbApparNegInit[-v];
+                            for(auto& vec:nbApparNegInit)
+                                ++vec[-v];
                     }
 					scoreVsids[abs(v)]+=INC_SCORE;
                     value.back().insert(v);
@@ -711,6 +729,7 @@ cout << endl;*/
                             }
                             --t;
                         }
+                        reset();
 					}
 					else{
                         --t;
@@ -742,11 +761,14 @@ cout << endl;*/
                             choice=-currentLvlLit.back().first;
                             currentLvlLit.pop_back();
                         }
+                        --t;
+                        reset();
 					}
-					else
+					else{
                         choice = -b.lastBack;
+                        --t;
+                    }
 //cout << "lastback : " << b.lastBack << endl;
-                    --t;
                     fixed[choice]=t;
                     currentLvlLit.emplace_back(choice,value.size()-1);
 //cout << choice << "  FORCE" << endl;
