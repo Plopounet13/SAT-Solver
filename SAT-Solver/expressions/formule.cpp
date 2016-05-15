@@ -9,6 +9,7 @@ extern bool bcl;
 extern bool bInterac;
 extern bool bForget;
 extern bool bwl;
+extern bool bParal;
 int nbVar=0;
 int t;
 
@@ -251,85 +252,88 @@ void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, que
 
 int Formule::evolWL(bool forced, queue<int>& forcedVariables){
     vector<int> clausesToDel;
-	int nbThreads=thread::hardware_concurrency();
-	if (!nbThreads)
-		nbThreads=1;
-	vector<thread> threads;
-	vector<int> returns(nbThreads);
-	int pas = activeClauses.size()/nbThreads;
-	set<int>::iterator start=activeClauses.begin();
-	set<int>::iterator end=activeClauses.end();
-	for (int i=0; i<nbThreads; ++i){
-		if (i!=nbThreads-1){
-			set<int>::iterator fin = start;
-			for (int j=0; j<pas; ++j)
-				++fin;
-			threads.emplace_back(&Formule::boucleThread, this, start, fin, &forcedVariables, &clausesToDel, &returns[i]);
-			start=fin;
-		}else
-			threads.emplace_back(&Formule::boucleThread, this , start, end, &forcedVariables, &clausesToDel, &returns[i]);
-	}
 	
-	int valReturn=0;
-	for (int i=0; i<threads.size(); ++i){
-		threads[i].join();
-		if (returns[i] && !valReturn){
-			valReturn=returns[i];
+	if (bParal){
+		int nbThreads=thread::hardware_concurrency();
+		if (!nbThreads)
+			nbThreads=1;
+		vector<thread> threads;
+		vector<int> returns(nbThreads);
+		int pas = activeClauses.size()/nbThreads;
+		set<int>::iterator start=activeClauses.begin();
+		set<int>::iterator end=activeClauses.end();
+		for (int i=0; i<nbThreads; ++i){
+			if (i!=nbThreads-1){
+				set<int>::iterator fin = start;
+				for (int j=0; j<pas; ++j)
+					++fin;
+				threads.emplace_back(&Formule::boucleThread, this, start, fin, &forcedVariables, &clausesToDel, &returns[i]);
+				start=fin;
+			}else
+				threads.emplace_back(&Formule::boucleThread, this , start, end, &forcedVariables, &clausesToDel, &returns[i]);
 		}
-	}
-	if (valReturn)
-		return valReturn;
-	/*
-	for (int c:activeClauses){
-		// Actualisation de watched1[c]
-		while(watched1[c] != valueWL[c].end() and fixed[-*watched1[c]]){
+	
+		int valReturn=0;
+		for (int i=0; i<threads.size(); ++i){
+			threads[i].join();
+			if (returns[i] && !valReturn){
+				valReturn=returns[i];
+			}
+		}
+		if (valReturn)
+			return valReturn;
+	}else{
+		for (int c:activeClauses){
+			// Actualisation de watched1[c]
+			while(watched1[c] != valueWL[c].end() and fixed[-*watched1[c]]){
 			/// à supprimer
-			reduceAppar(forcedVariables, *watched1[c]);
-			++watched1[c];
-		}
-		// On vérifie si c est une clause fausse
-		if(watched1[c] == valueWL[c].end()){
-			currentLvlLit.emplace_back(0,c);
-			//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
-			if(t!=1)
-				return -1;
-			else
-				return 2;
-		}
-		// Actualisation de watched2[c]
-		while(fixed[-*watched2[c]]){
-			/// à supprimer
-			reduceAppar(forcedVariables, *watched2[c]);
-			++watched2[c];
-		}
-		// On vérifie si c est une clause vraie
-		if(fixed[*watched1[c]] or fixed[*watched2[c]]){
-			clausesToDel.push_back(c);
-			vector<int>::iterator it=watched1[c];
-			for(; it!=watched2[c].base()-1; ++it){
+				reduceAppar(forcedVariables, *watched1[c]);
+				++watched1[c];
+			}
+			// On vérifie si c est une clause fausse
+			if(watched1[c] == valueWL[c].end()){
+				currentLvlLit.emplace_back(0,c);
+				//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
+				if(t!=1)
+					return -1;
+				else
+					return 2;
+			}
+			// Actualisation de watched2[c]
+			while(fixed[-*watched2[c]]){
+				/// à supprimer
+				reduceAppar(forcedVariables, *watched2[c]);
+				++watched2[c];
+			}
+			// On vérifie si c est une clause vraie
+			if(fixed[*watched1[c]] or fixed[*watched2[c]]){
+				clausesToDel.push_back(c);
+				vector<int>::iterator it=watched1[c];
+				for(; it!=watched2[c].base()-1; ++it){
+					reduceAppar(forcedVariables, *it);
+				}
 				reduceAppar(forcedVariables, *it);
 			}
-			reduceAppar(forcedVariables, *it);
-		}
-		// On vérifie si c est une clause unitaire
-		else if(watched1[c] == watched2[c].base()-1){
-			if (bForget){
-				if(scoreForget.count(c))
-					scoreForget[c]+=value.size();
-				for (auto& s:scoreForget){
-					if (s.first != c)
-						--s.second;
-					if (s.second <= 0)
-						retire(s.first);
+			// On vérifie si c est une clause unitaire
+			else if(watched1[c] == watched2[c].base()-1){
+				if (bForget){
+					if(scoreForget.count(c))
+						scoreForget[c]+=value.size();
+					for (auto& s:scoreForget){
+						if (s.first != c)
+							--s.second;
+						if (s.second <= 0)
+							retire(s.first);
+					}
 				}
+				//cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
+				forcedVariables.push(*watched1[c]);
+				fixed[*watched1[c]]=t;
+				currentLvlLit.emplace_back(*watched1[c],c);
+				reduceAppar(forcedVariables, *watched1[c]);
 			}
-			//cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
-			forcedVariables.push(*watched1[c]);
-			fixed[*watched1[c]]=t;
-			currentLvlLit.emplace_back(*watched1[c],c);
-			reduceAppar(forcedVariables, *watched1[c]);
 		}
-	}*/
+	}
 	
 	for(int c:clausesToDel){
         activeClauses.erase(c);

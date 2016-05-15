@@ -23,6 +23,7 @@ bool bcl;
 bool bInterac;
 bool bForget;
 bool bwl;
+bool bParal;
 
 void usage(){
     cerr << "Usage : ./resol [help] [-cl | -interac] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis]" << endl;
@@ -47,7 +48,9 @@ void help(){
 	cout << endl << "Options :" << endl;
 	cout << "\t-interac : Mode interactif permettant de proposer la visualisation du graphe de conflit" << endl;
 	cout << "\t-forget : Oubli des clauses apprises non utilisées" << endl;
+	cout << "\t-wl : Utilise les watched litterals" << endl;
 	cout << endl;
+	cout << "\t-thread : Parallèlise le calcul avec les watched litterals" << endl;
 	cout << "Exemples :" << endl;
 	cout << "\t./resol -tseitin fic.for -rand" << endl;
 	cout << "\tCet appel applique tseitin à fic.for puis fait tourner dpll en pariant aléatoirement" << endl;
@@ -108,10 +111,19 @@ int main(int argc, char** argv) {
 		}else if (!strcmp(argv[i], "-smte")){
 			bsmte = true;
 			++decal;
+		}else if (!strcmp(argv[i], "-thread")){
+			bParal = true;
+			++decal;
 		} else
 			argv[i-decal] = argv[i];
 	}
 	argc = argc-decal;
+	
+	//TODO : finir SMT
+	if (bsmte){
+		cout << "SMT n'est pas encore fini" << endl;
+		exit(0);
+	}
 
 	if (bsmte && (bcl || heuristique != STANDARD || bwl || bForget || bInterac)){
 		cerr << "Erreur : Le mode smt ne s'utilise avec aucune option" << endl;
