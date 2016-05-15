@@ -2,8 +2,8 @@
 
 #include "formule.hpp"
 
-vector<pair<int,int> > currentLvlLit;
-vector<pair<int,int> > currentLvlCl;
+mutex lockClausesToDel;
+mutex lockForcedVariables;
 extern int maxVar;
 extern bool bcl;
 extern bool bInterac;
@@ -145,7 +145,7 @@ void Formule::retire(int c){
 	lockActiveClauses.unlock();
 }
 
-void Formule::reduceAppar(int i){
+void Formule::reduceAppar(queue<int>& forcedVariables, int i){
 	lockNbAppar[abs(i)].lock();
     if(i>0)
         --(nbApparPos[i]);
@@ -176,110 +176,155 @@ void Formule::reduceAppar(int i){
 	lockNbAppar[abs(i)].unlock();
 }
 
-void* Formule::boucleThread(set<int>::iterator& start, set<int>::iterator& end, queue<int>& forcedVariables){
-	for(auto& c=start; c!=end; ++c){
-		while(watched1[*c] != valueWL[*c].end() and fixed[-*watched1[*c]]){
+void Formule::boucleThread(set<int>::iterator& start, set<int>::iterator& end, queue<int>& forcedVariables, vector<int>& clausesToDel, int& retVal){
+	for(auto& i=start; i!=end; ++i){
+		int c=*i;
+		while(watched1[c] != valueWL[c].end() and fixed[-*watched1[c]]){
 			/// à supprimer
-			reduceAppar(*watched1[*c]);
-			++watched1[*c];
+			reduceAppar(forcedVariables, *watched1[c]);
+			++watched1[c];
 		}
 		///* On vérifie si c est une clause fausse *///
-		if(watched1[*c] == valueWL[*c].end()){
-			currentLvlLit.emplace_back(0,*c);
+		if(watched1[c] == valueWL[c].end()){
+			lockCurrentLvlLit.lock();
+			currentLvlLit.emplace_back(0,c);
+			lockCurrentLvlLit.unlock();
+			//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
+			if(t!=1){
+				retVal = -1;
+				return;
+			}else{
+				retVal = 2;
+				return;
+			}
+		}
+		///* Actualisation de watched2[c] *///
+		while(fixed[-*watched2[c]]){
+			/// à supprimer
+			reduceAppar(forcedVariables, *watched2[c]);
+			++watched2[c];
+		}
+		///* On vérifie si c est une clause vraie *///
+		if(fixed[*watched1[c]] or fixed[*watched2[c]]){
+			lockClausesToDel.lock();
+			clausesToDel.push_back(c);
+			lockClausesToDel.unlock();
+			vector<int>::iterator it=watched1[c];
+			for(; it!=watched2[c].base()-1; ++it){
+				reduceAppar(forcedVariables, *it);
+			}
+			reduceAppar(forcedVariables, *it);
+		}
+		///* On vérifie si c est une clause unitaire *///
+		else if(watched1[c] == watched2[c].base()-1){
+			if (bForget){
+				lockScoreForget.lock();
+				if(scoreForget.count(c))
+					scoreForget[c]+=value.size();
+				for (auto& s:scoreForget){
+					if (s.first != c)
+						--s.second;
+					if (s.second <= 0)
+						retire(s.first);
+				}
+				lockScoreForget.unlock();
+			}
+			//cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
+			lockForcedVariables.lock();
+			forcedVariables.push(*watched1[c]);
+			lockForcedVariables.unlock();
+			lockFixed[*watched1[c]].lock();
+			fixed[*watched1[c]]=t;
+			lockFixed[*watched1[c]].unlock();
+			lockCurrentLvlLit.lock();
+			currentLvlLit.emplace_back(*watched1[c],c);
+			lockCurrentLvlLit.unlock();
+			reduceAppar(forcedVariables, *watched1[c]);
+		}
+	}
+	retVal=0;
+	return;
+}
+
+int Formule::evolWL(bool forced, queue<int>& forcedVariables){
+    vector<int> clausesToDel;
+	int nbThreads=thread::hardware_concurrency();
+	if (!nbThreads)
+		nbThreads=1;
+	vector<thread> threads;
+	vector<int> returns(nbThreads);
+	int pas = activeClauses.size()/nbThreads;
+	set<int>::iterator start=activeClauses.begin();
+	set<int>::iterator end=activeClauses.end();
+	for (int i=0; i<nbThreads; ++i){
+		if (i!=nbThreads-1){
+			set<int>::iterator fin = start;
+			for (int j=0; j<pas; ++j)
+				++fin;
+			threads.emplace_back(&Formule::boucleThread, this, start, fin, forcedVariables, clausesToDel, returns[i]);
+			start=fin;
+		}else
+			threads.emplace_back(&Formule::boucleThread, this , start, end, forcedVariables, clausesToDel, returns[i]);
+	}
+	
+	for (int i=0; i<threads.size(); ++i){
+		threads[i].join();
+		if (returns[i]){
+			return(returns[i]);
+		}
+	}
+	
+	for (int c:activeClauses){
+		// Actualisation de watched1[c]
+		while(watched1[c] != valueWL[c].end() and fixed[-*watched1[c]]){
+			/// à supprimer
+			reduceAppar(forcedVariables, *watched1[c]);
+			++watched1[c];
+		}
+		// On vérifie si c est une clause fausse
+		if(watched1[c] == valueWL[c].end()){
+			currentLvlLit.emplace_back(0,c);
 			//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
 			if(t!=1)
 				return -1;
 			else
 				return 2;
 		}
-		///* Actualisation de watched2[c] *///
-		while(fixed[-*watched2[*c]]){
+		// Actualisation de watched2[c]
+		while(fixed[-*watched2[c]]){
 			/// à supprimer
-			reduceAppar(*watched2[*c]);
-			++watched2[*c];
+			reduceAppar(forcedVariables, *watched2[c]);
+			++watched2[c];
 		}
-		///* On vérifie si c est une clause vraie *///
-		if(fixed[*watched1[*c]] or fixed[*watched2[*c]]){
-			clausesToDel.push_back(*c);
-			vector<int>::iterator it=watched1[*c];
+		// On vérifie si c est une clause vraie
+		if(fixed[*watched1[c]] or fixed[*watched2[c]]){
+			clausesToDel.push_back(c);
+			vector<int>::iterator it=watched1[c];
 			for(; it!=watched2[c].base()-1; ++it){
-				reduceAppar(*it);
+				reduceAppar(forcedVariables, *it);
 			}
-			reduceAppar(*it);
+			reduceAppar(forcedVariables, *it);
 		}
-		///* On vérifie si c est une clause unitaire *///
-		else if(watched1[*c] == watched2[*c].base()-1){
+		// On vérifie si c est une clause unitaire
+		else if(watched1[c] == watched2[c].base()-1){
 			if (bForget){
-				if(scoreForget.count(*c))
-					scoreForget[*c]+=value.size();
+				if(scoreForget.count(c))
+					scoreForget[c]+=value.size();
 				for (auto& s:scoreForget){
-					if (s.first != *c)
+					if (s.first != c)
 						--s.second;
 					if (s.second <= 0)
 						retire(s.first);
 				}
 			}
 			//cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
-			forcedVariables.push(*watched1[*c]);
-			fixed[*watched1[*c]]=t;
-			currentLvlLit.emplace_back(*watched1[*c],*c);
-			reduceAppar(*watched1[*c]);
+			forcedVariables.push(*watched1[c]);
+			fixed[*watched1[c]]=t;
+			currentLvlLit.emplace_back(*watched1[c],c);
+			reduceAppar(forcedVariables, *watched1[c]);
 		}
 	}
-}
-
-int Formule::evolWL(bool forced, queue<int>& forcedVariables){
-    vector<int> clausesToDel;
-	for (int c:activeClauses){
-///* Actualisation de watched1[c] *///
-        while(watched1[c] != valueWL[c].end() and fixed[-*watched1[c]]){
-/// à supprimer
-            reduceAppar(*watched1[c]);
-            ++watched1[c];
-        }
-///* On vérifie si c est une clause fausse *///
-        if(watched1[c] == valueWL[c].end()){
-            currentLvlLit.emplace_back(0,c);
-//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
-            if(t!=1)
-                return -1;
-            else
-                return 2;
-        }
-///* Actualisation de watched2[c] *///
-        while(fixed[-*watched2[c]]){
-/// à supprimer
-            reduceAppar(*watched2[c]);
-            ++watched2[c];
-        }
-///* On vérifie si c est une clause vraie *///
-        if(fixed[*watched1[c]] or fixed[*watched2[c]]){
-            clausesToDel.push_back(c);
-            vector<int>::iterator it=watched1[c];
-            for(; it!=watched2[c].base()-1; ++it){
-                reduceAppar(*it);
-            }
-            reduceAppar(*it);
-        }
-///* On vérifie si c est une clause unitaire *///
-        else if(watched1[c] == watched2[c].base()-1){
-            if (bForget){
-                if(scoreForget.count(c))
-                    scoreForget[c]+=value.size();
-                for (auto& s:scoreForget){
-                    if (s.first != c)
-                        --s.second;
-                    if (s.second <= 0)
-                        retire(s.first);
-                }
-            }
-//cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
-            forcedVariables.push(*watched1[c]);
-            fixed[*watched1[c]]=t;
-            currentLvlLit.emplace_back(*watched1[c],c);
-            reduceAppar(*watched1[c]);
-        }
-	}
+	
 	for(int c:clausesToDel){
         activeClauses.erase(c);
         currentLvlCl.emplace_back(c,t);
@@ -314,7 +359,7 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
         while(itN!=endN and *itN < c)
             ++itN;
 		if(itN!=endN and *itN == c){
-            reduceAppar(-var);
+            reduceAppar(forcedVariables, -var);
             // TODO : p->get().del();
 			value[c].erase(-var);
 			if (value[c].empty()){
@@ -334,7 +379,7 @@ cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
             ++itP;
 		if(itP!=endP and *itP == c){
             for(int i:value[c]){
-                reduceAppar(i);
+                reduceAppar(forcedVariables, i);
             }
             clausesToDel.push_back(c);
             clauses_sup->insert(c);
@@ -836,7 +881,7 @@ int Formule::preTrait(queue<int>& forcedVariables){
                 if (value[i].find(-v) != value[i].end()){
                     activeClauses.erase(i);
                     for(int l:value[i]){
-                        reduceAppar(l);
+                        reduceAppar(forcedVariables, l);
                     }
                     break;
                 }

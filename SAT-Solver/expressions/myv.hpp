@@ -2,6 +2,8 @@
 #define MYV_HPP_INCLUDED
 
 #include <vector>
+#include <mutex>
+
 using namespace std;
 template< typename T >
 class myv : public vector<T>

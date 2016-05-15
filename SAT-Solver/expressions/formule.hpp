@@ -52,11 +52,16 @@ public:
 	virtual void reset();
 private:
 	void retire(int v);
-	void reduceAppar(int i);
+	void reduceAppar(queue<int>& forcedVariables, int i);
+	void boucleThread(set<int>::iterator& start, set<int>::iterator& end, queue<int>& forcedVariables, vector<int>& clausesToDel, int& retVal);
 	int heuristique;
 	int nbClauseInit;
+	vector<pair<int,int>> currentLvlLit;
+	mutex lockCurrentLvlLit;
+	vector<pair<int,int>> currentLvlCl;
 	map<int,int> scoreVsids;
 	unordered_map<int,int> scoreForget;
+	mutex lockScoreForget;
     myv<int> fixed;
 	myv<mutex> lockFixed;
 	vector<unordered_set<int>> value;
