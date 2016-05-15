@@ -16,6 +16,8 @@
 #include <cstdlib>
 #include <string>
 #include <fstream>
+#include <thread>
+#include <mutex>
 #include "backtrack.hpp"
 #include "expr.hpp"
 #include "myv.hpp"
@@ -48,17 +50,22 @@ public:
 	virtual void pause(vector<pair<int,int>>& edges, int uid);
 	virtual void graphe(vector<pair<int,int>>& edges, int uid);
 private:
+	void retire(int v);
+	void reduceAppar(int i);
 	int heuristique;
 	int nbClauseInit;
 	map<int,int> scoreVsids;
-	map<int,int> scoreForget;
+	unordered_map<int,int> scoreForget;
     myv<int> fixed;
+	myv<mutex> lockFixed;
 	vector<unordered_set<int>> value;
 	vector<unordered_set<int>> initial_value;
 	set<int> activeClauses;
+	mutex lockActiveClauses;
 	Backtrack b;
 	vector<int> nbApparPos;
 	vector<int> nbApparNeg;
+	vector<mutex> lockNbAppar;
 	map<int,set<int> > appar;
 	map<int,int> scroreForget;
 	vector<vector<int> > valueWL;
