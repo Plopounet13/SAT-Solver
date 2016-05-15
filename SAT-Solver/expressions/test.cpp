@@ -8,7 +8,7 @@ using namespace std;
 
 class bar {
 public:
-	void foo(int& a) {
+	void foo(int* a) {
 		cout << ++a << endl;
 	}
 };
@@ -17,7 +17,7 @@ int main()
 {
 	int a=0;
 	cout << a << endl;
-	std::thread t(&bar::foo, bar(), a);
+	std::thread t(&bar::foo, bar(), &a);
 	t.join();
 	cout << a << endl;
 }

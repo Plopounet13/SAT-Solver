@@ -53,7 +53,7 @@ public:
 private:
 	void retire(int v);
 	void reduceAppar(queue<int>& forcedVariables, int i);
-	void boucleThread(set<int>::iterator& start, set<int>::iterator& end, queue<int>& forcedVariables, vector<int>& clausesToDel, int& retVal);
+	void boucleThread(set<int>::iterator start, set<int>::iterator end, queue<int>* forcedVariables, vector<int>* clausesToDel, int* retVal);
 	int heuristique;
 	int nbClauseInit;
 	vector<pair<int,int>> currentLvlLit;

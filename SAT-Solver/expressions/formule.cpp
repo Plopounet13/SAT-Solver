@@ -176,7 +176,10 @@ void Formule::reduceAppar(queue<int>& forcedVariables, int i){
 	lockNbAppar[abs(i)].unlock();
 }
 
-void Formule::boucleThread(set<int>::iterator& start, set<int>::iterator& end, queue<int>& forcedVariables, vector<int>& clausesToDel, int& retVal){
+void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, queue<int>* forVar, vector<int>* clToDel, int* rv){
+	queue<int>& forcedVariables=*forVar;
+	vector<int>& clausesToDel=*clToDel;
+	int& retVal=*rv;
 	for(auto& i=start; i!=end; ++i){
 		int c=*i;
 		while(watched1[c] != valueWL[c].end() and fixed[-*watched1[c]]){
@@ -261,10 +264,10 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 			set<int>::iterator fin = start;
 			for (int j=0; j<pas; ++j)
 				++fin;
-			threads.emplace_back(&Formule::boucleThread, this, start, fin, forcedVariables, clausesToDel, returns[i]);
+			threads.emplace_back(&Formule::boucleThread, this, start, fin, &forcedVariables, &clausesToDel, &returns[i]);
 			start=fin;
 		}else
-			threads.emplace_back(&Formule::boucleThread, this , start, end, forcedVariables, clausesToDel, returns[i]);
+			threads.emplace_back(&Formule::boucleThread, this , start, end, &forcedVariables, &clausesToDel, &returns[i]);
 	}
 	
 	for (int i=0; i<threads.size(); ++i){
@@ -273,7 +276,7 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 			return(returns[i]);
 		}
 	}
-	
+	/*
 	for (int c:activeClauses){
 		// Actualisation de watched1[c]
 		while(watched1[c] != valueWL[c].end() and fixed[-*watched1[c]]){
@@ -323,7 +326,7 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 			currentLvlLit.emplace_back(*watched1[c],c);
 			reduceAppar(forcedVariables, *watched1[c]);
 		}
-	}
+	}*/
 	
 	for(int c:clausesToDel){
         activeClauses.erase(c);
