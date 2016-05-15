@@ -132,7 +132,7 @@ Formule::Formule(vector<unordered_set<int>>& val, int heur):heuristique(heur),fi
     }
 }
 
-void Formule::retire(int c){
+void Formule::retireParal(int c){
 	lockActiveClauses.lock();
 	if (activeClauses.erase(c))
 		for (auto& v:value[c]){
@@ -146,7 +146,7 @@ void Formule::retire(int c){
 	lockActiveClauses.unlock();
 }
 
-void Formule::reduceAppar(queue<int>& forcedVariables, int i){
+void Formule::reduceApparParal(queue<int>& forcedVariables, int i){
 	lockNbAppar[abs(i)].lock();
     if(i>0)
         --(nbApparPos[i]);
@@ -177,6 +177,41 @@ void Formule::reduceAppar(queue<int>& forcedVariables, int i){
 	lockNbAppar[abs(i)].unlock();
 }
 
+void Formule::retire(int c){
+	if (activeClauses.erase(c))
+		for (auto& v:value[c]){
+			if (v<0)
+				--(nbApparNeg[-v]);
+			else
+				--(nbApparPos[v]);
+		}
+}
+
+void Formule::reduceAppar(queue<int>& forcedVariables, int i){
+	if(i>0)
+		--(nbApparPos[i]);
+	else
+		--(nbApparNeg[-i]);
+	if(!bcl and nbApparPos[abs(i)]+nbApparNeg[abs(i)]!=0 and !fixed[i] and !fixed[-i]){
+		if(nbApparPos[abs(i)]==0){
+			//cout << "ON FORCE " << -abs(i) << " QUI N'EST QUE NEGATIF" << endl;
+			if(!fixed[-abs(i)]){
+				fixed[-abs(i)]=t;
+				forcedVariables.push(-abs(i));
+				currentLvlLit.emplace_back(-abs(i),0);
+			}
+		}
+		if(nbApparNeg[abs(i)]==0){
+			//cout << "ON FORCE " << abs(i) << " QUI N'EST QUE POSITIF" << endl;
+			if(!fixed[abs(i)]){
+				fixed[abs(i)]=t;
+				forcedVariables.push(abs(i));
+				currentLvlLit.emplace_back(abs(i),0);
+			}
+		}
+	}
+}
+
 void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, queue<int>* forVar, vector<int>* clToDel, int* rv){
 	queue<int>& forcedVariables=*forVar;
 	vector<int>& clausesToDel=*clToDel;
@@ -185,7 +220,7 @@ void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, que
 		int c=*i;
 		while(watched1[c] != valueWL[c].end() and fixed[-*watched1[c]]){
 			/// à supprimer
-			reduceAppar(forcedVariables, *watched1[c]);
+			reduceApparParal(forcedVariables, *watched1[c]);
 			++watched1[c];
 		}
 		///* On vérifie si c est une clause fausse *///
@@ -205,7 +240,7 @@ void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, que
 		///* Actualisation de watched2[c] *///
 		while(fixed[-*watched2[c]]){
 			/// à supprimer
-			reduceAppar(forcedVariables, *watched2[c]);
+			reduceApparParal(forcedVariables, *watched2[c]);
 			++watched2[c];
 		}
 		///* On vérifie si c est une clause vraie *///
@@ -215,9 +250,9 @@ void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, que
 			lockClausesToDel.unlock();
 			vector<int>::iterator it=watched1[c];
 			for(; it!=watched2[c].base()-1; ++it){
-				reduceAppar(forcedVariables, *it);
+				reduceApparParal(forcedVariables, *it);
 			}
-			reduceAppar(forcedVariables, *it);
+			reduceApparParal(forcedVariables, *it);
 		}
 		///* On vérifie si c est une clause unitaire *///
 		else if(watched1[c] == watched2[c].base()-1){
@@ -229,7 +264,7 @@ void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, que
 					if (s.first != c)
 						--s.second;
 					if (s.second <= 0)
-						retire(s.first);
+						retireParal(s.first);
 				}
 				lockScoreForget.unlock();
 			}
@@ -243,7 +278,7 @@ void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, que
 			lockCurrentLvlLit.lock();
 			currentLvlLit.emplace_back(*watched1[c],c);
 			lockCurrentLvlLit.unlock();
-			reduceAppar(forcedVariables, *watched1[c]);
+			reduceApparParal(forcedVariables, *watched1[c]);
 		}
 	}
 	retVal=0;
