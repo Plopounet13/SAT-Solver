@@ -328,7 +328,7 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 			// On vérifie si c est une clause fausse
 			if(watched1[c] == valueWL[c].end()){
 				currentLvlLit.emplace_back(0,c);
-				//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
+cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
 				if(t!=1)
 					return -1;
 				else
@@ -361,7 +361,7 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 							retire(s.first);
 					}
 				}
-				//cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
+cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
 				forcedVariables.push(*watched1[c]);
 				fixed[*watched1[c]]=t;
 				currentLvlLit.emplace_back(*watched1[c],c);
