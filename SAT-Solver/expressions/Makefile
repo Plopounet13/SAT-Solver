@@ -5,7 +5,7 @@ EXTENSION=toEns Tseitin formule backtrack myv equality union_find
 CC=clang++
 #lex name+path
 LEX=flex
-FLAGS= -O3
+FLAGS= -O3 -g
 STD = -std=c++11
 LIBLEX=-L/usr/local/Cellar/flex/2.6.0/lib/ -lfl
 #yacc/bison

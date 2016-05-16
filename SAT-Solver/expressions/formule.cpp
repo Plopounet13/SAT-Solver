@@ -244,7 +244,11 @@ void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, que
 			++watched2[c];
 		}
 		///* On vérifie si c est une clause vraie *///
+		lockFixed[*watched1[c]].lock();
+		lockFixed[*watched2[c]].lock();
 		if(fixed[*watched1[c]] or fixed[*watched2[c]]){
+			lockFixed[*watched1[c]].unlock();
+			lockFixed[*watched2[c]].unlock();
 			lockClausesToDel.lock();
 			clausesToDel.push_back(c);
 			lockClausesToDel.unlock();
@@ -272,13 +276,13 @@ void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, que
 			lockForcedVariables.lock();
 			forcedVariables.push(*watched1[c]);
 			lockForcedVariables.unlock();
-			lockFixed[*watched1[c]].lock();
 			fixed[*watched1[c]]=t;
-			lockFixed[*watched1[c]].unlock();
 			lockCurrentLvlLit.lock();
 			currentLvlLit.emplace_back(*watched1[c],c);
 			lockCurrentLvlLit.unlock();
 			reduceApparParal(forcedVariables, *watched1[c]);
+			lockFixed[*watched1[c]].unlock();
+			lockFixed[*watched2[c]].unlock();
 		}
 	}
 	retVal=0;
@@ -328,7 +332,7 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 			// On vérifie si c est une clause fausse
 			if(watched1[c] == valueWL[c].end()){
 				currentLvlLit.emplace_back(0,c);
-cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
+//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
 				if(t!=1)
 					return -1;
 				else
@@ -361,7 +365,7 @@ cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
 							retire(s.first);
 					}
 				}
-cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
+//cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
 				forcedVariables.push(*watched1[c]);
 				fixed[*watched1[c]]=t;
 				currentLvlLit.emplace_back(*watched1[c],c);
@@ -527,6 +531,8 @@ int Formule::chooseWL() {
 					var = i;
 				}
             }
+			if (maxi == 0)
+				cout << "plop" << endl;
 			break;
         }
 		case VSIDS:{
