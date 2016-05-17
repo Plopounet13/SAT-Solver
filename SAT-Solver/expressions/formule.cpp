@@ -320,15 +320,15 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 	}else{
 		for (int c:activeClauses){
 			// Actualisation de watched1[c]
-			while(watched1[c] != valueWL[c].end() and fixed[-*watched1[c]]){
+			while(watched1[c] != watched2[c].base() and fixed[-*watched1[c]]){
 			/// à supprimer
 				reduceAppar(forcedVariables, *watched1[c]);
 				++watched1[c];
 			}
 			// On vérifie si c est une clause fausse
-			if(watched1[c] == valueWL[c].end()){
+			if(watched1[c] == watched2[c].base()){
 				currentLvlLit.emplace_back(0,c);
-cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
+//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
 				if(t!=1)
 					return -1;
 				else
@@ -344,10 +344,9 @@ cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
 			if(fixed[*watched1[c]] or fixed[*watched2[c]]){
 				clausesToDel.push_back(c);
 				vector<int>::iterator it=watched1[c];
-				for(; it!=watched2[c].base()-1; ++it){
+				for(; it!=watched2[c].base(); ++it){
 					reduceAppar(forcedVariables, *it);
 				}
-				reduceAppar(forcedVariables, *it);
 			}
 			// On vérifie si c est une clause unitaire
 			else if(watched1[c] == watched2[c].base()-1){
@@ -361,7 +360,8 @@ cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
 							retire(s.first);
 					}
 				}
-cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
+//cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
+				clausesToDel.push_back(c);
 				forcedVariables.push(*watched1[c]);
 				fixed[*watched1[c]]=t;
 				currentLvlLit.emplace_back(*watched1[c],c);
@@ -374,6 +374,7 @@ cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")"
         activeClauses.erase(c);
         currentLvlCl.emplace_back(c,t);
     }
+
     if (activeClauses.empty()){
         return 1;
     }
@@ -514,17 +515,27 @@ int Formule::chooseWL() {
 			break;
         }
 		case DLIS:{
+vector<int> nb1(nbVar+1);
+vector<int> nb2(nbVar+1);
+for(int c:activeClauses){
+for(auto it=watched1[c];it != watched2[c].base();++it){
+if(*it>0)
+++nb1[*it];
+else
+++nb2[-*it];
+}
+}
 			int maxi=0;
-			for (int i=0; i<nbApparNeg.size(); ++i){
-				if (nbApparNeg[i]>maxi and !fixed[i] and !fixed[-i]){
-					maxi = nbApparNeg[i];
-					var = -i;
+			for (int i=0; i<nb1.size(); ++i){
+				if (nb1[i]>maxi and !fixed[i] and !fixed[-i]){
+					maxi = nb1[i];
+					var = i;
 				}
             }
-			for (int i=0; i<nbApparPos.size(); ++i){
-				if (nbApparPos[i]>maxi and !fixed[i] and !fixed[-i]){
-					maxi = nbApparPos[i];
-					var = i;
+			for (int i=0; i<nb2.size(); ++i){
+				if (nb2[i]>maxi and !fixed[i] and !fixed[-i]){
+					maxi = nb2[i];
+					var = -i;
 				}
             }
 			break;
@@ -629,9 +640,11 @@ void Formule::dpll(string fout){
     initial_value = value;
     while(res<=0){
 //cout << "Time " << t << endl;
+//cout << activeClauses.size() << endl;
         if(res<=0){
             if(forcedVariables.empty()){
                 choice = choose();
+//cout << choice << "  UN CHOIX" << endl;
                 ++t;
                 if(bwl){
                     nbApparNegInit.push_back(nbApparNeg);
@@ -641,7 +654,6 @@ void Formule::dpll(string fout){
                 }
                 fixed[choice]=t;
                 currentLvlLit.emplace_back(choice,-1);
-//cout << choice << "  UN CHOIX" << endl;
                 res = evol(choice, false, forcedVariables);
             }
             else{
@@ -725,13 +737,13 @@ void Formule::dpll(string fout){
                                             litConflict.insert(-v);
                                             litSeen.insert(-v);
                                         }
-                                        else if(fixed[-v]){
+                                        else if(fixed[-v] and initial_value.back().count(v)==0){
                                             initial_value.back().insert(v);
-                                            if(v>0)
-                                                ++nbApparPos[v];
-                                            else
-                                                ++nbApparNeg[-v];
-                                            if(bwl){
+					if(bwl){
+                                            	if(v>0)
+                                                	++nbApparPos[v];
+                                            	else
+                                                	++nbApparNeg[-v];
                                                 valueWL.back().push_back(v);
                                                 if(v>0)
                                                     for(auto& vec:nbApparPosInit)
