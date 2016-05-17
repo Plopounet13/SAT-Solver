@@ -19,11 +19,8 @@ using namespace std;
 extern "C" FILE *yyin;
 extern Expr *res;
 extern int maxVar;
-bool bcl;
-bool bInterac;
-bool bForget;
-bool bwl;
-bool bParal;
+bool bParal2;
+mutex lockFini;
 
 void usage(){
     cerr << "Usage : ./resol [help] [-cl | -interac] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis]" << endl;
@@ -69,8 +66,52 @@ char* getExt(char* param){
         return NULL;
 }
 
+void thread1Tsei(){
+	Formule f(res->tseytin(maxVar), MOMS, false, false , false, true);
+	f.dpll("tash.out");
+}
+
+void thread2Tsei(){
+	Formule f(res->tseytin(maxVar), MOMS, true, false , false, false);
+	f.dpll("tash.out");
+}
+
+void thread3Tsei(){
+	Formule f(res->tseytin(maxVar), DLIS, false, false , false, true);
+	f.dpll("tash.out");
+}
+
+void thread4Tsei(){
+	Formule f(res->tseytin(maxVar), DLIS, true, false , false, true);
+	f.dpll("tash.out");
+}
+
+void thread1Cnf(vector<unordered_set<int>>* value){
+	Formule f(*value,  MOMS, false, false , false, true);
+	f.dpll("tash.out");
+}
+
+void thread2Cnf(vector<unordered_set<int>>* value){
+	Formule f(*value,  MOMS, true, false , false, false);
+	f.dpll("tash.out");
+}
+
+void thread3Cnf(vector<unordered_set<int>>* value){
+	Formule f(*value,  DLIS, false, false , false, true);
+	f.dpll("tash.out");
+}
+
+void thread4Cnf(vector<unordered_set<int>>* value){
+	Formule f(*value,  DLIS, true, false , false, true);
+	f.dpll("tash.out");
+}
+
 //ici c'est le début du main
 int main(int argc, char** argv) {
+	bool bcl;
+	bool bInterac;
+	bool bForget;
+	bool bwl;
 	bool bsmte=false;
 	bForget=false;
 	int backin = dup(0);
@@ -112,7 +153,7 @@ int main(int argc, char** argv) {
 			bsmte = true;
 			++decal;
 		}else if (!strcmp(argv[i], "-thread")){
-			bParal = true;
+			bParal2 = true;
 			++decal;
 		} else
 			argv[i-decal] = argv[i];
@@ -182,8 +223,19 @@ int main(int argc, char** argv) {
 	}else if (argc == 3){
         do {
 			//yyparse();
-			//Formule f(res->tseytin(maxVar), heuristique);
+			//Formule f(res->tseytin(maxVar), heuristique, bcl, bInterac, bForget, bwl);
+			if (!bParal2){
 			//f.dpll("plop.out");
+			} else {
+				thread t1(thread1Tsei);
+				thread t2(thread2Tsei);
+				thread t3(thread3Tsei);
+				thread t4(thread4Tsei);
+				t1.join();
+				t2.join();
+				t3.join();
+				t4.join();
+			}
         } while (!feof(yyin));
     } else {
 		fclose(yyin);
@@ -220,11 +272,22 @@ int main(int argc, char** argv) {
                 }
             }
         }
-        Formule f(value, heuristique);
-        if (C){
-            fprintf(stderr, "Erreur : Nombre clauses éronné.\n");
+		if (!bParal2){
+			Formule f(value, heuristique, bcl, bInterac, bForget, bwl);
+			if (C){
+				fprintf(stderr, "Erreur : Nombre clauses éronné.\n");
+			}
+			f.dpll("tash.out");
+		}else{
+			thread t1(thread1Tsei, &value);
+			thread t2(thread2Tsei, &value);
+			thread t3(thread3Tsei, &value);
+			thread t4(thread4Tsei, &value);
+			t1.join();
+			t2.join();
+			t3.join();
+			t4.join();
 		}
-        f.dpll("tash.out");
     }
     return 0;
 }
