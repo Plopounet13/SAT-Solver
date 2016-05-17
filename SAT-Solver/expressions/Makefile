@@ -2,17 +2,18 @@
 NAME=expr
 EXTENSION=toEns Tseitin formule backtrack myv equality union_find
 #compiler name
-CC=clang++
+CC=g++
 #lex name+path
 LEX=flex
-FLAGS= -O3 -g
+FLAGS= -O2
 STD = -std=c++11
-LIBLEX=-L/usr/local/Cellar/flex/2.6.0/lib/ -lfl
+LIBLEX=-ll
+LIB=-lpthread
 #yacc/bison
 YACC=bison
 
 all: $(NAME).tab.cpp $(NAME).yy.c $(NAME).cpp main.cpp $(EXTENSION:=.cpp)
-	$(CC) -Wno-write-strings -o resol $^ $(FLAGS) $(LIBLEX) $(STD)
+	$(CC) -Wno-write-strings -o resol $^ $(LIB) $(FLAGS) $(LIBLEX) $(STD)
 
 $(NAME).yy.c :  $(NAME).l
 	$(LEX)  -o $@ $^

@@ -24,6 +24,7 @@ bool bInterac;
 bool bForget;
 bool bwl;
 bool bParal;
+bool bParal2;
 
 void usage(){
     cerr << "Usage : ./resol [help] [-cl | -interac] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis]" << endl;
@@ -112,13 +113,13 @@ int main(int argc, char** argv) {
 			bsmte = true;
 			++decal;
 		}else if (!strcmp(argv[i], "-thread")){
-			bParal = true;
+			bParal2 = true;
 			++decal;
 		} else
 			argv[i-decal] = argv[i];
 	}
 	argc = argc-decal;
-	
+
 	//TODO : finir SMT
 	if (bsmte){
 		cout << "SMT n'est pas encore fini" << endl;

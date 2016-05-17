@@ -18,6 +18,7 @@
 #include <fstream>
 #include <thread>
 #include <mutex>
+#include <algorithm>
 #include "backtrack.hpp"
 #include "expr.hpp"
 #include "myv.hpp"
@@ -37,8 +38,8 @@ using namespace std;
 class Formule
 {
 public:
-	Formule(Expr& e, int heur);
-	Formule(vector<unordered_set<int>>& val, int heur);
+	Formule(Expr& e, int heur, bool cl, bool Interac, bool Forget, bool wl);
+	Formule(vector<unordered_set<int>> val, int heur, bool cl, bool Interac, bool Forget, bool wl);
 	virtual void dpll(string fout);
 	virtual int evol(int var, bool forced, queue<int>& forcedVariables);
 	virtual int evolWL(bool forced, queue<int>& forcedVariables);
@@ -54,7 +55,7 @@ private:
 	void retire(int v);
 	void reduceAppar(queue<int>& forcedVariables, int i);
 	void retireParal(int v);
-	void reduceApparParal(queue<int>& forcedVariables, int i);
+	void reduceApparParal(queue<int>& forcedVariables, int i, bool bFixedLocked);
 	void boucleThread(set<int>::iterator start, set<int>::iterator end, queue<int>* forcedVariables, vector<int>* clausesToDel, int* retVal);
 	int heuristique;
 	int nbClauseInit;
@@ -83,6 +84,12 @@ private:
     vector<vector<int>> nbApparPosInit;
 	vector<vector<vector<int>::iterator>> watched1Init;
 	vector<vector<vector<int>::reverse_iterator>> watched2Init;
+    int nbVar=0;
+    int t;
+    bool bcl;
+    bool bInterac;
+    bool bForget;
+    bool bwl;
 };
 
 
