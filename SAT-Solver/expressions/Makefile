@@ -5,9 +5,9 @@ EXTENSION=toEns Tseitin formule backtrack myv equality union_find
 CC=g++
 #lex name+path
 LEX=flex
-FLAGS= -O2
+FLAGS= -O3
 STD = -std=c++11
-LIBLEX=-ll
+LIBLEX=-lfl
 LIB=-lpthread
 #yacc/bison
 YACC=bison

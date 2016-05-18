@@ -8,7 +8,7 @@ mutex lockio;
 extern mutex lockFini;
 extern bool bFini;
 extern int maxVar;
-bool bParal = false;
+//bool bParal = false;
 
 void Formule::reset(){
     watched1.swap(watched1Init[t-1]);
@@ -23,7 +23,6 @@ void Formule::reset(){
 
 
 Formule::Formule(Expr& e, int heur, bool cl, bool Interac, bool Forget, bool wl):heuristique(heur),fixed(0,0), lockFixed(0,0), bcl(cl), bInterac(Interac), bForget(Forget), bwl(wl){
-    //cout << e.to_string() << endl;
     value = *toEns(e);
     if(bwl){
         for(auto& c:value){
@@ -33,11 +32,6 @@ Formule::Formule(Expr& e, int heur, bool cl, bool Interac, bool Forget, bool wl)
             }
         }
     }
-	/*for (set<int> x: value){
-        for (int y : x)
-            cout << y << " ";
-        cout << endl;
-	}*/
 	for(auto& x:value){
         for(int i:x)
             if(abs(i)>nbVar)
@@ -87,11 +81,6 @@ Formule::Formule(vector<unordered_set<int>> val, int heur, bool cl, bool Interac
             }
         }
     }
-	/*for (set<int> x: value){
-        for (int y : x)
-            cout << y << " ";
-        cout << endl;
-	}*/
 	for(auto& x:value){
         for(int i:x)
             if(abs(i)>nbVar)
@@ -143,7 +132,7 @@ void Formule::retireParal(int c){
 	lockActiveClauses.unlock();
 }
 
-void Formule::reduceApparParal(queue<int>& forcedVariables, int i, bool bFixedLocked){
+/*void Formule::reduceApparParal(queue<int>& forcedVariables, int i, bool bFixedLocked){
 ///CA BUG ICI
 	lockNbAppar[abs(i)].lock();
     if(i>0)
@@ -166,7 +155,6 @@ void Formule::reduceApparParal(queue<int>& forcedVariables, int i, bool bFixedLo
             return;
         }
         if(nbApparPos[abs(i)]==0){
-//cout << "ON FORCE " << -abs(i) << " QUI N'EST QUE NEGATIF" << endl;
             if(!fixed[-abs(i)]){
                 fixed[-abs(i)]=t;
                 forcedVariables.push(-abs(i));
@@ -174,7 +162,6 @@ void Formule::reduceApparParal(queue<int>& forcedVariables, int i, bool bFixedLo
             }
         }
         if(nbApparNeg[abs(i)]==0){
-//cout << "ON FORCE " << abs(i) << " QUI N'EST QUE POSITIF" << endl;
             if(!fixed[abs(i)]){
                 fixed[abs(i)]=t;
                 forcedVariables.push(abs(i));
@@ -187,7 +174,7 @@ void Formule::reduceApparParal(queue<int>& forcedVariables, int i, bool bFixedLo
         lockFixed[-abs(i)].unlock();
         lockFixed[abs(i)].unlock();
     }
-}
+}*/
 
 void Formule::retire(int c){
 	if (activeClauses.erase(c))
@@ -206,7 +193,6 @@ void Formule::reduceAppar(queue<int>& forcedVariables, int i){
 		--(nbApparNeg[-i]);
 	if(!bcl and nbApparPos[abs(i)]+nbApparNeg[abs(i)]!=0 and !fixed[i] and !fixed[-i]){
 		if(nbApparPos[abs(i)]==0){
-			//cout << "ON FORCE " << -abs(i) << " QUI N'EST QUE NEGATIF" << endl;
 			if(!fixed[-abs(i)]){
 				fixed[-abs(i)]=t;
 				forcedVariables.push(-abs(i));
@@ -214,7 +200,6 @@ void Formule::reduceAppar(queue<int>& forcedVariables, int i){
 			}
 		}
 		if(nbApparNeg[abs(i)]==0){
-			//cout << "ON FORCE " << abs(i) << " QUI N'EST QUE POSITIF" << endl;
 			if(!fixed[abs(i)]){
 				fixed[abs(i)]=t;
 				forcedVariables.push(abs(i));
@@ -224,7 +209,7 @@ void Formule::reduceAppar(queue<int>& forcedVariables, int i){
 	}
 }
 
-void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, queue<int>* forVar, vector<int>* clToDel, int* rv){
+/*void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, queue<int>* forVar, vector<int>* clToDel, int* rv){
 	queue<int>& forcedVariables=*forVar;
 	vector<int>& clausesToDel=*clToDel;
 	int& retVal=*rv;
@@ -236,7 +221,7 @@ void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, que
 			reduceApparParal(forcedVariables, *watched1[c],false);
 			++watched1[c];
 		}
-		///* On vérifie si c est une clause fausse *///
+		/// On vérifie si c est une clause fausse ///
 		if(watched1[c] == watched2[c].base()){
 			lockCurrentLvlLit.lock();
 			if(!bFini){
@@ -245,12 +230,9 @@ void Formule::boucleThread(set<int>::iterator start, set<int>::iterator end, que
                 lockCurrentLvlLit.unlock();
             }
             else{
-cout << "tue" << endl;
                 lockCurrentLvlLit.unlock();
                 return;
             }
-cout << "normal" << endl;
-			//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
 			if(t!=1){
 				retVal = -1;
 				return;
@@ -259,13 +241,13 @@ cout << "normal" << endl;
 				return;
 			}
 		}
-		///* Actualisation de watched2[c] *///
+		/// Actualisation de watched2[c] ///
 		while(fixed[-*watched2[c]]){
 			/// à supprimer
 			reduceApparParal(forcedVariables, *watched2[c],false);
 			++watched2[c];
 		}
-		///* On vérifie si c est une clause vraie *///
+		/// On vérifie si c est une clause vraie ///
 		int w[4] = {*watched1[c],*watched2[c],-*watched1[c],-*watched2[c]};
 		sort(w,w+4);
 		if(fixed[*watched1[c]] or fixed[*watched2[c]]){
@@ -277,7 +259,7 @@ cout << "normal" << endl;
 				reduceApparParal(forcedVariables, *it,false);
 			}
 		}
-		///* On vérifie si c est une clause unitaire *///
+		/// On vérifie si c est une clause unitaire ///
 		else if(watched1[c] == watched2[c].base()-1){
 			if (bForget){
 				lockScoreForget.lock();
@@ -291,13 +273,11 @@ cout << "normal" << endl;
 				}
 				lockScoreForget.unlock();
 			}
-			//cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
             lockFixed[w[0]].lock();
             lockFixed[w[3]].lock();
             if(!fixed[-*watched1[c]]){
                 lockCurrentLvlLit.lock();
                 if(bFini){
-cout << "ttue" << endl;
                     lockCurrentLvlLit.unlock();
                     lockFixed[w[0]].unlock();
                     lockFixed[w[3]].unlock();
@@ -314,7 +294,6 @@ cout << "ttue" << endl;
                 lockFixed[w[3]].unlock();
             }
             else{
-cout << "bizare" << endl;
                 lockFixed[w[0]].unlock();
                 lockFixed[w[3]].unlock();
                 if(t!=1){
@@ -330,12 +309,12 @@ cout << "bizare" << endl;
 	}
 	retVal=0;
 	return;
-}
+}*/
 
 int Formule::evolWL(bool forced, queue<int>& forcedVariables){
     vector<int> clausesToDel;
 
-	if (bParal){
+	/*if (bParal){
 		int nbThreads=thread::hardware_concurrency();
 		if (!nbThreads)
 			nbThreads=1;
@@ -365,30 +344,25 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 		cout << "FINI "<< t << endl;
 		if (valReturn)
 			return valReturn;
-	}else{
+	}else{*/
 		for (int c:activeClauses){
-			// Actualisation de watched1[c]
 			while(watched1[c] != watched2[c].base() and fixed[-*watched1[c]]){
 			/// à supprimer
 				reduceAppar(forcedVariables, *watched1[c]);
 				++watched1[c];
 			}
-			// On vérifie si c est une clause fausse
 			if(watched1[c] == watched2[c].base()){
 				currentLvlLit.emplace_back(0,c);
-//cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
 				if(t!=1)
 					return -1;
 				else
 					return 2;
 			}
-			// Actualisation de watched2[c]
 			while(fixed[-*watched2[c]]){
 				/// à supprimer
 				reduceAppar(forcedVariables, *watched2[c]);
 				++watched2[c];
 			}
-			// On vérifie si c est une clause vraie
 			if(fixed[*watched1[c]] or fixed[*watched2[c]]){
 				clausesToDel.push_back(c);
 				vector<int>::iterator it=watched1[c];
@@ -396,7 +370,6 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 					reduceAppar(forcedVariables, *it);
 				}
 			}
-			// On vérifie si c est une clause unitaire
 			else if(watched1[c] == watched2[c].base()-1){
 				if (bForget){
 					if(scoreForget.count(c))
@@ -408,7 +381,6 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 							retire(s.first);
 					}
 				}
-//cout << "ON FORCE " << *watched1[c] << " DANS " << c+1 << " (etape " << t << ")" << endl;
 				clausesToDel.push_back(c);
 				forcedVariables.push(*watched1[c]);
 				fixed[*watched1[c]]=t;
@@ -416,7 +388,7 @@ int Formule::evolWL(bool forced, queue<int>& forcedVariables){
 				reduceAppar(forcedVariables, *watched1[c]);
 			}
 		}
-	}
+	//}
 
 	for(int c:clausesToDel){
         activeClauses.erase(c);
@@ -454,19 +426,10 @@ int Formule::evol(int var, bool forced, queue<int>& forcedVariables){
             ++itN;
 		if(itN!=endN and *itN == c){
             reduceAppar(forcedVariables, -var);
-            // TODO : p->get().del();
 			value[c].erase(-var);
 			if (value[c].empty()){
                 bBack=true;
                 cBack = c;
-/*                clauses_sup->clear();
-                b.push(var,forced,clauses_sup,&(appar[-var]));
-cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
-                currentLvlLit.emplace_back(0,c);
-                if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg))
-                    return -1;
-                else
-                    return 2;*/
 			}
 		}
         while(itP!=endP and *itP < c)
@@ -480,7 +443,6 @@ cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
         }
         if (value[c].size()==1){
             if(!fixed[*value[c].begin()]){
-//cout << "ON FORCE " << *value[c].begin() << " DANS " << c+1 << " (etape " << t << ")" << endl;
 				if (bForget){
 					if(scoreForget.count(c))
 						scoreForget[c]+=value.size();
@@ -506,7 +468,6 @@ cout << "ON BACK A CAUSE DE LA CLAUSE " << c+1 << endl;
     }
 	b.push(var,forced,clauses_sup,&(appar[-var]));
 	if(bBack){
-//cout << "ON BACK A CAUSE DE LA CLAUSE " << cBack+1 << endl;
         currentLvlLit.emplace_back(0,cBack);
         if(b.back(value, activeClauses, fixed, &var,nbApparPos,nbApparNeg))
             return -1;
@@ -529,10 +490,6 @@ int Formule::chooseWL() {
 			advance(it,c);
 			c = *it;
 			var = *watched1[c];
-			/*auto it2 = watched1[c];
-			var = rand()%(distance(watched1[c],watched2[c])+1);
-			advance(it2, var);
-			var = *it2;*/
 			break;
         }
 		case MOMS:{
@@ -649,17 +606,31 @@ int Formule::choose() {
 			break;
         }
 		case DLIS:{
+            vector<int> nb1(nbVar+1);
+            vector<int> nb2(nbVar+1);
+            for(int c:activeClauses){
+                for(auto it=watched1[c];it != watched2[c].base();++it){
+                if(*it>0)
+                ++nb1[*it];
+                else
+                ++nb2[-*it];
+                }
+            }
 			int maxi=0;
-			for (int i=0; i<nbApparNeg.size(); ++i)
-				if (nbApparNeg[i]>maxi and !fixed[i] and !fixed[-i]){
-					maxi = nbApparNeg[i];
-					var = -i;
-				}
-			for (int i=0; i<nbApparPos.size(); ++i)
-				if (nbApparPos[i]>maxi and !fixed[i] and !fixed[-i]){
-					maxi = nbApparPos[i];
+			for (int i=0; i<nb1.size(); ++i){
+				if (nb1[i]>maxi and !fixed[i] and !fixed[-i]){
+					maxi = nb1[i];
 					var = i;
 				}
+            }
+			for (int i=0; i<nb2.size(); ++i){
+				if (nb2[i]>maxi and !fixed[i] and !fixed[-i]){
+					maxi = nb2[i];
+					var = -i;
+				}
+            }
+			if (maxi == 0)
+				cout << "plop" << endl;
 			break;
         }
 		case VSIDS:{
@@ -692,12 +663,9 @@ void Formule::dpll(string fout){
         if(bFini){
             return;
         }
-//cout << "Time " << t << endl;
-//cout << activeClauses.size() << endl;
         if(res<=0){
             if(forcedVariables.empty()){
                 choice = choose();
-//cout << choice << "  UN CHOIX" << endl;
                 ++t;
                 if(bwl){
                     nbApparNegInit.push_back(nbApparNeg);
@@ -711,18 +679,15 @@ void Formule::dpll(string fout){
             }
             else{
                 choice = forcedVariables.front();
-//cout << choice << "  FORCE" << endl;
                 forcedVariables.pop();
                 res = evol(choice, true, forcedVariables);
             }
 			while(res==-1){
-//cout << "______________BACK" << endl;
                 while(!bwl and !forcedVariables.empty()){
                     fixed[forcedVariables.front()]=0;
                     forcedVariables.pop();
                 }
                 if(bcl){
-                    //creer graphe
                     initial_value.push_back(unordered_set<int>());
                     value.push_back(unordered_set<int>());
                     if(bwl)
@@ -851,24 +816,16 @@ void Formule::dpll(string fout){
                             maxi_t = fixed[-x];
                         }
                     }
-/*cout << "NEW CLAUSE ";
-for(int i:initial_value.back())
-cout << i << " ";
-cout << endl;*/
-//cout << "UID " << *(litConflict.begin()) << endl;
                     if(bInterac){
                         pause(edges,*(litConflict.begin()));
                     }
-                    //currentlit
                     if(bwl){
-            //cout << "BACK JUSQUE " << maxi_t << endl;
                         while(!currentLvlCl.empty() && currentLvlCl.back().second == t){
                             activeClauses.insert(currentLvlCl.back().first);
                             currentLvlCl.pop_back();
                         }
                         currentLvlLit.pop_back();
                         while(!currentLvlLit.empty() && fixed[currentLvlLit.back().first]==0){
-            //cout << "ANNULE  " << currentLvlLit.back().first << " " << fixed[currentLvlLit.back().first] << endl;
                             currentLvlLit.pop_back();
                         }
                         --t;
@@ -878,7 +835,6 @@ cout << endl;*/
                                 currentLvlCl.pop_back();
                             }
                             while(!currentLvlLit.empty() && fixed[currentLvlLit.back().first]==t){
-            //cout << "ANNULE " << currentLvlLit.back().first << " " << fixed[currentLvlLit.back().first] << endl;
                                 fixed[currentLvlLit.back().first]=0;
                                 currentLvlLit.pop_back();
                             }
@@ -899,7 +855,6 @@ cout << endl;*/
 					choice = -*(litConflict.begin());
 					fixed[choice]=t;
 					currentLvlLit.emplace_back(choice,value.size()-1);
-//cout << choice << "  FORCE" << endl;
 
                     res = evol(choice,true,forcedVariables);
                 }
@@ -911,7 +866,6 @@ cout << endl;*/
                         }
                         currentLvlLit.pop_back();
                         while(!currentLvlLit.empty() && fixed[currentLvlLit.back().first]==t){
-//cout << currentLvlLit.back().first << " ANNULE" << endl;
                             fixed[currentLvlLit.back().first]=0;
                             choice=-currentLvlLit.back().first;
                             currentLvlLit.pop_back();
@@ -923,20 +877,13 @@ cout << endl;*/
                         choice = -b.lastBack;
                         --t;
                     }
-//cout << "lastback : " << b.lastBack << endl;
                     fixed[choice]=t;
                     currentLvlLit.emplace_back(choice,value.size()-1);
-//cout << choice << "  FORCE" << endl;
                     res = evol(choice,true,forcedVariables);
                 }
             }
         }
     }
-/*for(auto& x:initial_value){
-for(int i:x)
-cout << i << " ";
-cout << 0 << endl;
-}*/
     lockFini.lock();
     if(bFini){
         lockFini.unlock();
@@ -1007,11 +954,6 @@ int Formule::preTrait(queue<int>& forcedVariables){
             }
         }
     }
-    /*while(!forcedVariables.empty()){
-        int choice = forcedVariables.front();
-        forcedVariables.pop();
-        res = evol(choice, true, forcedVariables);
-    }*/
 	return activeClauses.empty();
 }
 
@@ -1098,38 +1040,3 @@ void Formule::pause(vector<pair<int,int>>& edges, int uid){
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

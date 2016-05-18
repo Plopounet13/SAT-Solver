@@ -20,10 +20,12 @@ extern "C" FILE *yyin;
 extern Expr *res;
 extern int maxVar;
 bool bParal2;
+bool bFini = false;
 mutex lockFini;
+vector<unordered_set<int>> value;
 
 void usage(){
-    cerr << "Usage : ./resol [help] [-cl | -interac] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis]" << endl;
+    cerr << "Usage : ./resol [help] [-cl | -interac] [-tseitin] src.[cnf|for] [-rand|-moms|-dlis] [-thread]" << endl;
 }
 
 void help(){
@@ -38,7 +40,7 @@ void help(){
 	cout << "\tCompatible heuristique" << endl;
 	cout << endl;
 	cout << "Heuristique :" << endl;
-	cout << "\t-rand : Choix aléatoire de la variable à fixer." << endl;
+	cout << "\t-rand : Choix aléatoire de la variable à fixer" << endl;
 	cout << "\t-moms : Choix de la variable ayant le plus d'occurences dans les clauses de taille minimale" << endl;
 	cout << "\t-dlis : Choix de la variable satisfaisant le plus de clauses" << endl;
 	cout << "\t-vsids : Choix de la variable la plus active dans des clauses apprises" << endl;
@@ -47,7 +49,7 @@ void help(){
 	cout << "\t-forget : Oubli des clauses apprises non utilisées" << endl;
 	cout << "\t-wl : Utilise les watched litterals" << endl;
 	cout << endl;
-	cout << "\t-thread : Parallèlise le calcul avec les watched litterals" << endl;
+	cout << "\t-thread : Parallélise plusieurs heuristiques et renvoie le résultat de la plus rapide" << endl;
 	cout << "Exemples :" << endl;
 	cout << "\t./resol -tseitin fic.for -rand" << endl;
 	cout << "\tCet appel applique tseitin à fic.for puis fait tourner dpll en pariant aléatoirement" << endl;
@@ -86,23 +88,23 @@ void thread4Tsei(){
 	f.dpll("tash.out");
 }
 
-void thread1Cnf(vector<unordered_set<int>>* value){
-	Formule f(*value,  MOMS, false, false , false, true);
+void thread1Cnf(){
+	Formule f(value,  MOMS, false, false , false, true);
 	f.dpll("tash.out");
 }
 
-void thread2Cnf(vector<unordered_set<int>>* value){
-	Formule f(*value,  MOMS, true, false , false, false);
+void thread2Cnf(){
+	Formule f(value,  MOMS, true, false , false, false);
 	f.dpll("tash.out");
 }
 
-void thread3Cnf(vector<unordered_set<int>>* value){
-	Formule f(*value,  DLIS, false, false , false, true);
+void thread3Cnf(){
+	Formule f(value,  DLIS, false, false , false, true);
 	f.dpll("tash.out");
 }
 
-void thread4Cnf(vector<unordered_set<int>>* value){
-	Formule f(*value,  DLIS, true, false , false, true);
+void thread4Cnf(){
+	Formule f(value,  DLIS, true, false , false, true);
 	f.dpll("tash.out");
 }
 
@@ -221,11 +223,12 @@ int main(int argc, char** argv) {
 			f.smt();
 		}while(!feof(yyin));*/
 	}else if (argc == 3){
+	cout << "ioygb_" << endl;
         do {
-			//yyparse();
-			//Formule f(res->tseytin(maxVar), heuristique, bcl, bInterac, bForget, bwl);
+			yyparse();
+			Formule f(res->tseytin(maxVar), heuristique, bcl, bInterac, bForget, bwl);
 			if (!bParal2){
-			//f.dpll("plop.out");
+			f.dpll("plop.out");
 			} else {
 				thread t1(thread1Tsei);
 				thread t2(thread2Tsei);
@@ -254,7 +257,6 @@ int main(int argc, char** argv) {
             fprintf(stderr,"Erreur : Le fichier doit commencer par \"p cnf\".\n");
             exit(4);
         }
-		vector<unordered_set<int>> value;
         while (getline(fic, line)){
             if (line != "" && line[0] != 'c' and line != "0" and line != "%"){
                 --C;
@@ -279,10 +281,10 @@ int main(int argc, char** argv) {
 			}
 			f.dpll("tash.out");
 		}else{
-			thread t1(thread1Tsei, &value);
-			thread t2(thread2Tsei, &value);
-			thread t3(thread3Tsei, &value);
-			thread t4(thread4Tsei, &value);
+			thread t1(thread1Cnf);
+			thread t2(thread2Cnf);
+			thread t3(thread3Cnf);
+			thread t4(thread4Cnf);
 			t1.join();
 			t2.join();
 			t3.join();
